@@ -7,7 +7,7 @@ const supabase = createClient(
 export default supabase;
 
 // fetch a table from supabase
-export const fetchData = async (table, selection, callback) => {
+export const fetchTable = async (table, selection, callback) => {
   try {
     const { data } = await supabase.from(table).select(selection);
     if (callback == null) return data; // return the data if there is no callback function to be called

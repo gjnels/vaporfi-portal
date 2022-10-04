@@ -1,6 +1,5 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext } from "react";
 import { useRealtime } from "../hooks/useRealtime";
-import supabase, { fetchData } from "../lib/supabaseClient";
 
 const FlavorsContext = createContext();
 

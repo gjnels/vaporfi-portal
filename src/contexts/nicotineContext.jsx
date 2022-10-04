@@ -1,4 +1,7 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { showToast } from "../components/ui/Toast";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useRealtime } from "../hooks/useRealtime";
 
 const NicotineContext = createContext();
@@ -23,12 +26,47 @@ const sortPackets = (packets) => {
 
 export const NicotineProvider = ({ children }) => {
   const [packets, loading] = useRealtime("nic_packets", "*");
-  console.log(packets, loading);
-  const [preferences, setPreferences] = useState([]);
+  const { get, set } = useLocalStorage("vf-nicotine-packet-preferences");
+  const [preferences, setPreferences] = useState(get());
+
+  useEffect(() => {
+    if (!preferences.length && packets.length) {
+      const initialPreferences = packets.map((packet) => ({
+        id: packet.id,
+        available: true,
+      }));
+      setPreferences(initialPreferences);
+      set(initialPreferences);
+    }
+  }, [packets]);
+
+  const togglePreference = (id, available) => {
+    const newPreferences = preferences.map((preference) =>
+      preference.id === id ? { ...preference, available } : preference
+    );
+    setPreferences(newPreferences);
+  };
+
+  const savePreferences = () => {
+    set(preferences);
+    showToast("Nicotine preferences saved");
+  };
+
+  const availablePackets = packets.map((packet) => ({
+    ...packet,
+    available:
+      preferences.find((preference) => preference.id === packet.id)
+        ?.available ?? false,
+  }));
 
   return (
     <NicotineContext.Provider
-      value={{ packets: sortPackets(packets), preferences, loading }}
+      value={{
+        packets: sortPackets(availablePackets),
+        togglePreference,
+        savePreferences,
+        loading,
+      }}
     >
       {children}
     </NicotineContext.Provider>

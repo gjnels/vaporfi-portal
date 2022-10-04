@@ -9,85 +9,123 @@ import { twMerge } from "tailwind-merge";
 import { Logo } from "./Logo";
 import { useSession } from "../contexts/sessionContext";
 import { MenuTransition } from "./MenuTransition";
-import { Link, NavLink } from "./ui/Links";
+import { Link, NavLink } from "react-router-dom";
+import { useProfile } from "../contexts/profileContext";
 
 const LINKS = [
-  { path: "/flavors", title: "Flavors", access: 1 },
-  { path: "/nicotine", title: "Nicotine", access: 1 },
-  { path: "/orders", title: "Orders", access: 2 },
-  { path: "/admin/transfers", title: "Transfers", access: 3 },
-  { path: "/admin/square", title: "Square", access: 3 },
-  { path: "/admin/promos", title: "Edit Promotions", access: 3 },
+  { to: "/custom-blends", title: "Custom Blends", access: 1 },
+  // { to: "/named-blends", title: "Named Blends", access: 1 },
+  { to: "/nicotine-calculator", title: "Nicotine Calculator", access: 1 },
+  // { to: "/orders", title: "Orders", access: 2 },
+  // { to: "/admin/transfers", title: "Transfers", access: 3 },
+  // { to: "/admin/square", title: "Square", access: 3 },
+  // { to: "/admin/promos", title: "Edit Promotions", access: 3 },
 ];
 
 export const NavBar = () => {
-  // const user = useSession();
-  const user = null; // TODO: remove when auth is working
+  const user = useSession();
+  const { profile, loading: profileLoading } = useProfile();
+  // const user = null; // TODO: remove when auth is working
 
   return (
-    <div className="shadow-md">
-      <Menu
-        as="nav"
-        className="container mx-auto flex flex-col gap-2 py-2 px-4 sm:px-6 lg:px-8"
-      >
-        {({ open }) => (
-          <>
-            <div className="relative flex items-center justify-between">
-              <Menu.Button className="inline-flex items-center justify-center rounded-md p-1 hover:bg-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-800 hover:dark:bg-gray-700 focus-visible:dark:ring-gray-200 lg:hidden">
-                {open ? (
-                  <XMarkIcon className="h-[2em]" />
-                ) : (
-                  <Bars3Icon className="h-[2em]" />
-                )}
-              </Menu.Button>
-              <div className="flex items-center justify-between">
-                <Link to="/">
-                  <Logo />
-                </Link>
-                <div className="hidden items-center gap-2 lg:ml-6 lg:flex">
-                  {LINKS.map((link) => (
-                    <NavLink key={link.path} {...link} user={user} />
-                  ))}
-                </div>
-              </div>
+    <>
+      {/* desktop menu */}
+      <div className="hidden max-w-[25ch] shrink-0 flex-col divide-y divide-gray-300 border-r border-gray-300 dark:divide-gray-700 dark:border-gray-700 lg:flex">
+        <div className="mx-auto p-4">
+          <Link to="/" className="focus-visible:outline-none">
+            <Logo />
+          </Link>
+        </div>
+        <div className="flex grow flex-col divide-y divide-gray-300 overflow-auto py-2 px-4 dark:divide-gray-700">
+          <LinkGroup links={LINKS.filter((link) => link.access === 1)} />
+        </div>
+        <footer className="p-4">
+          <p className="text-center text-xs text-gray-500">
+            Created by Garrett Nelson &copy; 2022
+          </p>
+        </footer>
+      </div>
 
-              {/* Login button (signed out) or profile menu (signed in)
-              empty div for now in order to keep flexbox working correctly */}
-              <div></div>
-              {/* {user == null ? (
-                <NavLink path="login" title="Login" />
-              ) : (
-                <Menu>
-                  <Menu.Button className="inline-flex items-center justify-center rounded-md p-1 hover:bg-gray-300 hover:dark:bg-gray-700">
-                    <UserCircleIcon className="h-[2em] text-green-500" />
-                  </Menu.Button>
-                  <MenuTransition>
-                    <Menu.Items className="absolute top-full right-0 z-20 flex flex-col gap-1 rounded-md bg-gray-100 py-1 shadow-md focus:outline-none dark:bg-gray-800">
-                      <Menu.Item>
-                        <NavLink path="profile" title="My Profile" />
-                      </Menu.Item>
-                      <Menu.Item>
-                        <NavLink path="logout" title="Logout" />
-                      </Menu.Item>
-                    </Menu.Items>
-                  </MenuTransition>
-                </Menu>
-              )} */}
-            </div>
-
-            {/* mobile menu */}
-            <MenuTransition>
-              <Menu.Items className="flex flex-col gap-1 py-1 focus:outline-none lg:hidden">
-                {LINKS.map((link) => (
-                  <Menu.Item key={link.path}>
-                    <NavLink {...link} user={user} />
-                  </Menu.Item>
-                ))}
-              </Menu.Items>
-            </MenuTransition>
-          </>
-        )}
-      </Menu>
-    </div>
+      {/* mobile menu */}
+      <div className="border-b border-gray-300 bg-gray-200 px-4 dark:border-gray-700 dark:bg-gray-900 lg:hidden">
+        <Menu
+          as="div"
+          className="relative flex items-center justify-between py-2"
+        >
+          <Link to="/">
+            <Logo />
+          </Link>
+          <Menu.Button className="hover:text-green-600 hover:dark:text-green-200">
+            <XMarkIcon className="h-[2em] ui-not-open:hidden" />
+            <Bars3Icon className="h-[2em] ui-open:hidden" />
+          </Menu.Button>
+          <Transition
+            as={Fragment}
+            enter="transition ease-out duration-100"
+            enterFrom="transform opacity-0 scale-y-95"
+            enterTo="transform opacity-100 scale-y-100"
+            leave="transition ease-in duration-75"
+            leaveFrom="transform opacity-100 scale-y-100"
+            leaveTo="transform opacity-0 scale-y-95"
+          >
+            <Menu.Items
+              as="nav"
+              className="absolute top-full mt-2 flex w-full origin-top flex-col space-y-1 divide-y divide-gray-300 rounded-lg border border-gray-300 bg-gray-200 p-1 shadow-md focus:outline-none dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-900"
+            >
+              <MobileLinkGroup
+                links={LINKS.filter((link) => link.access === 1)}
+              />
+            </Menu.Items>
+          </Transition>
+        </Menu>
+      </div>
+    </>
   );
 };
+
+const LinkGroup = ({ links }) =>
+  links.length > 0 && (
+    <div className="space-y-2 py-2">
+      {links.map((link) => (
+        <NavLink
+          key={link.to}
+          to={link.to}
+          className={({ isActive }) =>
+            `${
+              isActive
+                ? "bg-gray-300 dark:bg-gray-700"
+                : "text-gray-900 dark:text-gray-100"
+            } block rounded-md p-2 transition hover:bg-green-400 hover:text-gray-900 focus:bg-green-400 focus:outline-none active:bg-opacity-75`
+          }
+        >
+          {link.title}
+        </NavLink>
+      ))}
+    </div>
+  );
+
+const MobileLinkGroup = ({ links }) =>
+  links.length > 0 && (
+    <div className="space-y-1">
+      {links.map((link) => (
+        <Menu.Item key={link.to}>
+          {({ active: menuItemActive }) => (
+            <NavLink
+              to={link.to}
+              className={({ isActive }) =>
+                `${
+                  menuItemActive
+                    ? "bg-green-400 text-gray-900"
+                    : isActive
+                    ? "bg-gray-300 dark:bg-gray-700"
+                    : "text-gray-900 dark:text-gray-100"
+                } block rounded-md p-2 transition active:bg-opacity-75`
+              }
+            >
+              {link.title}
+            </NavLink>
+          )}
+        </Menu.Item>
+      ))}
+    </div>
+  );

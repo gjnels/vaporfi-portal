@@ -10,13 +10,15 @@ export const Promos = () => {
     <>
       <PageTitle title="Current Promotions" />
       {loading ? (
-        <Spinner className="text-2xl" />
-      ) : (
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+        <Spinner />
+      ) : promos.length > 0 ? (
+        <div className="grid grid-cols-1 justify-items-center gap-8 lg:grid-cols-2">
           {promos.map((promo) => (
             <Promo key={promo.id} promo={promo} />
           ))}
         </div>
+      ) : (
+        <i className="text-gray-500">No current promotions.</i>
       )}
     </>
   );

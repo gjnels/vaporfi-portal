@@ -1,7 +1,7 @@
 import { createPromoBlendString } from "../lib/strings";
 
 export const Promo = ({ promo }) => (
-  <div className="overflow-hidden rounded-lg bg-gray-200 shadow-md dark:bg-gray-900">
+  <div className="max-w-lg overflow-hidden rounded-lg border border-gray-400 bg-gray-200 shadow-md dark:border-gray-600 dark:bg-gray-900">
     {promo.img_url && (
       <img className="w-full" src={promo.img_url} alt={promo.title} />
     )}
@@ -28,7 +28,7 @@ export const Promo = ({ promo }) => (
         <span className="whitespace-pre-wrap">{promo.sale}</span>
       </p>
       {promo.notes && (
-        <p className="text-gray-600 dark:text-gray-400">{promo.notes}</p>
+        <p className="italic text-gray-600 dark:text-gray-400">{promo.notes}</p>
       )}
     </div>
   </div>

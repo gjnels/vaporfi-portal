@@ -3,23 +3,17 @@ import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 export const Toggle = ({
-  startEnabled = false,
+  enabled,
+  onChange,
   title,
   titleClassName,
-  toggleClassName,
   divClassName,
 }) => {
-  const [enabled, setEnabled] = useState(startEnabled);
-
   return (
     <div className={twMerge("flex items-center gap-2", divClassName)}>
       <Switch
         checked={enabled}
-        onChange={setEnabled}
-        // className={twMerge(
-        //   "h-[1.25em] w-[2.5em] rounded-full bg-white bg-opacity-50",
-        //   toggleClassName
-        // )}
+        onChange={onChange}
         className={twMerge(
           "focus-visible:outline-opacity-80 inline-flex h-[1.25em] w-[2.25em] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow transition  focus:outline-none focus-visible:outline-2 focus-visible:outline-gray-800 active:bg-opacity-75 focus-visible:dark:outline-gray-100",
           enabled ? "bg-green-500" : "bg-gray-400 dark:bg-gray-500"

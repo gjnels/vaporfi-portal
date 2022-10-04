@@ -5,7 +5,7 @@ export const Logo = () => (
     x="0px"
     y="0px"
     viewBox="0 0 245 80"
-    className="h-[3em]"
+    className="h-[3em] rounded focus:outline focus:outline-2 focus:outline-green-400"
   >
     <g>
       <g>

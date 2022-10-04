@@ -5,9 +5,11 @@ export function capitalize(text) {
     .join(" ");
 }
 
-export function createBlendString(blend) {
-  return blend
-    ? `${blend.bottleCount} x (${blend.blend
+export function createBlendString(mix) {
+  return mix
+    ? `${mix.bottleCount} x ${
+        mix.nicotine ? `${mix.nicotine}mg ` : ""
+      }(${mix.blend
         .map(({ flavor, shots }) => `${shots} ${flavor}`)
         .join(" - ")})`
     : "";

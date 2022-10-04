@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import supabase, {
-  fetchData,
+  fetchTable,
   fetchNewValue,
   fetchRow,
 } from "../lib/supabaseClient";
@@ -63,7 +63,7 @@ export const useRealtime = (
             singleRowColumn,
             singleRowValue
           )
-        : await fetchData(table, completeSelection, setValues);
+        : await fetchTable(table, completeSelection, setValues);
 
       setLoading(false);
     };
