@@ -105,7 +105,7 @@ export const NicotineCalculator = () => {
         ) : (
           <div className="flex gap-8">
             <div className="flex flex-col gap-2">
-              <h3 className="mb-1 whitespace-pre-wrap text-base font-semibold lg:text-lg">
+              <h3 className="mb-1 whitespace-pre-wrap text-base lg:text-lg">
                 Available Nicotine Packets
               </h3>
               {packets.map((packet) => (
@@ -132,7 +132,7 @@ export const NicotineCalculator = () => {
               className="flex flex-1 flex-col gap-4"
               onSubmit={handleSubmit}
             >
-              <h3 className="mb-1 text-center text-base font-semibold lg:text-lg">
+              <h3 className="mb-1 text-center text-lg font-semibold lg:text-xl">
                 Options
               </h3>
               <Select
@@ -217,31 +217,36 @@ export const NicotineCalculator = () => {
             </form>
           </div>
         )}
-        <div className="flex justify-center gap-12 justify-self-center">
-          {neededPackets?.length > 0 ? (
-            <>
-              {lowerPackets && (
-                <PacketResult
-                  {...lowerPackets}
-                  title={
-                    lowerPackets?.finalNicLevel !== desiredNic
-                      ? "Closest Below Desired Level"
-                      : null
-                  }
-                />
-              )}
-              {higherPacket && lowerPackets?.finalNicLevel !== desiredNic && (
-                <PacketResult
-                  {...higherPacket}
-                  title={"Closest Above Desired Level"}
-                />
-              )}
-            </>
-          ) : (
-            <i className="text-gray-500">
-              Fill out the form to see the resulting packets.
-            </i>
-          )}
+        <div>
+          <h3 className="mb-4 text-center text-lg font-semibold lg:text-xl">
+            Results
+          </h3>
+          <div className="flex justify-center gap-12 justify-self-center">
+            {neededPackets?.length > 0 ? (
+              <>
+                {lowerPackets && (
+                  <PacketResult
+                    {...lowerPackets}
+                    title={
+                      lowerPackets?.finalNicLevel !== desiredNic
+                        ? "Closest Below Desired Level"
+                        : null
+                    }
+                  />
+                )}
+                {higherPacket && lowerPackets?.finalNicLevel !== desiredNic && (
+                  <PacketResult
+                    {...higherPacket}
+                    title={"Closest Above Desired Level"}
+                  />
+                )}
+              </>
+            ) : (
+              <i className="text-gray-500">
+                Fill out the form to see the resulting packets.
+              </i>
+            )}
+          </div>
         </div>
       </div>
     </>
