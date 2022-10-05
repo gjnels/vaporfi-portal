@@ -18,7 +18,14 @@ const shots = [
   { id: 3, value: 3, label: "Triple Shot" },
 ];
 
-export const BlendForm = ({ title, mix, onSubmit, onCancel }) => {
+export const BlendForm = ({
+  title,
+  mix,
+  onSubmit,
+  onCancel,
+  showSpinner = true,
+  namedMix = false,
+}) => {
   const {
     categories: [categories, categoriesLoading],
     flavors: [flavors, flavorsLoading],
@@ -27,19 +34,14 @@ export const BlendForm = ({ title, mix, onSubmit, onCancel }) => {
   const [flavorCount, setFlavorCount] = useState(1);
   const [bottleCount, setBottleCount] = useState(1);
   const [nicotine, setNicotine] = useState("");
+  const [name, setName] = useState("");
   const [selections, setSelections] = useState([{ flavor: "", shots: "" }]);
-
-  // const [flavorCount, setFlavorCount] = useState(mix ? mix.blend.length : 1);
-  // const [bottleCount, setBottleCount] = useState(mix ? mix.bottleCount : 1);
-  // const [nicotine, setNicotine] = useState(mix ? mix.nicotine : "");
-  // const [selections, setSelections] = useState(
-  //   mix ? mix.blend : [{ flavor: "", shots: "" }]
-  // );
 
   useEffect(() => {
     setFlavorCount((prev) => (mix ? mix.blend.length : 1));
     setBottleCount((prev) => (mix ? mix.bottleCount : 1));
     setNicotine((prev) => (mix ? mix.nicotine : ""));
+    setName((prev) => (mix ? mix.name : ""));
     setSelections((prev) => (mix ? mix.blend : [{ flavor: "", shots: "" }]));
   }, [mix]);
 
@@ -81,7 +83,7 @@ export const BlendForm = ({ title, mix, onSubmit, onCancel }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const newMix = { ...mix, bottleCount, blend: selections, nicotine };
-    onSubmit(newMix);
+    if (onSubmit != null) onSubmit(newMix);
   };
 
   return (
@@ -90,12 +92,20 @@ export const BlendForm = ({ title, mix, onSubmit, onCancel }) => {
         {title}
       </h2>
       {categoriesLoading || flavorsLoading ? (
-        <Spinner />
+        showSpinner && <Spinner />
       ) : (
         <form
           onSubmit={handleSubmit}
           className="flex w-full max-w-lg flex-col gap-6 rounded-md"
         >
+          {namedMix && (
+            <Input
+              id="name"
+              label="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          )}
           <div className="flex flex-col gap-3">
             <QuantityInput
               className="-mb-2"
@@ -151,34 +161,36 @@ export const BlendForm = ({ title, mix, onSubmit, onCancel }) => {
               </div>
             ))}
           </div>
-          <Input
-            required={true}
-            value={nicotine}
-            onChange={(e) => {
-              const nic =
-                e.target.value === "" ||
-                isNaN(+e.target.value) ||
-                +e.target.value < 0
-                  ? ""
-                  : +e.target.value;
-              console.log(nic);
-              setNicotine(nic);
-            }}
-            // pattern="\d+"
-            unit="mg"
-            id="nicotine"
-            label="Nicotine Level"
-          />
-          <QuantityInput
-            title="Number of Bottles"
-            count={bottleCount}
-            decrease={() => {
-              bottleCount > 1 && setBottleCount((prev) => prev - 1);
-            }}
-            increase={() => {
-              bottleCount < 99 && setBottleCount((prev) => prev + 1);
-            }}
-          />
+          {!namedMix && (
+            <>
+              <Input
+                required={true}
+                value={nicotine}
+                onChange={(e) => {
+                  const nic =
+                    e.target.value === "" ||
+                    isNaN(+e.target.value) ||
+                    +e.target.value < 0
+                      ? ""
+                      : +e.target.value;
+                  setNicotine(nic);
+                }}
+                unit="mg"
+                id="nicotine"
+                label="Nicotine Level"
+              />
+              <QuantityInput
+                title="Number of Bottles"
+                count={bottleCount}
+                decrease={() => {
+                  bottleCount > 1 && setBottleCount((prev) => prev - 1);
+                }}
+                increase={() => {
+                  bottleCount < 99 && setBottleCount((prev) => prev + 1);
+                }}
+              />
+            </>
+          )}
           <div className="flex gap-4 self-center">
             <Button type="submit">{mix ? "Update" : "Create"}</Button>
             {mix && (

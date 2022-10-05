@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import {
   XMarkIcon,
@@ -6,9 +6,8 @@ import {
   UserCircleIcon,
 } from "@heroicons/react/20/solid";
 import { twMerge } from "tailwind-merge";
-import { Logo } from "./Logo";
+import { Logo } from "./ui/Logo";
 import { useSession } from "../contexts/sessionContext";
-import { MenuTransition } from "./MenuTransition";
 import { Link, NavLink } from "react-router-dom";
 import { useProfile } from "../contexts/profileContext";
 
@@ -25,7 +24,10 @@ const LINKS = [
 export const NavBar = () => {
   const user = useSession();
   const { profile, loading: profileLoading } = useProfile();
-  // const user = null; // TODO: remove when auth is working
+
+  useEffect(() => {
+    console.log(user);
+  });
 
   return (
     <>

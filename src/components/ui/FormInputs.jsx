@@ -25,7 +25,7 @@ export const Select = ({
         <select
           id={id}
           className={twMerge(
-            "w-full cursor-pointer rounded-md border border-gray-400 bg-gray-100 py-2 px-3 pr-10 text-sm shadow transition hover:border-gray-800 focus:border-green-500 focus:outline-none focus:ring-0 focus-visible:outline-none dark:border-gray-500 dark:bg-gray-800 hover:dark:border-gray-100 focus:dark:border-green-400 lg:text-base",
+            "w-full cursor-pointer rounded-md border border-gray-400 bg-transparent py-2 px-3 pr-10 text-sm shadow transition hover:border-gray-800 focus:border-green-500 focus:outline-none focus:ring-0 focus-visible:outline-none dark:border-gray-500 hover:dark:border-gray-100 focus:dark:border-green-400 lg:text-base",
             selectClassName
           )}
           {...props}

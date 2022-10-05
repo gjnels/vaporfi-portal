@@ -1,4 +1,4 @@
-import { createPromoBlendString } from "../lib/strings";
+import { createDisplayBlendString } from "../lib/strings";
 
 export const Promo = ({ promo }) => (
   <div className="max-w-lg overflow-hidden rounded-lg border border-gray-400 bg-gray-200 shadow-md dark:border-gray-600 dark:bg-gray-900">
@@ -16,7 +16,7 @@ export const Promo = ({ promo }) => (
                 {promo.mix.name}
               </p>
               <p className="text-base font-semibold text-green-700 dark:text-green-300 lg:text-lg">
-                {createPromoBlendString(promo.mix.blend)}
+                {createDisplayBlendString(promo.mix.blend)}
               </p>
             </div>
           )

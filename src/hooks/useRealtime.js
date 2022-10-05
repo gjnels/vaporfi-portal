@@ -20,7 +20,7 @@ export const useRealtime = (
   const [loading, setLoading] = useState(true);
 
   const handleInsert = async (payload) => {
-    console.log(`🔔 new value inserted in ${table}`);
+    if (import.meta.env.DEV) console.log(`🔔 new value inserted in ${table}`);
     const newValue = await fetchNewValue(
       payload.new,
       table,
@@ -30,7 +30,7 @@ export const useRealtime = (
   };
 
   const handleUpdate = async (payload) => {
-    console.log(`📝 value updated in ${table}`);
+    if (import.meta.env.DEV) console.log(`📝 value updated in ${table}`);
     const newValue = await fetchNewValue(
       payload.new,
       table,
@@ -44,7 +44,7 @@ export const useRealtime = (
   };
 
   const handleDelete = async (payload) => {
-    console.log(`⛔️ value deleted from ${table}`);
+    if (import.meta.env.DEV) console.log(`⛔️ value deleted from ${table}`);
     setValues((prevValues) =>
       prevValues.filter((prevValue) => prevValue !== payload.old.id)
     );

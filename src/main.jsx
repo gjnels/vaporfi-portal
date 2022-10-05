@@ -13,6 +13,7 @@ import { Promos } from "./routes/Promos";
 import { FlavorPicker } from "./routes/FlavorPicker";
 import { NicotineCalculator } from "./routes/Nicotine";
 import { Toaster } from "react-hot-toast";
+import { NamedBlends } from "./routes/NamedBlends";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
           {
             path: "custom-blends",
             element: <FlavorPicker />,
+          },
+          {
+            path: "named-blends",
+            element: <NamedBlends />,
           },
           {
             path: "nicotine-calculator",

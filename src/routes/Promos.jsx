@@ -1,4 +1,4 @@
-import { PageTitle } from "../components/PageTitle";
+import { PageTitle } from "../components/ui/PageTitle";
 import { Promo } from "../components/Promo";
 import { Spinner } from "../components/ui/Spinner";
 import { usePromos } from "../contexts/promosContext";

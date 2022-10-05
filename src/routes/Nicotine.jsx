@@ -1,5 +1,5 @@
 import { Button } from "../components/ui/Button";
-import { PageTitle } from "../components/PageTitle";
+import { PageTitle } from "../components/ui/PageTitle";
 import { Spinner } from "../components/ui/Spinner";
 import { Toggle } from "../components/ui/Toggle";
 import { useNicotine } from "../contexts/nicotineContext";

@@ -7,15 +7,15 @@ export function capitalize(text) {
 
 export function createBlendString(mix) {
   return mix
-    ? `${mix.bottleCount} x ${
-        mix.nicotine ? `${mix.nicotine}mg ` : ""
+    ? `${mix.bottleCount} x ${mix.nicotine ? `${mix.nicotine}mg ` : ""}${
+        mix.name ? `${mix.name} ` : ""
       }(${mix.blend
         .map(({ flavor, shots }) => `${shots} ${flavor}`)
         .join(" - ")})`
     : "";
 }
 
-export function createPromoBlendString(blend) {
+export function createDisplayBlendString(blend) {
   return blend
     ? blend
         .map(

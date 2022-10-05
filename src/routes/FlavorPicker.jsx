@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { BlendForm } from "../components/forms/BlendForm";
-import { PageTitle } from "../components/PageTitle";
+import { PageTitle } from "../components/ui/PageTitle";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { v4 as uuid } from "uuid";
 import { Button } from "../components/ui/Button";
@@ -16,7 +16,6 @@ export const FlavorPicker = () => {
   const [editMixId, setEditMixId] = useState(null);
 
   const onBlendSubmit = (mix) => {
-    console.log(mix);
     const newMix = editMixId === null ? { ...mix, id: uuid() } : mix;
     const updatedMixes = [
       newMix,
