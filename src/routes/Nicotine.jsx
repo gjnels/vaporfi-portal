@@ -99,13 +99,13 @@ export const NicotineCalculator = () => {
   return (
     <>
       <PageTitle title="Nicotine Calculator" />
-      <div className="grid grid-cols-1 gap-16 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-16 xl:grid-cols-2">
         {loading ? (
           <Spinner />
         ) : (
           <div className="flex gap-8">
-            <div className="flex flex-col gap-2">
-              <h3 className="mb-1 whitespace-pre-wrap text-base lg:text-lg">
+            <div className="flex shrink-0 flex-col gap-2">
+              <h3 className="mb-1 text-base lg:text-lg">
                 Available Nicotine Packets
               </h3>
               {packets.map((packet) => (
