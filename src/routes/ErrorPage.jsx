@@ -12,7 +12,10 @@ export const ErrorPage = () => {
         <i className="text-gray-400">{error.statusText || error.message}</i>
       </p>
       <p>
-        Go to <Link to="/">Home Page</Link>
+        Go to{" "}
+        <Link to="/" replace={true}>
+          Home Page
+        </Link>
       </p>
     </div>
   );
