@@ -69,7 +69,7 @@ export const useRealtime = (
     };
     fetchInitialData();
 
-    console.log(`✅ subscribing to ${table}`);
+    if (import.meta.env.DEV) console.log(`✅ subscribing to ${table}`);
     const subscription = supabase
       .from(table)
       .on("INSERT", handleInsert)
@@ -78,7 +78,7 @@ export const useRealtime = (
       .subscribe();
 
     const removeSubscription = async () => {
-      console.log(`🛑 unsubscribing from ${table}`);
+      if (import.meta.env.DEV) console.log(`🛑 unsubscribing from ${table}`);
       await supabase.removeSubscription(subscription);
     };
 

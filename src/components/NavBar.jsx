@@ -47,11 +47,8 @@ export const NavBar = () => {
       </div>
 
       {/* mobile menu */}
-      <div className="border-b border-gray-300 bg-gray-200 px-4 dark:border-gray-700 dark:bg-gray-900 lg:hidden">
-        <Menu
-          as="div"
-          className="relative flex items-center justify-between py-2"
-        >
+      <div className="relative border-b border-gray-300 bg-gray-200 px-4 dark:border-gray-700 dark:bg-gray-900 lg:hidden">
+        <Menu as="div" className="flex items-center justify-between py-2">
           <Link to="/">
             <Logo />
           </Link>
@@ -70,7 +67,7 @@ export const NavBar = () => {
           >
             <Menu.Items
               as="nav"
-              className="absolute top-full mt-2 flex w-full origin-top flex-col space-y-1 divide-y divide-gray-300 rounded-lg border border-gray-300 bg-gray-200 p-1 shadow-md focus:outline-none dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-900"
+              className="absolute top-full left-0 right-0 flex origin-top flex-col space-y-2 divide-y divide-gray-300 rounded-b-lg border-b border-t border-gray-300 bg-gray-200 p-2 shadow-md focus:outline-none dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-900"
             >
               <MobileLinkGroup
                 links={LINKS.filter((link) => link.access === 1)}
@@ -95,7 +92,7 @@ const LinkGroup = ({ links }) =>
               isActive
                 ? "bg-gray-300 dark:bg-gray-700"
                 : "text-gray-900 dark:text-gray-100"
-            } block rounded-md p-2 transition hover:bg-green-400 hover:text-gray-900 focus:bg-green-400 focus:outline-none active:bg-opacity-75`
+            } block rounded-md p-2 transition hover:bg-green-400 hover:text-gray-900 focus:outline-none focus-visible:bg-green-400 focus-visible:text-gray-900 active:bg-opacity-75`
           }
         >
           {link.title}
