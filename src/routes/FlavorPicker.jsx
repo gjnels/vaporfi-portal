@@ -16,7 +16,6 @@ export const FlavorPicker = () => {
   const [editMixId, setEditMixId] = useState(null);
 
   const onBlendSubmit = (mix) => {
-    console.log(mix);
     const newMix = editMixId === null ? { ...mix, id: uuid() } : mix;
     const updatedMixes = [
       newMix,

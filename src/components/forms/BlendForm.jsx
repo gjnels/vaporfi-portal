@@ -161,10 +161,8 @@ export const BlendForm = ({ title, mix, onSubmit, onCancel }) => {
                 +e.target.value < 0
                   ? ""
                   : +e.target.value;
-              console.log(nic);
               setNicotine(nic);
             }}
-            // pattern="\d+"
             unit="mg"
             id="nicotine"
             label="Nicotine Level"

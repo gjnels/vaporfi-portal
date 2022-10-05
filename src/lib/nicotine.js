@@ -66,9 +66,6 @@ function findPacketsAbove(packets, nicToAdd) {
     const lower = findLowerPacket(packets, currentNic);
     const higher = findHigherPacket(packets, currentNic);
 
-    // console.log("lower:", lower);
-    // console.log("higher:", higher);
-
     if (lower) {
       currentNic -= lower.nic_level;
 

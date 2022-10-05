@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import {
   XMarkIcon,
@@ -6,15 +6,14 @@ import {
   UserCircleIcon,
 } from "@heroicons/react/20/solid";
 import { twMerge } from "tailwind-merge";
-import { Logo } from "./Logo";
+import { Logo } from "./ui/Logo";
 import { useSession } from "../contexts/sessionContext";
-import { MenuTransition } from "./MenuTransition";
 import { Link, NavLink } from "react-router-dom";
 import { useProfile } from "../contexts/profileContext";
 
 const LINKS = [
   { to: "/custom-blends", title: "Custom Blends", access: 1 },
-  // { to: "/named-blends", title: "Named Blends", access: 1 },
+  { to: "/named-blends", title: "Named Blends", access: 1 },
   { to: "/nicotine-calculator", title: "Nicotine Calculator", access: 1 },
   // { to: "/orders", title: "Orders", access: 2 },
   // { to: "/admin/transfers", title: "Transfers", access: 3 },
@@ -25,7 +24,10 @@ const LINKS = [
 export const NavBar = () => {
   const user = useSession();
   const { profile, loading: profileLoading } = useProfile();
-  // const user = null; // TODO: remove when auth is working
+
+  useEffect(() => {
+    if (import.meta.env.DEV) console.log(user);
+  });
 
   return (
     <>
