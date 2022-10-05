@@ -11,7 +11,7 @@ export function SessionProvider({ children }) {
   const [user, setUser] = useState(supabase.auth.user());
 
   useEffect(() => {
-    console.log("✅ subscribing to auth changes");
+    if (import.meta.env.DEV) console.log("✅ subscribing to auth changes");
     const { data: authSubscription } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user());
@@ -19,7 +19,7 @@ export function SessionProvider({ children }) {
     );
 
     return () => {
-      console.log("🛑 unsubscribed from auth changes");
+      if (import.meta.env.DEV) console.log("🛑 unsubscribed from auth changes");
       authSubscription.unsubscribe();
     };
   }, []);
