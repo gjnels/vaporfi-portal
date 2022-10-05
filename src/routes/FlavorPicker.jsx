@@ -34,7 +34,7 @@ export const FlavorPicker = () => {
   return (
     <>
       <PageTitle title="Flavor Picker" />
-      <div className="grid grid-cols-1 justify-items-center gap-10 xl:grid-cols-2">
+      <div className="grid grid-cols-1 justify-items-center gap-12 xl:grid-cols-2 xl:gap-8">
         <BlendForm
           onSubmit={onBlendSubmit}
           onCancel={onBlendCancel}
@@ -46,7 +46,7 @@ export const FlavorPicker = () => {
             Your Custom Mixes
           </h2>
           {mixes.length ? (
-            <ul className="w-full divide-y divide-gray-400 dark:divide-gray-600">
+            <ul className="w-full max-w-xl divide-y divide-gray-400 dark:divide-gray-600">
               {mixes.map((mix) => (
                 <li
                   key={mix.id}
