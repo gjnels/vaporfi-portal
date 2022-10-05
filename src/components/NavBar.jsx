@@ -6,14 +6,14 @@ import {
   UserCircleIcon,
 } from "@heroicons/react/20/solid";
 import { twMerge } from "tailwind-merge";
-import { Logo } from "./ui/Logo";
+import { Logo } from "./Logo";
 import { useSession } from "../contexts/sessionContext";
 import { Link, NavLink } from "react-router-dom";
 import { useProfile } from "../contexts/profileContext";
 
 const LINKS = [
   { to: "/custom-blends", title: "Custom Blends", access: 1 },
-  { to: "/named-blends", title: "Named Blends", access: 1 },
+  // { to: "/named-blends", title: "Named Blends", access: 1 },
   { to: "/nicotine-calculator", title: "Nicotine Calculator", access: 1 },
   // { to: "/orders", title: "Orders", access: 2 },
   // { to: "/admin/transfers", title: "Transfers", access: 3 },
