@@ -32,7 +32,7 @@ export const NavBar = () => {
       {/* desktop menu */}
       <div className="hidden max-w-[25ch] shrink-0 flex-col divide-y divide-gray-300 border-r border-gray-300 dark:divide-gray-700 dark:border-gray-700 lg:flex">
         <div className="mx-auto p-4">
-          <Link to="/" className="focus-visible:outline-none">
+          <Link to="/">
             <Logo />
           </Link>
         </div>
