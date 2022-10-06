@@ -12,7 +12,7 @@ export const FlavorsProvider = ({ children }) => {
     "category(name)"
   );
   const [categories, categoriesLoading] = useRealtime("flavor_categories", "*");
-  const [namedBlends, namedBlendsLoading] = useRealtime("named_blends", "*");
+  const [namedBlends, namedBlendsLoading] = useRealtime("named_mixes", "*");
 
   const value = {
     flavors: [flavors, flavorsLoading],

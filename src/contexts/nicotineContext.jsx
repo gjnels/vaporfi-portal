@@ -25,7 +25,7 @@ const sortPackets = (packets) => {
 };
 
 export const NicotineProvider = ({ children }) => {
-  const [packets, loading] = useRealtime("nic_packets", "*");
+  const [packets, loading] = useRealtime("nicotine_packets", "*");
   const { get, set } = useLocalStorage("vf-nicotine-packet-preferences");
   const [preferences, setPreferences] = useState(get());
 
