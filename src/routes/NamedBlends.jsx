@@ -66,7 +66,7 @@ export const NamedBlends = () => {
   }, [search, mixes]);
 
   const openMixModal = (id) => {
-    setEditMixId(id);
+    if (id) setEditMixId(id);
     setMixModalIsOpen(true);
   };
 
@@ -96,15 +96,26 @@ export const NamedBlends = () => {
   return (
     <>
       <PageTitle title="Named Custom Blends" />
-      <div className="flex flex-col gap-8">
-        <Input
-          type="search"
-          autoFocus
-          placeholder="Search blends..."
-          className="w-full max-w-xl self-center"
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <ul className="flex w-full max-w-6xl flex-col divide-y divide-gray-600 self-center">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
+        <div className="flex w-full justify-between gap-8 self-center">
+          <Button
+            variant="small secondary"
+            className="shrink-0"
+            onClick={() => {
+              openMixModal();
+            }}
+          >
+            Create New Mix
+          </Button>
+          <Input
+            type="search"
+            autoFocus
+            placeholder="Search blends..."
+            className="w-full"
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <ul className="flex w-full flex-col divide-y divide-gray-600 self-center">
           {filteredMixes ? (
             filteredMixes.map((mix) => (
               <li
@@ -175,15 +186,19 @@ export const NamedBlends = () => {
       {/* edit/create named blend form */}
       <Modal isOpen={mixModalIsOpen} onClose={closeMixModal}>
         <BlendForm
-          title={`${editMixId == null ? "Create" : "Update"} Named Blend`}
+          title={`${editMixId ? "Update" : "Create"} Named Blend`}
           onCancel={closeMixModal}
           onSubmit={async (mix) => {
-            const error = await updateRow("named_mixes", mix);
+            const error = editMixId
+              ? await updateRow("named_mixes", mix)
+              : await insertRow("named_mixes", mix);
             if (error) {
               showToast(
                 error.code === "23505"
                   ? "This name already exists."
-                  : "Error updating mix.",
+                  : editMixId
+                  ? "Error updating mix."
+                  : "Error creating mix.",
                 "error",
                 "top-center"
               );

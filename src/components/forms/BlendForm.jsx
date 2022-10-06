@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
-import { useFlavors } from "../../contexts/flavorsContext";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Input, Select } from "../ui/FormInputs";
 import { QuantityInput } from "../ui/QuantityInput";
 import { Spinner } from "../ui/Spinner";
@@ -54,7 +53,16 @@ export const BlendForm = ({
     );
   }, [editMix]);
 
-  const flavorCount = mix.blend.length;
+  const flavorCount = useMemo(() => mix.blend.length, [mix]);
+
+  useEffect(() => {
+    if (flavorCount === 3) {
+      setMix((prev) => ({
+        ...prev,
+        blend: prev.blend.map((value) => ({ ...value, shots: 1 })),
+      }));
+    }
+  }, [flavorCount]);
 
   const availableFlavors = useCallback(
     (index) =>
@@ -130,10 +138,7 @@ export const BlendForm = ({
                   if (flavorCount < 3) {
                     setMix((prev) => ({
                       ...prev,
-                      blend: [
-                        ...prev.blend,
-                        { flavor: "", shots: flavorCount === 2 ? 1 : "" },
-                      ],
+                      blend: [...prev.blend, { flavor: "", shots: "" }],
                     }));
                   }
                 }}
@@ -225,7 +230,7 @@ export const BlendForm = ({
             <Button type="submit">
               {copyNamedMix ? "Submit" : editMix ? "Update" : "Create"}
             </Button>
-            {editMix && (
+            {onCancel && (
               <Button variant="secondary" onClick={onCancel}>
                 Cancel
               </Button>
