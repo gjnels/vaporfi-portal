@@ -14,7 +14,7 @@ export const Modal = ({ isOpen, onClose, centered = true, children }) => (
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
       >
-        <div className="fixed inset-0 bg-gray-500/75 dark:bg-gray-900/75" />
+        <div className="fixed inset-0 bg-gray-900/75" />
       </Transition.Child>
 
       <div
@@ -32,7 +32,7 @@ export const Modal = ({ isOpen, onClose, centered = true, children }) => (
           leaveFrom="opacity-100 scale-100"
           leaveTo="opacity-0 scale-95"
         >
-          <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-xl bg-gray-200 p-6 text-left align-middle text-gray-900 shadow-xl transition-all dark:bg-gray-700 dark:text-gray-100">
+          <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-xl bg-gray-700 p-6 text-left align-middle text-gray-100 shadow-xl transition">
             {children}
           </Dialog.Panel>
         </Transition.Child>

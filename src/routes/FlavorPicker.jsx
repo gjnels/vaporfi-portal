@@ -44,7 +44,7 @@ export const FlavorPicker = () => {
             Your Custom Mixes
           </h2>
           {mixes.length ? (
-            <ul className="w-full max-w-xl divide-y divide-gray-400 dark:divide-gray-600">
+            <ul className="w-full max-w-xl divide-y divide-gray-600">
               {mixes.map((mix) => (
                 <li
                   key={mix.id}

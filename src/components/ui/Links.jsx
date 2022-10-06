@@ -45,8 +45,8 @@ export const NavLink = forwardRef(
               mobileActive
                 ? "bg-green-400 text-gray-900"
                 : isActive && showActive
-                ? "bg-gray-300 dark:bg-gray-700"
-                : "text-gray-900 dark:text-gray-100",
+                ? "bg-gray-700"
+                : "text-gray-100",
               className
             )
           )

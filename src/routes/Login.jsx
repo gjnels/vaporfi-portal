@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { PageTitle } from "../components/ui/PageTitle";
-import { useSession } from "../contexts/sessionContext";
+import { useSessionContext } from "../contexts/sessionContext";
 import { Input } from "../components/ui/FormInputs";
 import { Button } from "../components/ui/Button";
 
 export const Login = () => {
-  const { session, signIn, loading } = useSession();
+  const { session, signIn, loading } = useSessionContext();
   const location = useLocation();
   const navigate = useNavigate();
   const [credentials, setCredentials] = useState({ email: "", password: "" });
@@ -32,6 +32,7 @@ export const Login = () => {
           type="email"
           required
           autoFocus
+          autoComplete="email"
           placeholder="Email"
           disabled={loading}
           onChange={(e) =>
@@ -41,17 +42,14 @@ export const Login = () => {
         <Input
           type="password"
           required
+          autoComplete="current-password"
           placeholder="Password"
           disabled={loading}
           onChange={(e) =>
             setCredentials((prev) => ({ ...prev, password: e.target.value }))
           }
         />
-        {error && (
-          <span className="self-center text-rose-500 dark:text-rose-400">
-            {error}
-          </span>
-        )}
+        {error && <span className="self-center text-rose-400">{error}</span>}
         <Button
           type="submit"
           disabled={loading || (!credentials.email && !credentials.password)}

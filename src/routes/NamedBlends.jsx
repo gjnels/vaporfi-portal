@@ -104,7 +104,7 @@ export const NamedBlends = () => {
           className="w-full max-w-xl self-center"
           onChange={(e) => setSearch(e.target.value)}
         />
-        <ul className="flex w-full max-w-6xl flex-col divide-y divide-gray-400 self-center dark:divide-gray-600">
+        <ul className="flex w-full max-w-6xl flex-col divide-y divide-gray-600 self-center">
           {filteredMixes ? (
             filteredMixes.map((mix) => (
               <li
@@ -115,16 +115,14 @@ export const NamedBlends = () => {
                   {access === "admin" && (
                     <p
                       className={`font-semibold ${
-                        mix.approved
-                          ? "text-green-500 dark:text-green-400"
-                          : "text-rose-500 dark:text-rose-400"
+                        mix.approved ? "text-green-400" : "text-rose-400"
                       }`}
                     >
                       {mix.approved ? "Approved" : "Not Approved"}
                     </p>
                   )}
                   <p className="text-lg lg:text-xl">{mix.name}</p>
-                  <p className="ml-1 text-gray-700 dark:text-gray-300">
+                  <p className="ml-1 text-gray-400">
                     {createDisplayBlendString(mix.blend)}
                   </p>
                 </div>
@@ -220,78 +218,5 @@ export const NamedBlends = () => {
         />
       </Modal>
     </>
-  );
-};
-
-const CopyMixForm = ({ mix, closeModal }) => {
-  const [bottleCount, setBottleCount] = useState(1);
-  const [nicotine, setNicotine] = useState("");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const copyMix = { ...mix, bottleCount, nicotine };
-    try {
-      await navigator.clipboard.writeText(createBlendString(copyMix));
-      showToast("Copied to clipboard!");
-    } catch (error) {
-      showToast("Error copying to clipboard. Try again.");
-    }
-    closeModal();
-  };
-
-  return (
-    mix && (
-      <form className="flex flex-col gap-8" onSubmit={handleSubmit}>
-        <div>
-          <p>{mix.name}</p>
-          <p>{createDisplayBlendString(mix.blend)}</p>
-        </div>
-        <Input
-          required={true}
-          value={nicotine}
-          onChange={(e) => {
-            const nic =
-              e.target.value === "" ||
-              isNaN(+e.target.value) ||
-              +e.target.value < 0
-                ? ""
-                : +e.target.value;
-            setNicotine(nic);
-          }}
-          unit="mg"
-          id="nicotine"
-          label="Nicotine Level"
-          type="number"
-          step="any"
-          min={0}
-        />
-        <QuantityInput
-          title="Number of Bottles"
-          count={bottleCount}
-          decrease={() => {
-            bottleCount > 1 && setBottleCount((prev) => prev - 1);
-          }}
-          increase={() => {
-            bottleCount < 99 && setBottleCount((prev) => prev + 1);
-          }}
-        />
-        <div className="flex gap-4 self-center">
-          <Button type="submit">Submit</Button>
-          <Button variant="secondary" onClick={closeModal}>
-            Cancel
-          </Button>
-          <Button
-            type="reset"
-            variant="danger"
-            onClick={() => {
-              setFlavorCount((prev) => 1);
-              setNicotine((prev) => "");
-            }}
-          >
-            Reset
-          </Button>
-        </div>
-      </form>
-    )
   );
 };

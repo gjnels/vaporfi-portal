@@ -25,7 +25,7 @@ export const Select = ({
         <select
           id={id}
           className={twMerge(
-            "w-full cursor-pointer rounded-md border border-gray-400 bg-transparent py-2 px-3 pr-10 text-sm shadow transition hover:border-gray-800 focus:border-green-500 focus:outline-none focus:ring-0 focus-visible:outline-none dark:border-gray-500 hover:dark:border-gray-100 focus:dark:border-green-400 lg:text-base",
+            "w-full cursor-pointer rounded-md border border-gray-500 bg-transparent py-2 px-3 text-sm shadow transition hover:border-gray-100 focus:border-green-400 focus:outline-none focus:ring-0 focus-visible:outline-none lg:text-base",
             selectClassName
           )}
           {...props}
@@ -74,7 +74,7 @@ export const Input = ({
       )}
       <div
         className={twMerge(
-          "flex overflow-hidden rounded-md border border-gray-400 shadow transition focus-within:border-green-500 hover:border-gray-800 dark:border-gray-500 focus-within:dark:border-green-400 hover:dark:border-gray-100",
+          "flex overflow-hidden rounded-md border border-gray-500 shadow transition focus-within:border-green-400 hover:border-gray-100",
           inputGroupClassname
         )}
       >
@@ -87,7 +87,7 @@ export const Input = ({
           {...props}
         />
         {unit && (
-          <span className="pointer-events-none flex items-center justify-center bg-gray-300 px-4 text-gray-600 dark:bg-gray-700 dark:text-gray-400">
+          <span className="pointer-events-none flex items-center justify-center bg-gray-700 px-4 text-gray-400">
             {unit}
           </span>
         )}

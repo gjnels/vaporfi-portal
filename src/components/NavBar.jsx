@@ -29,13 +29,13 @@ export const NavBar = () => {
   return (
     <>
       {/* desktop menu */}
-      <div className="hidden max-w-[25ch] shrink-0 flex-col divide-y divide-gray-300 border-r border-gray-300 dark:divide-gray-700 dark:border-gray-700 lg:flex">
+      <div className="hidden max-w-[25ch] shrink-0 flex-col divide-y divide-gray-700 border-r border-gray-700 lg:flex">
         <div className="mx-auto p-4">
           <Link to="/" logo={true}>
             <Logo />
           </Link>
         </div>
-        <div className="flex grow flex-col divide-y divide-gray-300 overflow-auto py-2 px-4 dark:divide-gray-700">
+        <div className="flex grow flex-col divide-y divide-gray-700 overflow-auto py-2 px-4">
           <LinkGroup links={LINKS.filter((link) => link.access === 1)} />
         </div>
         <div className="px-4 py-2">
@@ -55,12 +55,12 @@ export const NavBar = () => {
       </div>
 
       {/* mobile menu */}
-      <div className="relative border-b border-gray-300 bg-gray-200 dark:border-gray-700 dark:bg-gray-900 lg:hidden">
+      <div className="relative border-b border-gray-700 bg-gray-900 lg:hidden">
         <Menu as="div" className="flex items-center justify-between py-2 px-4">
           <Link to="/">
             <Logo />
           </Link>
-          <Menu.Button className="hover:text-green-600 hover:dark:text-green-200">
+          <Menu.Button className="hover:text-green-400">
             <XMarkIcon className="h-[2em] ui-not-open:hidden" />
             <Bars3Icon className="h-[2em] ui-open:hidden" />
           </Menu.Button>
@@ -75,7 +75,7 @@ export const NavBar = () => {
           >
             <Menu.Items
               as="nav"
-              className="absolute top-full left-0 right-0 flex origin-top flex-col space-y-2 divide-y divide-gray-300 rounded-b-lg border-b border-t border-gray-300 bg-gray-200 p-2 shadow-md focus:outline-none dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-900"
+              className="absolute top-full left-0 right-0 flex origin-top flex-col space-y-2 divide-y divide-gray-700 rounded-b-lg border-b border-t border-gray-700 bg-gray-900 p-2 shadow-md focus:outline-none"
             >
               <MobileLinkGroup
                 links={LINKS.filter((link) => link.access === 1)}

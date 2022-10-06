@@ -4,10 +4,6 @@ import supabase from "../lib/supabaseClient";
 
 const SessionContext = createContext();
 
-export function useSession() {
-  return useContext(SessionContext);
-}
-
 export function useSessionContext() {
   return useContext(SessionContext);
 }
