@@ -2,11 +2,13 @@ import { Button } from "../components/ui/Button";
 import { PageTitle } from "../components/ui/PageTitle";
 import { Spinner } from "../components/ui/Spinner";
 import { Toggle } from "../components/ui/Toggle";
-import { useNicotine } from "../contexts/nicotineContext";
 import { capitalize } from "../lib/strings";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Input, Select } from "../components/ui/FormInputs";
 import { calculatePackets } from "../lib/nicotine";
+import { useSupabaseContext } from "../contexts/supabaseContext";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import { showToast } from "../components/ui/Toast";
 
 const packetColors = {
   yellow: {
@@ -61,8 +63,26 @@ const packetColors = {
   },
 };
 
+const sortPackets = (packets) => {
+  return [...packets].sort((a, b) => {
+    if (a.salt && !b.salt) {
+      return 1;
+    } else if (!a.salt && b.salt) {
+      return -1;
+    } else if (a.nic_level < b.nic_level) {
+      return -1;
+    } else if (a.nic_level > b.nic_level) {
+      return 1;
+    } else {
+      return 0;
+    }
+  });
+};
+
 export const NicotineCalculator = () => {
-  const { packets, togglePreference, savePreferences, loading } = useNicotine();
+  const { nicotinePackets, loading } = useSupabaseContext();
+  const { get, set } = useLocalStorage("vf-nicotine-packet-preferences");
+  const [preferences, setPreferences] = useState(get());
   const [neededPackets, setNeededPackets] = useState([]);
   const [formData, setFormData] = useState({
     bottleSize: 30,
@@ -72,6 +92,30 @@ export const NicotineCalculator = () => {
   });
   const [desiredNic, setDesiredNic] = useState(0);
 
+  useEffect(() => {
+    if (!preferences.length && nicotinePackets.length) {
+      const initialPreferences = nicotinePackets.map((packet) => ({
+        id: packet.id,
+        available: true,
+      }));
+      setPreferences(initialPreferences);
+      set(initialPreferences);
+    }
+  }, [nicotinePackets]);
+
+  const packets = useMemo(
+    () =>
+      sortPackets(
+        nicotinePackets.map((packet) => ({
+          ...packet,
+          available:
+            preferences.find((preference) => preference.id === packet.id)
+              ?.available ?? false,
+        }))
+      ),
+    [nicotinePackets, preferences]
+  );
+
   const higherPacket = useMemo(
     () => neededPackets.find((packet) => packet.type === "higher"),
     [neededPackets]
@@ -80,6 +124,18 @@ export const NicotineCalculator = () => {
     () => neededPackets.find((packet) => packet.type === "lower"),
     [neededPackets]
   );
+
+  const togglePreference = (id, available) => {
+    const newPreferences = preferences.map((preference) =>
+      preference.id === id ? { ...preference, available } : preference
+    );
+    setPreferences(newPreferences);
+  };
+
+  const savePreferences = () => {
+    set(preferences);
+    showToast("Nicotine preferences saved");
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -108,18 +164,22 @@ export const NicotineCalculator = () => {
               <h3 className="mb-1 text-base lg:text-lg">
                 Available Nicotine Packets
               </h3>
-              {packets.map((packet) => (
-                <Toggle
-                  key={packet.id}
-                  enabled={packet.available}
-                  onChange={(enabled) => {
-                    togglePreference(packet.id, enabled);
-                  }}
-                  title={`${capitalize(packet.color)} - ${packet.nic_level}mg${
-                    packet.salt ? " (salt)" : ""
-                  }`}
-                />
-              ))}
+              {packets.length ? (
+                packets.map((packet) => (
+                  <Toggle
+                    key={packet.id}
+                    enabled={packet.available}
+                    onChange={(enabled) => {
+                      togglePreference(packet.id, enabled);
+                    }}
+                    title={`${capitalize(packet.color)} - ${
+                      packet.nic_level
+                    }mg${packet.salt ? " (salt)" : ""}`}
+                  />
+                ))
+              ) : (
+                <Spinner />
+              )}
               <Button
                 className="mt-2 self-center"
                 variant="small secondary"

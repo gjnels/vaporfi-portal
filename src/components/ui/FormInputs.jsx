@@ -81,7 +81,7 @@ export const Input = ({
         <input
           type={type}
           className={twMerge(
-            "w-full appearance-none border-none bg-transparent py-2 px-3 text-sm focus:outline-none focus:ring-0 focus-visible:outline-none lg:text-base",
+            "w-full appearance-none border-none bg-transparent py-2 px-3 text-sm autofill:bg-transparent focus:outline-none focus:ring-0 focus-visible:outline-none lg:text-base",
             inputClassName
           )}
           {...props}

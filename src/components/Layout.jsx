@@ -5,10 +5,10 @@ export const Layout = () => {
   const navigation = useNavigation();
 
   return (
-    <div className="flex h-full flex-col bg-gray-200 text-sm text-gray-900 dark:bg-gray-900 dark:text-gray-100 lg:flex-row lg:text-base">
+    <div className="flex h-screen flex-col bg-gray-200 text-sm text-gray-900 dark:bg-gray-900 dark:text-gray-100 lg:flex-row lg:text-base">
       <NavBar />
-      <main className="grow bg-gray-100 py-8 px-6 dark:bg-gray-800 lg:overflow-y-auto lg:px-8">
-        <div className="container mx-auto">
+      <main className="grow bg-gray-100 dark:bg-gray-800 lg:overflow-y-scroll">
+        <div className="container mx-auto py-8 px-6 lg:py-8">
           <Outlet />
         </div>
       </main>

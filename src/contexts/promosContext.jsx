@@ -20,11 +20,11 @@ const sortPromos = (a, b) => {
 };
 
 export const PromosProvider = ({ children }) => {
-  const [promos, loading] = useRealtime(
-    "promos",
-    "*",
-    "priority(level), mix(*)"
-  );
+  const [promos, loading] = useRealtime({
+    table: "promos",
+    selection: "*",
+    foreignKeySelection: "priority(level), mix(*)",
+  });
 
   const value = {
     promos: [...promos].sort(sortPromos),

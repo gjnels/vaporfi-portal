@@ -8,29 +8,32 @@ import supabase, {
 // custom hook for supabase realtime feature
 // handles all realtime events (insert, update, and delete) as well as fetches foreign key values if necessary
 
-export const useRealtime = (
+export const useRealtime = ({
   table,
   selection,
   foreignKeySelection,
   singleRowColumn,
   singleRowValue,
-  initialValue = []
-) => {
+  initialValue = [],
+}) => {
   const [values, setValues] = useState(initialValue);
   const [loading, setLoading] = useState(true);
 
   const handleInsert = async (payload) => {
     if (import.meta.env.DEV) console.log(`🔔 new value inserted in ${table}`);
+    setLoading(true);
     const newValue = await fetchNewValue(
       payload.new,
       table,
       foreignKeySelection
     );
     setValues((prevValues) => [...prevValues, newValue]);
+    setLoading(false);
   };
 
   const handleUpdate = async (payload) => {
     if (import.meta.env.DEV) console.log(`📝 value updated in ${table}`);
+    setLoading(true);
     const newValue = await fetchNewValue(
       payload.new,
       table,
@@ -41,13 +44,16 @@ export const useRealtime = (
         prevValue.id === payload.new.id ? newValue : prevValue
       )
     );
+    setLoading(false);
   };
 
   const handleDelete = async (payload) => {
     if (import.meta.env.DEV) console.log(`⛔️ value deleted from ${table}`);
+    setLoading(true);
     setValues((prevValues) =>
       prevValues.filter((prevValue) => prevValue !== payload.old.id)
     );
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -56,14 +62,16 @@ export const useRealtime = (
       : selection;
 
     const fetchInitialData = async () => {
-      singleRowColumn && singleRowValue
-        ? await fetchRow(
-            table,
-            completeSelection,
-            singleRowColumn,
-            singleRowValue
-          )
-        : await fetchTable(table, completeSelection, setValues);
+      setValues(
+        singleRowColumn && singleRowValue
+          ? await fetchRow(
+              table,
+              completeSelection,
+              singleRowColumn,
+              singleRowValue
+            )
+          : await fetchTable(table, completeSelection)
+      );
 
       setLoading(false);
     };

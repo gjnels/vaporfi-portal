@@ -5,7 +5,6 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 import { v4 as uuid } from "uuid";
 import { Button } from "../components/ui/Button";
 import { createBlendString } from "../lib/strings";
-import toast from "react-hot-toast";
 import { showToast } from "../components/ui/Toast";
 
 const MAX_MIXES = 10;
@@ -38,7 +37,7 @@ export const FlavorPicker = () => {
           onSubmit={onBlendSubmit}
           onCancel={onBlendCancel}
           title={`${editMixId ? "Edit" : "Create"} Custom Mix`}
-          mix={mixes.find((mix) => mix.id === editMixId)}
+          editMix={mixes.find((mix) => mix.id === editMixId)}
         />
         <div className="flex w-full flex-col items-center gap-4">
           <h2 className="text-center text-lg font-semibold lg:text-xl">

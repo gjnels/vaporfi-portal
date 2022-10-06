@@ -4,6 +4,8 @@ import { Input, Select } from "../ui/FormInputs";
 import { QuantityInput } from "../ui/QuantityInput";
 import { Spinner } from "../ui/Spinner";
 import { Button } from "../ui/Button";
+import { Toggle } from "../ui/Toggle";
+import { useSupabaseContext } from "../../contexts/supabaseContext";
 
 const createSelectOptions = (flavors = []) =>
   flavors.map((flavor) => ({
@@ -20,48 +22,48 @@ const shots = [
 
 export const BlendForm = ({
   title,
-  mix,
+  editMix,
   onSubmit,
   onCancel,
   showSpinner = true,
   namedMix = false,
+  copyNamedMix = false,
 }) => {
   const {
-    categories: [categories, categoriesLoading],
-    flavors: [flavors, flavorsLoading],
-  } = useFlavors();
+    flavors,
+    flavorCategories: categories,
+    loading,
+  } = useSupabaseContext();
 
-  const [flavorCount, setFlavorCount] = useState(1);
   const [bottleCount, setBottleCount] = useState(1);
   const [nicotine, setNicotine] = useState("");
-  const [name, setName] = useState("");
-  const [selections, setSelections] = useState([{ flavor: "", shots: "" }]);
+  const [mix, setMix] = useState({
+    name: "",
+    blend: [{ flavor: "", shots: "" }],
+  });
 
   useEffect(() => {
-    setFlavorCount((prev) => (mix ? mix.blend.length : 1));
-    setBottleCount((prev) => (mix ? mix.bottleCount : 1));
-    setNicotine((prev) => (mix ? mix.nicotine : ""));
-    setName((prev) => (mix ? mix.name : ""));
-    setSelections((prev) => (mix ? mix.blend : [{ flavor: "", shots: "" }]));
-  }, [mix]);
-
-  useEffect(() => {
-    setSelections((prev) =>
-      prev.map((selection) => ({
-        ...selection,
-        shots: flavorCount === 3 ? 1 : "",
-      }))
+    setBottleCount((prev) => editMix?.bottleCount ?? 1);
+    setNicotine((prev) => editMix?.nicotine ?? "");
+    setMix(
+      (prev) =>
+        editMix ?? {
+          name: "",
+          blend: [{ flavor: "", shots: "" }],
+        }
     );
-  }, [flavorCount]);
+  }, [editMix]);
+
+  const flavorCount = mix.blend.length;
 
   const availableFlavors = useCallback(
     (index) =>
       flavors.filter(({ flavor }) =>
-        selections
+        mix.blend
           .filter((_, i) => i !== index)
           .every(({ flavor: selectedFlavor }) => flavor !== selectedFlavor)
       ),
-    [selections, flavors]
+    [mix, flavors]
   );
 
   const availableShots = useCallback(
@@ -70,19 +72,22 @@ export const BlendForm = ({
         case 1:
           return shots;
         case 2:
-          return selections.find((_, i) => i !== index).shots === 2
+          return mix.blend.find((_, i) => i !== index).shots === 2
             ? shots.slice(0, 1)
             : shots.slice(0, 2);
         case 3:
           return shots.slice(0, 1);
       }
     },
-    [selections, flavorCount]
+    [mix, flavorCount]
   );
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newMix = { ...mix, bottleCount, blend: selections, nicotine };
+    const newMix =
+      namedMix && !copyNamedMix
+        ? { ...editMix, ...mix }
+        : { ...editMix, ...mix, bottleCount, nicotine };
     if (onSubmit != null) onSubmit(newMix);
   };
 
@@ -91,7 +96,7 @@ export const BlendForm = ({
       <h2 className="mb-4 text-center text-xl font-semibold lg:text-2xl">
         {title}
       </h2>
-      {categoriesLoading || flavorsLoading ? (
+      {loading ? (
         showSpinner && <Spinner />
       ) : (
         <form
@@ -102,42 +107,54 @@ export const BlendForm = ({
             <Input
               id="name"
               label="Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              disabled={copyNamedMix}
+              value={mix.name}
+              onChange={(e) => setMix({ ...mix, name: e.target.value })}
             />
           )}
           <div className="flex flex-col gap-3">
-            <QuantityInput
-              className="-mb-2"
-              title="Number of Flavors"
-              count={flavorCount}
-              decrease={() => {
-                if (flavorCount > 1) {
-                  setFlavorCount((prev) => prev - 1);
-                  setSelections((prev) => prev.slice(0, -1));
-                }
-              }}
-              increase={() => {
-                if (flavorCount < 3) {
-                  setFlavorCount((prev) => prev + 1);
-                  setSelections((prev) => [...prev, { flavor: "", shots: "" }]);
-                }
-              }}
-            />
-            {selections.map((selection, index) => (
+            {!copyNamedMix && (
+              <QuantityInput
+                className="-mb-2"
+                title="Number of Flavors"
+                count={flavorCount}
+                decrease={() => {
+                  if (flavorCount > 1) {
+                    setMix((prev) => ({
+                      ...prev,
+                      blend: prev.blend.slice(0, -1),
+                    }));
+                  }
+                }}
+                increase={() => {
+                  if (flavorCount < 3) {
+                    setMix((prev) => ({
+                      ...prev,
+                      blend: [
+                        ...prev.blend,
+                        { flavor: "", shots: flavorCount === 2 ? 1 : "" },
+                      ],
+                    }));
+                  }
+                }}
+              />
+            )}
+            {mix.blend.map(({ flavor, shots }, index) => (
               <div key={index} className="flex gap-2">
                 <Select
                   required={true}
+                  disabled={copyNamedMix}
                   notSelectedValue="Select a flavor"
                   optionGroups={categories}
                   options={createSelectOptions(availableFlavors(index))}
-                  value={selection.flavor}
+                  value={flavor}
                   onChange={(e) =>
-                    setSelections((prev) =>
-                      prev.map((p, i) =>
+                    setMix((prev) => ({
+                      ...prev,
+                      blend: prev.blend.map((p, i) =>
                         i === index ? { ...p, flavor: e.target.value } : p
-                      )
-                    )
+                      ),
+                    }))
                   }
                   label={`Flavor ${index + 1}`}
                   id={`flavor_${index + 1}`}
@@ -145,15 +162,17 @@ export const BlendForm = ({
                 />
                 <Select
                   required={true}
+                  disabled={copyNamedMix}
                   notSelectedValue="Select shots"
                   options={availableShots(index)}
-                  value={selection.shots}
+                  value={shots}
                   onChange={(e) => {
-                    setSelections((prev) =>
-                      prev.map((p, i) =>
+                    setMix((prev) => ({
+                      ...prev,
+                      blend: prev.blend.map((p, i) =>
                         i === index ? { ...p, shots: +e.target.value || "" } : p
-                      )
-                    );
+                      ),
+                    }));
                   }}
                   label={`Shots`}
                   id={`shots_${index + 1}`}
@@ -161,7 +180,15 @@ export const BlendForm = ({
               </div>
             ))}
           </div>
-          {!namedMix && (
+          {namedMix && !copyNamedMix ? (
+            <Toggle
+              enabled={mix.approved}
+              onChange={(enabled) =>
+                setMix((prev) => ({ ...prev, approved: enabled }))
+              }
+              title="Approved"
+            />
+          ) : (
             <>
               <Input
                 required={true}
@@ -178,6 +205,9 @@ export const BlendForm = ({
                 unit="mg"
                 id="nicotine"
                 label="Nicotine Level"
+                type="number"
+                step="any"
+                min={0}
               />
               <QuantityInput
                 title="Number of Bottles"
@@ -192,20 +222,26 @@ export const BlendForm = ({
             </>
           )}
           <div className="flex gap-4 self-center">
-            <Button type="submit">{mix ? "Update" : "Create"}</Button>
-            {mix && (
+            <Button type="submit">
+              {copyNamedMix ? "Submit" : editMix ? "Update" : "Create"}
+            </Button>
+            {editMix && (
               <Button variant="secondary" onClick={onCancel}>
                 Cancel
               </Button>
             )}
             <Button
-              type="reset"
               variant="danger"
               onClick={() => {
-                setFlavorCount((prev) => 1);
                 setBottleCount((prev) => 1);
                 setNicotine((prev) => "");
-                setSelections((prev) => [{ flavor: "", shots: "" }]);
+                if (!copyNamedMix) {
+                  setMix((prev) => ({
+                    ...mix,
+                    name: "",
+                    blend: [{ flavor: "", shots: "" }],
+                  }));
+                }
               }}
             >
               Reset

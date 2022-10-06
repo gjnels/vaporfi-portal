@@ -1,25 +1,24 @@
-import { useMemo, useState } from "react";
-import { useFlavors } from "../contexts/flavorsContext";
+import { useEffect, useMemo, useState } from "react";
 import { PageTitle } from "../components/ui/PageTitle";
 import { Input } from "../components/ui/FormInputs";
 import { Spinner } from "../components/ui/Spinner";
 import { Button } from "../components/ui/Button";
 import { createBlendString, createDisplayBlendString } from "../lib/strings";
-import { useProfile } from "../contexts/profileContext";
 import { BlendForm } from "../components/forms/BlendForm";
 import { Modal } from "../components/ui/Modal";
 import { QuantityInput } from "../components/ui/QuantityInput";
 import { showToast } from "../components/ui/Toast";
+import { useSupabaseContext } from "../contexts/supabaseContext";
 
 export const NamedBlends = () => {
-  const { profile, profileLoading } = useProfile();
   const {
-    namedBlends: {
-      namedBlends: mixes,
-      namedBlendsLoading: loading,
-      updateNamedBlend: update,
-    },
-  } = useFlavors();
+    profile,
+    namedMixes: mixes,
+    loading,
+    insertRow,
+    updateRow,
+    deleteRow,
+  } = useSupabaseContext();
 
   const [search, setSearch] = useState("");
   const [mixModalIsOpen, setMixModalIsOpen] = useState(false);
@@ -27,15 +26,33 @@ export const NamedBlends = () => {
   const [copyModalIsOpen, setCopyModalIsOpen] = useState(false);
   const [copyMixId, setCopyMixId] = useState(null);
 
+  const access = useMemo(() => profile?.role?.name ?? null, [profile]);
+
   const filteredMixes = useMemo(() => {
     const searchTerms = search.trim().toLowerCase().split(" ");
 
     return loading || mixes == null
-      ? []
+      ? null
       : mixes
           .sort((a, b) => {
-            if (a.name > b.name) return 1;
-            if (a.name < b.name) return -1;
+            const aName = a.name.toLowerCase();
+            const bName = b.name.toLowerCase();
+            if (aName < bName) {
+              return -1;
+            }
+            if (aName > bName) {
+              return 1;
+            }
+            return 0;
+          })
+          .sort((a, b) => {
+            if (!a.approved && b.approved) {
+              return -1;
+            }
+            if (a.approved && !b.approved) {
+              return 1;
+            }
+            return 0;
           })
           .filter((mix) =>
             searchTerms.every(
@@ -82,33 +99,32 @@ export const NamedBlends = () => {
       <div className="flex flex-col gap-8">
         <Input
           type="search"
+          autoFocus
           placeholder="Search blends..."
           className="w-full max-w-xl self-center"
           onChange={(e) => setSearch(e.target.value)}
         />
         <ul className="flex w-full max-w-6xl flex-col divide-y divide-gray-400 self-center dark:divide-gray-600">
-          {loading ? (
-            <Spinner />
-          ) : (
+          {filteredMixes ? (
             filteredMixes.map((mix) => (
-              <li key={mix.id} className="flex items-center gap-4 py-2 px-1">
-                {profile?.role?.name === "admin" && (
-                  <Button
-                    variant={`small ${mix.approved ? "danger" : ""}`}
-                    onClick={async () => {
-                      const error = await update({
-                        ...mix,
-                        approved: !mix.approved,
-                      });
-                      console.log(error);
-                    }}
-                  >
-                    {mix.approved ? "Un-approve" : "Approve"}
-                  </Button>
-                )}
-                <div className="flex-1">
+              <li
+                key={mix.id}
+                className="flex items-center justify-between gap-8 py-2 px-1"
+              >
+                <div>
+                  {access === "admin" && (
+                    <p
+                      className={`font-semibold ${
+                        mix.approved
+                          ? "text-green-500 dark:text-green-400"
+                          : "text-rose-500 dark:text-rose-400"
+                      }`}
+                    >
+                      {mix.approved ? "Approved" : "Not Approved"}
+                    </p>
+                  )}
                   <p className="text-lg lg:text-xl">{mix.name}</p>
-                  <p className="ml-2 opacity-75">
+                  <p className="ml-1 text-gray-700 dark:text-gray-300">
                     {createDisplayBlendString(mix.blend)}
                   </p>
                 </div>
@@ -121,18 +137,39 @@ export const NamedBlends = () => {
                   >
                     Copy
                   </Button>
-                  <Button
-                    variant="small secondary"
-                    onClick={() => {
-                      openMixModal(mix.id);
-                    }}
-                  >
-                    Edit
-                  </Button>
-                  <Button variant="small danger">Delete</Button>
+                  {access === "manager" ||
+                    (access === "admin" && (
+                      <Button
+                        variant="small secondary"
+                        onClick={() => {
+                          openMixModal(mix.id);
+                        }}
+                      >
+                        Edit
+                      </Button>
+                    ))}
+                  {access === "admin" && (
+                    <Button
+                      variant="small danger"
+                      onClick={async () => {
+                        const error = await deleteRow("named_mixes", mix.id);
+                        if (error) {
+                          showToast(
+                            "Could not delete mix.",
+                            "error",
+                            "top-center"
+                          );
+                        }
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  )}
                 </div>
               </li>
             ))
+          ) : (
+            <Spinner />
           )}
         </ul>
       </div>
@@ -142,17 +179,44 @@ export const NamedBlends = () => {
         <BlendForm
           title={`${editMixId == null ? "Create" : "Update"} Named Blend`}
           onCancel={closeMixModal}
+          onSubmit={async (mix) => {
+            const error = await updateRow("named_mixes", mix);
+            if (error) {
+              showToast(
+                error.code === "23505"
+                  ? "This name already exists."
+                  : "Error updating mix.",
+                "error",
+                "top-center"
+              );
+            } else {
+              closeMixModal();
+            }
+          }}
           namedMix={true}
           showSpinner={false}
-          mix={mixes.find((mix) => mix.id === editMixId)}
+          editMix={mixes.find((mix) => mix.id === editMixId)}
         />
       </Modal>
 
       {/* copy blend form to get bottle count and nicotine level */}
       <Modal isOpen={copyModalIsOpen} onClose={closeCopyModal}>
-        <CopyMixForm
-          mix={mixes.find((mix) => mix.id === copyMixId)}
-          closeModal={closeCopyModal}
+        <BlendForm
+          title="Copy Named Blend"
+          onCancel={closeCopyModal}
+          onSubmit={async (mix) => {
+            try {
+              await navigator.clipboard.writeText(createBlendString(mix));
+              showToast("Copied to clipboard!", "success");
+            } catch (error) {
+              showToast("Error copying to clipboard. Try again.", "error");
+            }
+            closeCopyModal();
+          }}
+          namedMix={true}
+          copyNamedMix={true}
+          showSpinner={false}
+          editMix={mixes.find((mix) => mix.id === copyMixId)}
         />
       </Modal>
     </>
@@ -197,6 +261,9 @@ const CopyMixForm = ({ mix, closeModal }) => {
           unit="mg"
           id="nicotine"
           label="Nicotine Level"
+          type="number"
+          step="any"
+          min={0}
         />
         <QuantityInput
           title="Number of Bottles"

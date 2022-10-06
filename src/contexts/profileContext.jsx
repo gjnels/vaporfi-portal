@@ -9,12 +9,14 @@ export function useProfile() {
 }
 
 export function ProfileProvider({ children }) {
-  const user = useSession();
-  const [profile, loading] = useRealtime(
-    "profiles",
-    "*",
-    "location(*), role(*)"
-  );
+  const { user } = useSession();
+  const [profile, loading] = useRealtime({
+    table: "profiles",
+    selection: "*",
+    foreignKeySelection: "location(*), role(*)",
+    singleRowColumn: "id",
+    singleRowValue: user?.id,
+  });
 
   return (
     <ProfileContext.Provider value={{ profile, loading }}>

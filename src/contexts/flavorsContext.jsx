@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect } from "react";
 import { useRealtime } from "../hooks/useRealtime";
 import supabase from "../lib/supabaseClient";
 
@@ -7,13 +7,19 @@ const FlavorsContext = createContext();
 export const useFlavors = () => useContext(FlavorsContext);
 
 export const FlavorsProvider = ({ children }) => {
-  const [flavors, flavorsLoading] = useRealtime(
-    "flavors",
-    "*",
-    "category(name)"
-  );
-  const [categories, categoriesLoading] = useRealtime("flavor_categories", "*");
-  const [namedBlends, namedBlendsLoading] = useRealtime("named_blends", "*");
+  const [flavors, flavorsLoading] = useRealtime({
+    table: "flavors",
+    selection: "*",
+    foreignKeySelection: "category(name)",
+  });
+  const [categories, categoriesLoading] = useRealtime({
+    table: "flavor_categories",
+    selection: "*",
+  });
+  const [namedBlends, namedBlendsLoading] = useRealtime({
+    table: "named_blends",
+    selection: "*",
+  });
 
   const updateNamedBlend = async (updatedBlend) => {
     try {

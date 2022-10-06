@@ -15,7 +15,7 @@ export const Promo = ({ promo }) => (
               <p className="text-lg font-semibold lg:text-xl">
                 {promo.mix.name}
               </p>
-              <p className="text-base font-semibold text-green-700 dark:text-green-300 lg:text-lg">
+              <p className="text-base text-green-700 dark:text-green-300 lg:text-lg">
                 {createDisplayBlendString(promo.mix.blend)}
               </p>
             </div>
