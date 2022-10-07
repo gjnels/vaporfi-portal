@@ -166,6 +166,9 @@ export const BlendForm = ({ title, mix, onSubmit, onCancel }) => {
             unit="mg"
             id="nicotine"
             label="Nicotine Level"
+            type="number"
+            step="any"
+            min={0}
           />
           <QuantityInput
             title="Number of Bottles"
