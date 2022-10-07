@@ -27,6 +27,7 @@ export const BlendForm = ({
   showSpinner = true,
   namedMix = false,
   copyNamedMix = false,
+  admin = false,
 }) => {
   const {
     flavors,
@@ -186,13 +187,15 @@ export const BlendForm = ({
             ))}
           </div>
           {namedMix && !copyNamedMix ? (
-            <Toggle
-              enabled={mix.approved}
-              onChange={(enabled) =>
-                setMix((prev) => ({ ...prev, approved: enabled }))
-              }
-              title="Approved"
-            />
+            admin && (
+              <Toggle
+                enabled={mix.approved}
+                onChange={(enabled) =>
+                  setMix((prev) => ({ ...prev, approved: enabled }))
+                }
+                title="Approved"
+              />
+            )
           ) : (
             <>
               <Input

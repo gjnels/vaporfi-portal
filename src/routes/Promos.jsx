@@ -1,8 +1,7 @@
+import { useSupabaseContext } from "../contexts/supabaseContext";
 import { PageTitle } from "../components/ui/PageTitle";
 import { Promo } from "../components/Promo";
 import { Spinner } from "../components/ui/Spinner";
-import { usePromos } from "../contexts/promosContext";
-import { useSupabaseContext } from "../contexts/supabaseContext";
 
 export const Promos = () => {
   const { promos, loading } = useSupabaseContext();
@@ -19,7 +18,7 @@ export const Promos = () => {
           ))}
         </div>
       ) : (
-        <i className="text-gray-500">No current promotions.</i>
+        <p className="text-center text-gray-500">No current promotions.</p>
       )}
     </>
   );

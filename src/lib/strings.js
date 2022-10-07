@@ -7,9 +7,9 @@ export function capitalize(text) {
 
 export function createBlendString(mix) {
   return mix
-    ? `${mix.bottleCount} x ${mix.nicotine ? `${mix.nicotine}mg ` : ""}${
-        mix.name ? `${mix.name} ` : ""
-      }(${mix.blend
+    ? `${mix.bottleCount} x ${
+        mix.nicotine != null ? `${mix.nicotine}mg ` : ""
+      }${mix.name ? `${mix.name} ` : ""}(${mix.blend
         .map(({ flavor, shots }) => `${shots} ${flavor}`)
         .join(" - ")})`
     : "";

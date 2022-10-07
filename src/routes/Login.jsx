@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { PageTitle } from "../components/ui/PageTitle";
 import { useSessionContext } from "../contexts/sessionContext";
+import { PageTitle } from "../components/ui/PageTitle";
 import { Input } from "../components/ui/FormInputs";
 import { Button } from "../components/ui/Button";
 
 export const Login = () => {
   const { session, signIn, loading } = useSessionContext();
   const location = useLocation();
-  const navigate = useNavigate();
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
 
@@ -23,7 +22,7 @@ export const Login = () => {
     <Navigate to={location.state?.prevLocation || "/"} replace={true} />
   ) : (
     <>
-      <PageTitle title="Login" />
+      <PageTitle title="Login to Your Account" />
       <form
         onSubmit={handleSubmit}
         className="mx-auto flex w-full max-w-lg flex-col gap-4"

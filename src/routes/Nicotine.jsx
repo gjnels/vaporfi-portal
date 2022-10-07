@@ -1,14 +1,14 @@
+import { useEffect, useMemo, useState } from "react";
+import { useSupabaseContext } from "../contexts/supabaseContext";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 import { Button } from "../components/ui/Button";
 import { PageTitle } from "../components/ui/PageTitle";
 import { Spinner } from "../components/ui/Spinner";
 import { Toggle } from "../components/ui/Toggle";
-import { capitalize } from "../lib/strings";
-import { useEffect, useMemo, useState } from "react";
 import { Input, Select } from "../components/ui/FormInputs";
-import { calculatePackets } from "../lib/nicotine";
-import { useSupabaseContext } from "../contexts/supabaseContext";
-import { useLocalStorage } from "../hooks/useLocalStorage";
 import { showToast } from "../components/ui/Toast";
+import { capitalize } from "../lib/strings";
+import { calculatePackets } from "../lib/nicotine";
 
 const packetColors = {
   yellow: {
@@ -302,9 +302,9 @@ export const NicotineCalculator = () => {
                 )}
               </>
             ) : (
-              <i className="text-gray-500">
+              <p className="text-center italic text-gray-500">
                 Fill out the form to see the resulting packets.
-              </i>
+              </p>
             )}
           </div>
         </div>

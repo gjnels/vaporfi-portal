@@ -41,6 +41,8 @@ export const SupabaseProvider = ({ children }) => {
   const [flavorCategories, setFlavorCategories] = useState([]);
   const [namedMixes, setNamedMixes] = useState([]);
   const [nicotinePackets, setNicotinePackets] = useState([]);
+  const [roles, setRoles] = useState([]);
+  const [locations, setLocations] = useState([]);
 
   useEffect(() => {
     session
@@ -61,6 +63,8 @@ export const SupabaseProvider = ({ children }) => {
     fetchTable("flavor_categories", "*", setFlavorCategories);
     fetchTable("named_mixes", "*", setNamedMixes);
     fetchTable("nicotine_packets", "*", setNicotinePackets);
+    fetchTable("roles", "*", setRoles);
+    fetchTable("locations", "*", setLocations);
 
     if (import.meta.env.DEV) console.log("✅ subscribing to supabase tables");
 
@@ -82,6 +86,10 @@ export const SupabaseProvider = ({ children }) => {
     createListener("named_mixes", setNamedMixes);
 
     createListener("nicotine_packets", setNicotinePackets);
+
+    createListener("roles", setRoles);
+
+    createListener("locations", setLocations);
 
     setLoading(false);
 
@@ -157,6 +165,8 @@ export const SupabaseProvider = ({ children }) => {
     flavorCategories,
     namedMixes,
     nicotinePackets,
+    roles,
+    locations,
     insertRow,
     updateRow,
     deleteRow,

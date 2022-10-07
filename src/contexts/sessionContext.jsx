@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { showToast } from "../components/ui/Toast";
 import supabase from "../lib/supabaseClient";
 
 const SessionContext = createContext();
@@ -44,6 +45,7 @@ export function SessionProvider({ children }) {
       setLoading(true);
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+      showToast("Successfully logged out.", "success", { duration: 2000 });
     } catch (error) {
       return error;
     } finally {

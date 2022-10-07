@@ -57,17 +57,3 @@ export const NavLink = forwardRef(
     );
   }
 );
-
-export const LoginLink = () => {
-  const location = useLocation();
-  return (
-    <NavLink
-      to="/login"
-      state={{ prevLocation: location.pathname }}
-      showActive={false}
-      className="text-center"
-    >
-      Login
-    </NavLink>
-  );
-};

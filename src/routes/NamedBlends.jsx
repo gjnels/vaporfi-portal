@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { PageTitle } from "../components/ui/PageTitle";
 import { Input } from "../components/ui/FormInputs";
 import { Spinner } from "../components/ui/Spinner";
@@ -6,7 +6,6 @@ import { Button } from "../components/ui/Button";
 import { createBlendString, createDisplayBlendString } from "../lib/strings";
 import { BlendForm } from "../components/forms/BlendForm";
 import { Modal } from "../components/ui/Modal";
-import { QuantityInput } from "../components/ui/QuantityInput";
 import { showToast } from "../components/ui/Toast";
 import { useSupabaseContext } from "../contexts/supabaseContext";
 
@@ -27,6 +26,10 @@ export const NamedBlends = () => {
   const [copyMixId, setCopyMixId] = useState(null);
 
   const access = useMemo(() => profile?.role?.name ?? null, [profile]);
+  const accessLevel = useMemo(
+    () => profile?.role?.access_level ?? 0,
+    [profile]
+  );
 
   const filteredMixes = useMemo(() => {
     const searchTerms = search.trim().toLowerCase().split(" ");
@@ -54,6 +57,7 @@ export const NamedBlends = () => {
             }
             return 0;
           })
+          .filter((mix) => (access !== "admin" ? mix.approved : true))
           .filter((mix) =>
             searchTerms.every(
               (term) =>
@@ -98,15 +102,17 @@ export const NamedBlends = () => {
       <PageTitle title="Named Custom Blends" />
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
         <div className="flex w-full justify-between gap-8 self-center">
-          <Button
-            variant="small secondary"
-            className="shrink-0"
-            onClick={() => {
-              openMixModal();
-            }}
-          >
-            Create New Mix
-          </Button>
+          {accessLevel >= 2 && (
+            <Button
+              variant="small secondary"
+              className="shrink-0"
+              onClick={() => {
+                openMixModal();
+              }}
+            >
+              Create New Mix
+            </Button>
+          )}
           <Input
             type="search"
             autoFocus
@@ -163,11 +169,9 @@ export const NamedBlends = () => {
                       onClick={async () => {
                         const error = await deleteRow("named_mixes", mix.id);
                         if (error) {
-                          showToast(
-                            "Could not delete mix.",
-                            "error",
-                            "top-center"
-                          );
+                          showToast("Could not delete blend.", "error");
+                        } else {
+                          showToast("Blend deleted successfully.", "success");
                         }
                       }}
                     >
@@ -187,8 +191,13 @@ export const NamedBlends = () => {
       <Modal isOpen={mixModalIsOpen} onClose={closeMixModal}>
         <BlendForm
           title={`${editMixId ? "Update" : "Create"} Named Blend`}
+          namedMix={true}
+          showSpinner={false}
+          editMix={mixes.find((mix) => mix.id === editMixId)}
+          admin={access === "admin"}
           onCancel={closeMixModal}
           onSubmit={async (mix) => {
+            // if there is no editMixId, a mix is being created, not updated
             const error = editMixId
               ? await updateRow("named_mixes", mix)
               : await insertRow("named_mixes", mix);
@@ -197,18 +206,23 @@ export const NamedBlends = () => {
                 error.code === "23505"
                   ? "This name already exists."
                   : editMixId
-                  ? "Error updating mix."
-                  : "Error creating mix.",
-                "error",
-                "top-center"
+                  ? "Error updating blend."
+                  : "Error creating blend.",
+                "error"
               );
             } else {
+              // mixes created without admin access are not approved and must wait approval by an admin
+              showToast(
+                editMixId
+                  ? "Blend updated successfully."
+                  : `Blend created successfully.${
+                      accessLevel === 2 ? "\nPending approval." : ""
+                    }`,
+                "success"
+              );
               closeMixModal();
             }
           }}
-          namedMix={true}
-          showSpinner={false}
-          editMix={mixes.find((mix) => mix.id === editMixId)}
         />
       </Modal>
 

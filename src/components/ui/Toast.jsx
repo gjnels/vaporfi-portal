@@ -8,32 +8,26 @@ const animations = {
   right: { enter: "animate-enter-right", leave: "animate-leave-right" },
 };
 
-export const showToast = (
-  msg,
-  type = "notify",
-  position = "top-right",
-  duration = 3000
-) =>
+export const showToast = (msg, type = "notify", options) => {
+  const toastOptions = { position: "top-right", duration: 3000, ...options };
   toast.custom(
     (t) => (
       <div
         className={twMerge(
-          "rounded-md p-3 font-semibold text-gray-900 shadow-lg",
+          "rounded-md p-3 font-semibold text-gray-100 shadow-lg",
           t.visible
-            ? animations[position.split("-")[1]]?.enter ||
-                animations[position.split("-")[0]]?.enter
-            : animations[position.split("-")[1]]?.leave ||
-                animations[position.split("-")[0]]?.leave,
-          type === "notify" && "bg-violet-400",
-          type === "success" && "bg-green-400",
-          type === "error" && "bg-rose-400"
+            ? animations[toastOptions.position.split("-")[1]]?.enter ||
+                animations[toastOptions.position.split("-")[0]]?.enter
+            : animations[toastOptions.position.split("-")[1]]?.leave ||
+                animations[toastOptions.position.split("-")[0]]?.leave,
+          type === "notify" && "bg-violet-500",
+          type === "success" && "bg-green-500 text-gray-900",
+          type === "error" && "bg-rose-500"
         )}
       >
-        {msg}
+        <p className="whitespace-pre-wrap">{msg}</p>
       </div>
     ),
-    {
-      duration,
-      position,
-    }
+    toastOptions
   );
+};
