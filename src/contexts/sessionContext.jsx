@@ -45,7 +45,10 @@ export function SessionProvider({ children }) {
       setLoading(true);
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      showToast("Successfully logged out.", "success", { duration: 2000 });
+      showToast("Successfully logged out.", {
+        type: "success",
+        duration: 2000,
+      });
     } catch (error) {
       return error;
     } finally {

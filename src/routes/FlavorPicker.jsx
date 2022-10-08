@@ -61,10 +61,9 @@ export const FlavorPicker = () => {
                           );
                           showToast("Copied to clipboard!");
                         } catch (error) {
-                          showToast(
-                            "Error copying to clipboard. Try again.",
-                            "error"
-                          );
+                          showToast("Error copying to clipboard. Try again.", {
+                            type: "error",
+                          });
                         }
                       }}
                     >

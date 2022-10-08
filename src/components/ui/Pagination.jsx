@@ -11,10 +11,11 @@ import { usePagination } from "../../hooks/usePagination";
 export const Pagination = ({
   totalCount,
   siblingCount = 1,
-  pageSize = 10,
+  pageSize,
+  currentPage,
+  onPageChange,
   className,
 }) => {
-  const [currentPage, setCurrentPage] = useState(1);
   const paginationRange = usePagination({
     currentPage,
     totalCount,
@@ -27,8 +28,6 @@ export const Pagination = ({
   }
 
   const lastPage = paginationRange[paginationRange.length - 1];
-  const firstPageIndex = (currentPage - 1) * pageSize;
-  const lastPageIndex = firstPageIndex + pageSize;
 
   return (
     <div
@@ -43,22 +42,25 @@ export const Pagination = ({
           currentPage !== 1 && "hover:bg-gray-700"
         )}
         disabled={currentPage === 1}
-        onClick={() => setCurrentPage((prev) => prev - 1)}
+        onClick={() => onPageChange((prev) => prev - 1)}
       >
         <ChevronLeftIcon className="h-[1.5em]" />
       </button>
       {paginationRange.map((pageNumber, index) =>
         pageNumber === "dots" ? (
-          <div className="inline-flex h-[2em] w-[2em] items-center justify-center">
+          <div
+            key={index}
+            className="inline-flex h-[2em] w-[2em] items-center justify-center"
+          >
             <EllipsisHorizontalIcon className="h-[1.5em]" />
           </div>
         ) : (
           <button
+            key={index}
             className={`${
               pageNumber === currentPage ? "bg-gray-600" : "hover:bg-gray-700"
             } inline-flex h-[2em] w-[2em] items-center justify-center rounded-md border border-gray-300 transition`}
-            key={index}
-            onClick={() => setCurrentPage(pageNumber)}
+            onClick={() => onPageChange(pageNumber)}
           >
             {pageNumber}
           </button>
@@ -70,7 +72,7 @@ export const Pagination = ({
           currentPage !== lastPage && "hover:bg-gray-700"
         )}
         disabled={currentPage === lastPage}
-        onClick={() => setCurrentPage((prev) => prev + 1)}
+        onClick={() => onPageChange((prev) => prev + 1)}
       >
         <ChevronRightIcon className="h-[1.5em]" />
       </button>

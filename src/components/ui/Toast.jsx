@@ -8,13 +8,18 @@ const animations = {
   right: { enter: "animate-enter-right", leave: "animate-leave-right" },
 };
 
-export const showToast = (msg, type = "notify", options) => {
-  const toastOptions = { position: "top-right", duration: 3000, ...options };
+export const showToast = (msg, options) => {
+  const { type, ...toastOptions } = {
+    type: "notify",
+    position: "top-right",
+    duration: 3000,
+    ...options,
+  };
   toast.custom(
     (t) => (
       <div
         className={twMerge(
-          "rounded-md p-3 font-semibold text-gray-100 shadow-lg",
+          "max-w-md rounded-md p-3 font-semibold text-gray-100 shadow-lg",
           t.visible
             ? animations[toastOptions.position.split("-")[1]]?.enter ||
                 animations[toastOptions.position.split("-")[0]]?.enter

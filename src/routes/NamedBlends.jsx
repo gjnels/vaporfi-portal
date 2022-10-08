@@ -9,10 +9,10 @@ import { Modal } from "../components/ui/Modal";
 import { showToast } from "../components/ui/Toast";
 import { useSupabaseContext } from "../contexts/supabaseContext";
 import { Pagination } from "../components/ui/Pagination";
+import { useAccess } from "../hooks/useAccess";
 
 export const NamedBlends = () => {
   const {
-    profile,
     namedMixes: mixes,
     loading,
     insertRow,
@@ -20,17 +20,22 @@ export const NamedBlends = () => {
     deleteRow,
   } = useSupabaseContext();
 
+  const { accessByLevel } = useAccess();
+
   const [search, setSearch] = useState("");
   const [mixModalIsOpen, setMixModalIsOpen] = useState(false);
   const [editMixId, setEditMixId] = useState(null);
   const [copyModalIsOpen, setCopyModalIsOpen] = useState(false);
   const [copyMixId, setCopyMixId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const access = useMemo(() => profile?.role?.name ?? null, [profile]);
-  const accessLevel = useMemo(
-    () => profile?.role?.access_level ?? 0,
-    [profile]
-  );
+  const pageSize = 10;
+
+  const pageIndeces = useMemo(() => {
+    const firstPageIndex = (currentPage - 1) * pageSize;
+    const lastPageIndex = firstPageIndex + pageSize;
+    return [firstPageIndex, lastPageIndex];
+  }, [currentPage]);
 
   const filteredMixes = useMemo(() => {
     const searchTerms = search.trim().toLowerCase().split(" ");
@@ -58,7 +63,7 @@ export const NamedBlends = () => {
             }
             return 0;
           })
-          .filter((mix) => (access !== "admin" ? mix.approved : true))
+          .filter((mix) => (!accessByLevel(3) ? mix.approved : true))
           .filter((mix) =>
             searchTerms.every(
               (term) =>
@@ -103,7 +108,7 @@ export const NamedBlends = () => {
       <PageTitle title="Named Custom Blends" />
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-4">
         <div className="flex w-full justify-between gap-8 self-center">
-          {accessLevel >= 2 && (
+          {accessByLevel(2) && (
             <Button
               variant="small secondary"
               className="shrink-0"
@@ -122,15 +127,20 @@ export const NamedBlends = () => {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <Pagination pageSize={5} totalCount={mixes.length} />
+        <Pagination
+          currentPage={currentPage}
+          pageSize={pageSize}
+          totalCount={filteredMixes.length}
+          onPageChange={setCurrentPage}
+        />
         <ul className="flex w-full flex-col divide-y divide-gray-600 self-center">
-          {filteredMixes.map((mix) => (
+          {filteredMixes.slice(...pageIndeces).map((mix) => (
             <li
               key={mix.id}
               className="flex items-center justify-between gap-8 py-2 px-1"
             >
               <div>
-                {access === "admin" && (
+                {accessByLevel(3) && (
                   <p
                     className={`font-semibold ${
                       mix.approved ? "text-green-400" : "text-rose-400"
@@ -153,26 +163,31 @@ export const NamedBlends = () => {
                 >
                   Copy
                 </Button>
-                {access === "manager" ||
-                  (access === "admin" && (
-                    <Button
-                      variant="small secondary"
-                      onClick={() => {
-                        openMixModal(mix.id);
-                      }}
-                    >
-                      Edit
-                    </Button>
-                  ))}
-                {access === "admin" && (
+                {accessByLevel(2) && (
+                  <Button
+                    variant="small secondary"
+                    onClick={() => {
+                      openMixModal(mix.id);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                )}
+                {accessByLevel(3) && (
                   <Button
                     variant="small danger"
                     onClick={async () => {
+                      console.log(
+                        confirm(`Are you sure you want to delete ${mix.name}?`)
+                      );
+                      return;
                       const error = await deleteRow("named_mixes", mix.id);
                       if (error) {
-                        showToast("Could not delete blend.", "error");
+                        showToast("Could not delete blend.", { type: "error" });
                       } else {
-                        showToast("Blend deleted successfully.", "success");
+                        showToast("Blend deleted successfully.", {
+                          type: "success",
+                        });
                       }
                     }}
                   >
@@ -192,7 +207,7 @@ export const NamedBlends = () => {
           namedMix={true}
           showSpinner={false}
           editMix={mixes.find((mix) => mix.id === editMixId)}
-          admin={access === "admin"}
+          admin={accessByLevel(3)}
           onCancel={closeMixModal}
           onSubmit={async (mix) => {
             // if there is no editMixId, a mix is being created, not updated
@@ -206,7 +221,7 @@ export const NamedBlends = () => {
                   : editMixId
                   ? "Error updating blend."
                   : "Error creating blend.",
-                "error"
+                { type: "error" }
               );
             } else {
               // mixes created without admin access are not approved and must wait approval by an admin
@@ -214,9 +229,9 @@ export const NamedBlends = () => {
                 editMixId
                   ? "Blend updated successfully."
                   : `Blend created successfully.${
-                      accessLevel === 2 ? "\nPending approval." : ""
+                      !accessByLevel(3) ? "\nPending approval." : ""
                     }`,
-                "success"
+                { type: "success" }
               );
               closeMixModal();
             }
@@ -232,9 +247,11 @@ export const NamedBlends = () => {
           onSubmit={async (mix) => {
             try {
               await navigator.clipboard.writeText(createBlendString(mix));
-              showToast("Copied to clipboard!", "success");
+              showToast("Copied to clipboard!", { type: "success" });
             } catch (error) {
-              showToast("Error copying to clipboard. Try again.", "error");
+              showToast("Error copying to clipboard. Try again.", {
+                type: "error",
+              });
             }
             closeCopyModal();
           }}

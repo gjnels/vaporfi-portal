@@ -38,30 +38,30 @@ const router = createBrowserRouter([
             index: true,
             element: <Promos />,
           },
-          {
-            path: "login",
-            element: <Login />,
-          },
+          // {
+          //   path: "login",
+          //   element: <Login />,
+          // },
           {
             path: "custom-blends",
             element: <FlavorPicker />,
           },
-          {
-            path: "named-blends",
-            element: <NamedBlends />,
-          },
+          // {
+          //   path: "named-blends",
+          //   element: <NamedBlends />,
+          // },
           {
             path: "nicotine-calculator",
             element: <NicotineCalculator />,
           },
-          {
-            path: "profile",
-            element: (
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            ),
-          },
+          // {
+          //   path: "profile",
+          //   element: (
+          //     <ProtectedRoute>
+          //       <Profile />
+          //     </ProtectedRoute>
+          //   ),
+          // },
           // {
           //   path: "orders",
           //   children: [
@@ -75,28 +75,28 @@ const router = createBrowserRouter([
           //     },
           //   ],
           // },
-          {
-            path: "admin",
-            element: <ProtectedRoute access={3} />,
-            children: [
-              {
-                index: true,
-                element: <AdminDashboard />,
-              },
-              {
-                path: "transfers",
-                element: <Transfers />,
-              },
-              {
-                path: "square",
-                element: <Square />,
-              },
-              {
-                path: "promos",
-                element: <EditPromos />,
-              },
-            ],
-          },
+          // {
+          //   path: "admin",
+          //   element: <ProtectedRoute access={3} />,
+          //   children: [
+          //     {
+          //       index: true,
+          //       element: <AdminDashboard />,
+          //     },
+          //     {
+          //       path: "transfers",
+          //       element: <Transfers />,
+          //     },
+          //     {
+          //       path: "square",
+          //       element: <Square />,
+          //     },
+          //     {
+          //       path: "promos",
+          //       element: <EditPromos />,
+          //     },
+          //   ],
+          // },
         ],
       },
     ],

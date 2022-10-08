@@ -18,7 +18,7 @@ export const ProtectedRoute = ({ access, children }) => {
       return (
         <ErrorPage
           manualError={{
-            message: `You do not have access to ${location.pathname}`,
+            message: `You do not have access to this page.`,
           }}
         />
       );

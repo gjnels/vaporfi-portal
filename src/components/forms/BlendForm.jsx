@@ -101,7 +101,7 @@ export const BlendForm = ({
   };
 
   return (
-    <div>
+    <div className="mx-auto w-full max-w-lg">
       <h2 className="mb-4 text-center text-xl font-semibold lg:text-2xl">
         {title}
       </h2>
@@ -110,7 +110,7 @@ export const BlendForm = ({
       ) : (
         <form
           onSubmit={handleSubmit}
-          className="flex w-full flex-col gap-6 rounded-md"
+          className="flex flex-col gap-6 rounded-md"
         >
           {namedMix && (
             <Input
@@ -164,7 +164,7 @@ export const BlendForm = ({
                   }
                   label={`Flavor ${index + 1}`}
                   id={`flavor_${index + 1}`}
-                  className="flex-1"
+                  className="grow"
                 />
                 <Select
                   required={true}
@@ -194,6 +194,7 @@ export const BlendForm = ({
                   setMix((prev) => ({ ...prev, approved: enabled }))
                 }
                 title="Approved"
+                divClassName="self-center"
               />
             )
           ) : (

@@ -17,19 +17,6 @@ const SupabaseContext = createContext();
 export const useSupabaseContext = () => useContext(SupabaseContext);
 
 export const SupabaseProvider = ({ children }) => {
-  // const [flavors, flavorsLoading] = useRealtime({
-  //   table: "flavors",
-  //   selection: "*",
-  //   foreignKeySelection: "category(name)",
-  // });
-  // const [categories, categoriesLoading] = useRealtime({
-  //   table: "flavor_categories",
-  //   selection: "*",
-  // });
-  // const [namedBlends, namedBlendsLoading] = useRealtime({
-  //   table: "named_blends",
-  //   selection: "*",
-  // });
   const { session } = useSessionContext();
 
   const [loading, setLoading] = useState(true);
@@ -70,12 +57,45 @@ export const SupabaseProvider = ({ children }) => {
 
     supabase
       .from("profiles")
-      .on("UPDATE", (payload) => {
-        setProfile(payload.new);
+      .on("INSERT", async (payload) => {
+        setLoading(true);
+        const newValue = await fetchNewValue(
+          payload.new,
+          "profiles",
+          "role(*), location(*)"
+        );
+        setAllProfiles((prev) => [...prev, newValue]);
+        if (session && session.user.id === newValue.id) {
+          setProfile(newValue);
+        }
+        setLoading(false);
+      })
+      .on("UPDATE", async (payload) => {
+        setLoading(true);
+        const newValue = await fetchNewValue(
+          payload.new,
+          "profiles",
+          "role(*), location(*)"
+        );
+        setAllProfiles((prev) =>
+          prev.map((value) => (value.id === newValue.id ? newValue : value))
+        );
+        if (session && session.user.id === newValue.id) {
+          setProfile(newValue);
+        }
+        setLoading(false);
+      })
+      .on("DELETE", (payload) => {
+        setAllProfiles((prev) =>
+          prev.filter((value) => value.id !== payload.old.id)
+        );
+        if (session && session.user.id === payload.old.id) {
+          setProfile(null);
+        }
       })
       .subscribe();
 
-    createListener("profiles", setAllProfiles, "roles(*), locations(*)");
+    // createListener("profiles", setAllProfiles, "roles(*), locations(*)");
 
     createListener("promos", setPromos, "priority(level), mix(*)");
 
@@ -99,7 +119,7 @@ export const SupabaseProvider = ({ children }) => {
     };
   }, []);
 
-  const createListener = useCallback((table, callback, foreignKeys) =>
+  const createListener = useCallback((table, setState, foreignKeys) =>
     supabase
       .from(table)
       .on("INSERT", async (payload) => {
@@ -107,7 +127,7 @@ export const SupabaseProvider = ({ children }) => {
         const newValue = foreignKeys
           ? await fetchNewValue(payload.new, table, foreignKeys)
           : payload.new;
-        callback((prev) => [...prev, newValue]);
+        setState((prev) => [...prev, newValue]);
         setLoading(false);
       })
       .on("UPDATE", async (payload) => {
@@ -115,13 +135,13 @@ export const SupabaseProvider = ({ children }) => {
         const newValue = foreignKeys
           ? await fetchNewValue(payload.new, table, foreignKeys)
           : payload.new;
-        callback((prev) =>
+        setState((prev) =>
           prev.map((value) => (value.id === newValue.id ? newValue : value))
         );
         setLoading(false);
       })
       .on("DELETE", (payload) => {
-        callback((prev) => prev.filter((value) => value.id !== payload.old.id));
+        setState((prev) => prev.filter((value) => value.id !== payload.old.id));
       })
       .subscribe()
   );

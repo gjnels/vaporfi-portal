@@ -11,26 +11,26 @@ import { Link, NavLink } from "./ui/Links";
 import { Button } from "./ui/Button";
 import { useSupabaseContext } from "../contexts/supabaseContext";
 import { useLocation } from "react-router-dom";
+import { useAccess } from "../hooks/useAccess";
 
 const links = [
   { to: "/", title: "Dashboard", access: 0, end: true },
   { to: "/custom-blends", title: "Custom Blends", access: 0 },
-  { to: "/named-blends", title: "Named Blends", access: 0 },
+  // { to: "/named-blends", title: "Named Blends", access: 0 },
   { to: "/nicotine-calculator", title: "Nicotine Calculator", access: 0 },
-  { to: "/profile", title: "My Profile", access: 1 },
-  { to: "/orders", title: "Orders", access: 2 },
-  { to: "/admin", title: "Admin Dashboard", access: 3, end: true },
-  { to: "/admin/transfers", title: "Transfers", access: 3 },
-  { to: "/admin/square", title: "Square", access: 3 },
-  { to: "/admin/promos", title: "Edit Promotions", access: 3 },
+  // { to: "/profile", title: "My Profile", access: 1 },
+  // { to: "/orders", title: "Orders", access: 2 },
+  // { to: "/admin", title: "Admin Dashboard", access: 3, end: true },
+  // { to: "/admin/transfers", title: "Transfers", access: 3 },
+  // { to: "/admin/square", title: "Square", access: 3 },
+  // { to: "/admin/promos", title: "Edit Promotions", access: 3 },
 ];
 
 export const NavBar = () => {
   const { session, signOut } = useSessionContext();
   const { profile } = useSupabaseContext();
+  const { accessByLevel } = useAccess();
   const location = useLocation();
-
-  const accessLevel = useMemo(() => (profile ? profile.role.access_level : 0));
 
   return (
     <>
@@ -41,17 +41,17 @@ export const NavBar = () => {
         </div>
         <div className="flex grow flex-col divide-y divide-gray-700 overflow-auto py-2 px-4">
           <LinkGroup links={links.filter((link) => link.access === 0)} />
-          {accessLevel >= 1 && (
+          {accessByLevel(1) && (
             <LinkGroup links={links.filter((link) => link.access === 1)} />
           )}
-          {accessLevel >= 2 && (
+          {accessByLevel(2) && (
             <LinkGroup links={links.filter((link) => link.access === 2)} />
           )}
-          {accessLevel === 3 && (
+          {accessByLevel(3) && (
             <LinkGroup links={links.filter((link) => link.access === 3)} />
           )}
         </div>
-        <div className="px-4 py-2">
+        {/* <div className="px-4 py-2">
           {session ? (
             <div className="flex flex-col gap-2">
               {profile && <p className="whitespace-pre-wrap">{profile.name}</p>}
@@ -69,7 +69,7 @@ export const NavBar = () => {
               Login
             </NavLink>
           )}
-        </div>
+        </div> */}
         <footer className="p-4">
           <p className="text-center text-xs text-gray-500">
             Created by Garrett Nelson &copy; 2022
@@ -101,22 +101,22 @@ export const NavBar = () => {
               <MobileLinkGroup
                 links={links.filter((link) => link.access === 0)}
               />
-              {accessLevel >= 1 && (
+              {accessByLevel(1) && (
                 <MobileLinkGroup
                   links={links.filter((link) => link.access === 1)}
                 />
               )}
-              {accessLevel >= 2 && (
+              {accessByLevel(2) && (
                 <MobileLinkGroup
                   links={links.filter((link) => link.access === 2)}
                 />
               )}
-              {accessLevel === 3 && (
+              {accessByLevel(3) && (
                 <MobileLinkGroup
                   links={links.filter((link) => link.access === 3)}
                 />
               )}
-              <div className="px-2 py-2">
+              {/* <div className="px-2 py-2">
                 <Menu.Item>
                   {({ active }) =>
                     session ? (
@@ -142,7 +142,7 @@ export const NavBar = () => {
                     )
                   }
                 </Menu.Item>
-              </div>
+              </div> */}
             </Menu.Items>
           </Transition>
         </Menu>

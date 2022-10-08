@@ -9,16 +9,16 @@ export const ErrorPage = ({ manualError }) => {
       <h1 className="text-3xl font-bold lg:text-4xl">Oops!</h1>
       {manualError == null && <p>Sorry, an unexpected error has occured.</p>}
       <p>
-        <i className="text-gray-400">
+        <p className="text-center italic text-gray-400">
           {manualError
             ? manualError.message
             : error.statusText || error.message}
-        </i>
+        </p>
       </p>
       <p>
         Go to{" "}
         <Link to="/" replace={true}>
-          Home Page
+          Dashboard
         </Link>
       </p>
     </div>
