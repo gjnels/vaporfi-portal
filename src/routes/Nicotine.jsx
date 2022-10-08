@@ -118,7 +118,7 @@ export const NicotineCalculator = () => {
                   title={`${capitalize(packet.color)} - ${packet.nic_level}mg${
                     packet.salt ? " (salt)" : ""
                   }`}
-                  titleClassName="whitespace-pre-wrap"
+                  titleClassName="whitespace-pre-wrap text-xs lg:text-sm"
                 />
               ))}
               <Button
