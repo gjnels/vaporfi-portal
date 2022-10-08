@@ -160,7 +160,7 @@ export const NicotineCalculator = () => {
           <Spinner />
         ) : (
           <div className="flex gap-8">
-            <div className="flex shrink-0 flex-col gap-2">
+            <div className="flex flex-col gap-2">
               <h3 className="mb-1 text-base lg:text-lg">
                 Available Nicotine Packets
               </h3>
@@ -175,6 +175,7 @@ export const NicotineCalculator = () => {
                     title={`${capitalize(packet.color)} - ${
                       packet.nic_level
                     }mg${packet.salt ? " (salt)" : ""}`}
+                    titleClassName="whitespace-pre-wrap text-xs lg:text-sm"
                   />
                 ))
               ) : (
