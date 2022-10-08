@@ -1,21 +1,10 @@
-<<<<<<< HEAD
-import { Fragment, useEffect } from "react";
-=======
 import { Fragment, useMemo } from "react";
->>>>>>> dev
 import { Menu, Transition } from "@headlessui/react";
 import {
   XMarkIcon,
   Bars3Icon,
   UserCircleIcon,
 } from "@heroicons/react/20/solid";
-<<<<<<< HEAD
-import { twMerge } from "tailwind-merge";
-import { Logo } from "./Logo";
-import { useSession } from "../contexts/sessionContext";
-import { Link, NavLink } from "react-router-dom";
-import { useProfile } from "../contexts/profileContext";
-=======
 import { Logo } from "./ui/Logo";
 import { useSessionContext } from "../contexts/sessionContext";
 import { Link, NavLink } from "./ui/Links";
@@ -23,7 +12,6 @@ import { Button } from "./ui/Button";
 import { useSupabaseContext } from "../contexts/supabaseContext";
 import { useLocation } from "react-router-dom";
 import { useAccess } from "../hooks/useAccess";
->>>>>>> dev
 
 const links = [
   { to: "/", title: "Dashboard", access: 0, end: true },
@@ -39,19 +27,10 @@ const links = [
 ];
 
 export const NavBar = () => {
-<<<<<<< HEAD
-  const user = useSession();
-  const { profile, loading: profileLoading } = useProfile();
-
-  useEffect(() => {
-    if (import.meta.env.DEV) console.log(user);
-  });
-=======
   const { session, signOut } = useSessionContext();
   const { profile } = useSupabaseContext();
   const { accessByLevel } = useAccess();
   const location = useLocation();
->>>>>>> dev
 
   return (
     <>

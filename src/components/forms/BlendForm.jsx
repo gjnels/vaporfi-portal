@@ -186,37 +186,6 @@ export const BlendForm = ({
               </div>
             ))}
           </div>
-<<<<<<< HEAD
-          <Input
-            required={true}
-            value={nicotine}
-            onChange={(e) => {
-              const nic =
-                e.target.value === "" ||
-                isNaN(+e.target.value) ||
-                +e.target.value < 0
-                  ? ""
-                  : +e.target.value;
-              setNicotine(nic);
-            }}
-            unit="mg"
-            id="nicotine"
-            label="Nicotine Level"
-            type="number"
-            step="any"
-            min={0}
-          />
-          <QuantityInput
-            title="Number of Bottles"
-            count={bottleCount}
-            decrease={() => {
-              bottleCount > 1 && setBottleCount((prev) => prev - 1);
-            }}
-            increase={() => {
-              bottleCount < 99 && setBottleCount((prev) => prev + 1);
-            }}
-          />
-=======
           {namedMix && !copyNamedMix ? (
             admin && (
               <Toggle
@@ -261,7 +230,6 @@ export const BlendForm = ({
               />
             </>
           )}
->>>>>>> dev
           <div className="flex gap-4 self-center">
             <Button type="submit">
               {copyNamedMix ? "Submit" : editMix ? "Update" : "Create"}
