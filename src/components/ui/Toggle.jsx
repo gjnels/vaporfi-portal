@@ -15,8 +15,8 @@ export const Toggle = ({
         checked={enabled}
         onChange={onChange}
         className={twMerge(
-          "focus-visible:outline-opacity-80 inline-flex h-[1.25em] w-[2.25em] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow transition  focus:outline-none focus-visible:outline-2 focus-visible:outline-gray-800 active:bg-opacity-75 focus-visible:dark:outline-gray-100",
-          enabled ? "bg-green-500" : "bg-gray-400 dark:bg-gray-500"
+          "focus-visible:outline-opacity-80 inline-flex h-[1.25em] w-[2.25em] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow transition  focus:outline-none focus-visible:outline-2 focus-visible:outline-gray-100",
+          enabled ? "bg-green-500" : "bg-gray-500"
         )}
       >
         <span className="sr-only">{`Toggle ${title} ${

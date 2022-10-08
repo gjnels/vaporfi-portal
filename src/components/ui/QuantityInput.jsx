@@ -14,7 +14,7 @@ export const QuantityInput = ({
     <div className="flex w-[5em] items-center justify-between">
       <button
         type="button"
-        className="rounded-full hover:text-green-400 focus-visible:text-green-500 focus-visible:outline-none hover:dark:text-green-400 focus-visible:dark:text-green-400"
+        className="rounded-full hover:text-green-400 focus-visible:text-green-400 focus-visible:outline-none"
         onClick={decrease}
       >
         <MinusCircleIcon className="h-[1.5em]" />
@@ -22,7 +22,7 @@ export const QuantityInput = ({
       <span className="text-lg lg:text-xl">{count}</span>
       <button
         type="button"
-        className="rounded-full hover:text-green-400 focus-visible:text-green-500 focus-visible:outline-none hover:dark:text-green-400 focus-visible:dark:text-green-400"
+        className="rounded-full hover:text-green-400 focus-visible:text-green-400 focus-visible:outline-none"
         onClick={increase}
       >
         <PlusCircleIcon className="h-[1.5em]" />

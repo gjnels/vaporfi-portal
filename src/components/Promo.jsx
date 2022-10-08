@@ -1,7 +1,7 @@
-import { createPromoBlendString } from "../lib/strings";
+import { createDisplayBlendString } from "../lib/strings";
 
 export const Promo = ({ promo }) => (
-  <div className="max-w-lg overflow-hidden rounded-lg border border-gray-400 bg-gray-200 shadow-md dark:border-gray-600 dark:bg-gray-900">
+  <div className="max-w-lg overflow-hidden rounded-lg border border-gray-600 bg-gray-900 shadow-md">
     {promo.img_url && (
       <img className="w-full" src={promo.img_url} alt={promo.title} />
     )}
@@ -15,8 +15,8 @@ export const Promo = ({ promo }) => (
               <p className="text-lg font-semibold lg:text-xl">
                 {promo.mix.name}
               </p>
-              <p className="text-base font-semibold text-green-700 dark:text-green-300 lg:text-lg">
-                {createPromoBlendString(promo.mix.blend)}
+              <p className="text-base text-green-300 lg:text-lg">
+                {createDisplayBlendString(promo.mix.blend)}
               </p>
             </div>
           )
@@ -27,9 +27,7 @@ export const Promo = ({ promo }) => (
         <span>Sale:</span>
         <span className="whitespace-pre-wrap">{promo.sale}</span>
       </p>
-      {promo.notes && (
-        <p className="italic text-gray-600 dark:text-gray-400">{promo.notes}</p>
-      )}
+      {promo.notes && <p className="italic text-gray-400">{promo.notes}</p>}
     </div>
   </div>
 );

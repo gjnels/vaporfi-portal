@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* remove arrows from number inputs */
 @layer utilities {
   input[type="number"]::-webkit-inner-spin-button,
   input[type="number"]::-webkit-outer-spin-button {

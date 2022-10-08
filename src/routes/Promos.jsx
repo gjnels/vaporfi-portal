@@ -1,10 +1,10 @@
-import { PageTitle } from "../components/PageTitle";
+import { useSupabaseContext } from "../contexts/supabaseContext";
+import { PageTitle } from "../components/ui/PageTitle";
 import { Promo } from "../components/Promo";
 import { Spinner } from "../components/ui/Spinner";
-import { usePromos } from "../contexts/promosContext";
 
 export const Promos = () => {
-  const { promos, loading } = usePromos();
+  const { promos, loading } = useSupabaseContext();
 
   return (
     <>
@@ -18,7 +18,7 @@ export const Promos = () => {
           ))}
         </div>
       ) : (
-        <i className="text-gray-500">No current promotions.</i>
+        <p className="text-center text-gray-500">No current promotions.</p>
       )}
     </>
   );

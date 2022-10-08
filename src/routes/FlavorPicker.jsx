@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { BlendForm } from "../components/forms/BlendForm";
-import { PageTitle } from "../components/PageTitle";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { v4 as uuid } from "uuid";
+import { BlendForm } from "../components/forms/BlendForm";
+import { PageTitle } from "../components/ui/PageTitle";
 import { Button } from "../components/ui/Button";
-import { createBlendString } from "../lib/strings";
-import toast from "react-hot-toast";
 import { showToast } from "../components/ui/Toast";
+import { v4 as uuid } from "uuid";
+import { createBlendString } from "../lib/strings";
 
 const MAX_MIXES = 10;
 
@@ -36,16 +35,16 @@ export const FlavorPicker = () => {
       <div className="grid grid-cols-1 justify-items-center gap-12 xl:grid-cols-2 xl:gap-8">
         <BlendForm
           onSubmit={onBlendSubmit}
-          onCancel={onBlendCancel}
-          title={`${editMixId ? "Edit" : "Create"} Custom Mix`}
-          mix={mixes.find((mix) => mix.id === editMixId)}
+          onCancel={editMixId ? onBlendCancel : null}
+          title={`${editMixId ? "Edit" : "Create"} Custom Blend`}
+          editMix={mixes.find((mix) => mix.id === editMixId) ?? null}
         />
         <div className="flex w-full flex-col items-center gap-4">
           <h2 className="text-center text-lg font-semibold lg:text-xl">
-            Your Custom Mixes
+            Your Custom Blends
           </h2>
           {mixes.length ? (
-            <ul className="w-full max-w-xl divide-y divide-gray-400 dark:divide-gray-600">
+            <ul className="w-full max-w-xl divide-y divide-gray-600">
               {mixes.map((mix) => (
                 <li
                   key={mix.id}
@@ -62,7 +61,9 @@ export const FlavorPicker = () => {
                           );
                           showToast("Copied to clipboard!");
                         } catch (error) {
-                          showToast("Error copying to clipboard. Try again.");
+                          showToast("Error copying to clipboard. Try again.", {
+                            type: "error",
+                          });
                         }
                       }}
                     >
@@ -89,7 +90,9 @@ export const FlavorPicker = () => {
               ))}
             </ul>
           ) : (
-            <i className="text-gray-500">No created mixes.</i>
+            <p className="text-center italic text-gray-500">
+              No created mixes.
+            </p>
           )}
         </div>
       </div>
