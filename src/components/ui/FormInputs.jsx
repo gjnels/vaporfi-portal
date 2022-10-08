@@ -31,7 +31,7 @@ export const Select = ({
           <select
             id={id}
             className={twMerge(
-              "w-full rounded-md border-2 border-gray-500 bg-transparent py-2 pl-3 pr-9 text-sm shadow transition lg:text-base",
+              "w-full rounded-md border-2 border-gray-500 bg-gray-800 py-2 pl-3 pr-9 text-sm shadow transition lg:text-base",
               !props.disabled &&
                 "cursor-pointer hover:border-gray-100 focus:border-green-400 focus:outline-none focus:ring-0 focus-visible:outline-none",
               selectClassName
@@ -103,7 +103,7 @@ export const Input = ({
           <input
             type={type}
             className={twMerge(
-              "w-full appearance-none border-none bg-transparent py-2 px-3 text-sm autofill:bg-transparent focus:outline-none focus:ring-0 focus-visible:outline-none lg:text-base",
+              "w-full appearance-none border-none bg-gray-800 py-2 px-3 text-sm autofill:bg-transparent focus:outline-none focus:ring-0 focus-visible:outline-none lg:text-base",
               inputClassName
             )}
             {...props}
