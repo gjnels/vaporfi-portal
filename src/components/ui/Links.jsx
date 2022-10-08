@@ -1,17 +1,12 @@
 import { forwardRef } from "react";
-import {
-  Link as RouterLink,
-  NavLink as RouterNavLink,
-  useLocation,
-} from "react-router-dom";
+import { Link as RouterLink, NavLink as RouterNavLink } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 
-export const Link = ({ to, className, children, logo = false, ...props }) => (
+export const Link = ({ to, className, children, ...props }) => (
   <RouterLink
     to={to}
     className={twMerge(
-      !logo &&
-        "underline transition ease-out hover:text-green-500 focus:outline-none focus-visible:text-green-500",
+      "underline transition ease-out hover:text-green-500 focus:outline-none focus-visible:text-green-500",
       className
     )}
     {...props}

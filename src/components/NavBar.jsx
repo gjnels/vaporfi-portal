@@ -13,11 +13,12 @@ import { useSupabaseContext } from "../contexts/supabaseContext";
 import { useLocation } from "react-router-dom";
 
 const links = [
+  { to: "/", title: "Dashboard", access: 0, end: true },
   { to: "/custom-blends", title: "Custom Blends", access: 0 },
   { to: "/named-blends", title: "Named Blends", access: 0 },
   { to: "/nicotine-calculator", title: "Nicotine Calculator", access: 0 },
   { to: "/profile", title: "My Profile", access: 1 },
-  // { to: "/orders", title: "Orders", access: 2 },
+  { to: "/orders", title: "Orders", access: 2 },
   { to: "/admin", title: "Admin Dashboard", access: 3, end: true },
   { to: "/admin/transfers", title: "Transfers", access: 3 },
   { to: "/admin/square", title: "Square", access: 3 },
@@ -36,9 +37,7 @@ export const NavBar = () => {
       {/* desktop menu */}
       <div className="hidden w-48 shrink-0 flex-col divide-y divide-gray-700 border-r border-gray-700 lg:flex">
         <div className="mx-auto p-4">
-          <Link to="/" logo={true}>
-            <Logo />
-          </Link>
+          <Logo />
         </div>
         <div className="flex grow flex-col divide-y divide-gray-700 overflow-auto py-2 px-4">
           <LinkGroup links={links.filter((link) => link.access === 0)} />
@@ -81,9 +80,7 @@ export const NavBar = () => {
       {/* mobile menu */}
       <div className="relative border-b border-gray-700 bg-gray-900 lg:hidden">
         <Menu as="div" className="flex items-center justify-between py-2 px-4">
-          <Link to="/">
-            <Logo />
-          </Link>
+          <Logo />
           <Menu.Button className="hover:text-green-400">
             <XMarkIcon className="h-[2em] ui-not-open:hidden" />
             <Bars3Icon className="h-[2em] ui-open:hidden" />

@@ -110,7 +110,7 @@ export const BlendForm = ({
       ) : (
         <form
           onSubmit={handleSubmit}
-          className="flex w-full max-w-lg flex-col gap-6 rounded-md"
+          className="flex w-full flex-col gap-6 rounded-md"
         >
           {namedMix && (
             <Input

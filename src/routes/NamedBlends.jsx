@@ -8,6 +8,7 @@ import { BlendForm } from "../components/forms/BlendForm";
 import { Modal } from "../components/ui/Modal";
 import { showToast } from "../components/ui/Toast";
 import { useSupabaseContext } from "../contexts/supabaseContext";
+import { Pagination } from "../components/ui/Pagination";
 
 export const NamedBlends = () => {
   const {
@@ -35,7 +36,7 @@ export const NamedBlends = () => {
     const searchTerms = search.trim().toLowerCase().split(" ");
 
     return loading || mixes == null
-      ? null
+      ? []
       : mixes
           .sort((a, b) => {
             const aName = a.name.toLowerCase();
@@ -100,7 +101,7 @@ export const NamedBlends = () => {
   return (
     <>
       <PageTitle title="Named Custom Blends" />
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-4">
         <div className="flex w-full justify-between gap-8 self-center">
           {accessLevel >= 2 && (
             <Button
@@ -121,69 +122,66 @@ export const NamedBlends = () => {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
+        <Pagination pageSize={5} totalCount={mixes.length} />
         <ul className="flex w-full flex-col divide-y divide-gray-600 self-center">
-          {filteredMixes ? (
-            filteredMixes.map((mix) => (
-              <li
-                key={mix.id}
-                className="flex items-center justify-between gap-8 py-2 px-1"
-              >
-                <div>
-                  {access === "admin" && (
-                    <p
-                      className={`font-semibold ${
-                        mix.approved ? "text-green-400" : "text-rose-400"
-                      }`}
-                    >
-                      {mix.approved ? "Approved" : "Not Approved"}
-                    </p>
-                  )}
-                  <p className="text-lg lg:text-xl">{mix.name}</p>
-                  <p className="ml-1 text-gray-400">
-                    {createDisplayBlendString(mix.blend)}
-                  </p>
-                </div>
-                <div className="flex gap-4">
-                  <Button
-                    variant="small"
-                    onClick={() => {
-                      openCopyModal(mix.id);
-                    }}
+          {filteredMixes.map((mix) => (
+            <li
+              key={mix.id}
+              className="flex items-center justify-between gap-8 py-2 px-1"
+            >
+              <div>
+                {access === "admin" && (
+                  <p
+                    className={`font-semibold ${
+                      mix.approved ? "text-green-400" : "text-rose-400"
+                    }`}
                   >
-                    Copy
-                  </Button>
-                  {access === "manager" ||
-                    (access === "admin" && (
-                      <Button
-                        variant="small secondary"
-                        onClick={() => {
-                          openMixModal(mix.id);
-                        }}
-                      >
-                        Edit
-                      </Button>
-                    ))}
-                  {access === "admin" && (
+                    {mix.approved ? "Approved" : "Not Approved"}
+                  </p>
+                )}
+                <p className="text-lg lg:text-xl">{mix.name}</p>
+                <p className="ml-1 text-gray-400">
+                  {createDisplayBlendString(mix.blend)}
+                </p>
+              </div>
+              <div className="flex gap-4">
+                <Button
+                  variant="small"
+                  onClick={() => {
+                    openCopyModal(mix.id);
+                  }}
+                >
+                  Copy
+                </Button>
+                {access === "manager" ||
+                  (access === "admin" && (
                     <Button
-                      variant="small danger"
-                      onClick={async () => {
-                        const error = await deleteRow("named_mixes", mix.id);
-                        if (error) {
-                          showToast("Could not delete blend.", "error");
-                        } else {
-                          showToast("Blend deleted successfully.", "success");
-                        }
+                      variant="small secondary"
+                      onClick={() => {
+                        openMixModal(mix.id);
                       }}
                     >
-                      Delete
+                      Edit
                     </Button>
-                  )}
-                </div>
-              </li>
-            ))
-          ) : (
-            <Spinner />
-          )}
+                  ))}
+                {access === "admin" && (
+                  <Button
+                    variant="small danger"
+                    onClick={async () => {
+                      const error = await deleteRow("named_mixes", mix.id);
+                      if (error) {
+                        showToast("Could not delete blend.", "error");
+                      } else {
+                        showToast("Blend deleted successfully.", "success");
+                      }
+                    }}
+                  >
+                    Delete
+                  </Button>
+                )}
+              </div>
+            </li>
+          ))}
         </ul>
       </div>
 
