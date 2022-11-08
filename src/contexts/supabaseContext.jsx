@@ -30,6 +30,7 @@ export const SupabaseProvider = ({ children }) => {
   const [nicotinePackets, setNicotinePackets] = useState([]);
   const [roles, setRoles] = useState([]);
   const [locations, setLocations] = useState([]);
+  const [priorities, setPriorities] = useState([]);
 
   useEffect(() => {
     session
@@ -45,13 +46,14 @@ export const SupabaseProvider = ({ children }) => {
 
   useEffect(() => {
     fetchTable("profiles", "*, roles(*), locations(*)", setAllProfiles);
-    fetchTable("promos", "*, priority(level), mix(*)", setPromos);
+    fetchTable("promos", "*, priority(*), mix(*)", setPromos);
     fetchTable("flavors", "*, category(name)", setFlavors);
     fetchTable("flavor_categories", "*", setFlavorCategories);
     fetchTable("named_mixes", "*", setNamedMixes);
     fetchTable("nicotine_packets", "*", setNicotinePackets);
     fetchTable("roles", "*", setRoles);
     fetchTable("locations", "*", setLocations);
+    fetchTable("promo_priority_levels", "*", setPriorities);
 
     if (import.meta.env.DEV) console.log("✅ subscribing to supabase tables");
 
@@ -97,7 +99,7 @@ export const SupabaseProvider = ({ children }) => {
 
     // createListener("profiles", setAllProfiles, "roles(*), locations(*)");
 
-    createListener("promos", setPromos, "priority(level), mix(*)");
+    createListener("promos", setPromos, "priority(*), mix(*)");
 
     createListener("flavors", setFlavors, "category(name)");
 
@@ -110,6 +112,8 @@ export const SupabaseProvider = ({ children }) => {
     createListener("roles", setRoles);
 
     createListener("locations", setLocations);
+
+    createListener("promo_priority_levels", setPriorities);
 
     setLoading(false);
 
@@ -155,12 +159,9 @@ export const SupabaseProvider = ({ children }) => {
     }
   };
 
-  const updateRow = async (table, value) => {
+  const updateRow = async (table, value, id) => {
     try {
-      const { error } = await supabase
-        .from(table)
-        .update(value)
-        .eq("id", value.id);
+      const { error } = await supabase.from(table).update(value).eq("id", id);
       throw error;
     } catch (error) {
       return error;
@@ -187,6 +188,7 @@ export const SupabaseProvider = ({ children }) => {
     nicotinePackets,
     roles,
     locations,
+    priorities,
     insertRow,
     updateRow,
     deleteRow,

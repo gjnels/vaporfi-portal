@@ -1,14 +1,12 @@
-import { Outlet, useNavigation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { NavBar } from "./NavBar";
 
 export const Layout = () => {
-  const navigation = useNavigation();
-
   return (
-    <div className="flex h-screen flex-col bg-gray-900 text-sm text-gray-100 lg:flex-row lg:text-base">
+    <div className="relative flex h-screen flex-col bg-gray-900 text-sm text-gray-100 lg:flex-row lg:text-base">
       <NavBar />
       <main className="grow bg-gray-800 lg:overflow-y-scroll">
-        <div className="container mx-auto py-8 px-6 lg:py-8">
+        <div className="container mx-auto py-8 px-4">
           <Outlet />
         </div>
       </main>

@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { twMerge } from "tailwind-merge";
 
 export const Select = ({
@@ -64,9 +65,73 @@ export const Select = ({
   );
 };
 
-export const Input = ({
-  type = "text",
-  unit,
+export const Input = forwardRef(
+  (
+    {
+      type = "text",
+      unit,
+      id,
+      label,
+      className,
+      labelClassName,
+      inputClassName,
+      inputGroupClassname,
+      inlineElement,
+      ...props
+    },
+    ref
+  ) => {
+    return (
+      <div
+        className={twMerge(
+          "grow",
+          props.disabled && "text-gray-400",
+          className
+        )}
+      >
+        {label && (
+          <label
+            className={twMerge(
+              "ml-1",
+              !props.disabled && "cursor-pointer",
+              labelClassName
+            )}
+          >
+            {label}
+          </label>
+        )}
+        <div className="flex gap-2">
+          <div
+            className={twMerge(
+              "flex grow overflow-hidden rounded-md border-2 border-gray-500 shadow transition",
+              !props.disabled &&
+                "focus-within:border-green-400 hover:border-gray-100",
+              inputGroupClassname
+            )}
+          >
+            <input
+              ref={ref}
+              type={type}
+              className={twMerge(
+                "w-full appearance-none border-none bg-transparent py-2 px-3 text-sm autofill:bg-transparent focus:outline-none focus:ring-0 focus-visible:outline-none lg:text-base",
+                inputClassName
+              )}
+              {...props}
+            />
+            {unit && (
+              <span className="pointer-events-none flex items-center justify-center bg-gray-700 px-4 text-gray-400">
+                {unit}
+              </span>
+            )}
+          </div>
+          {inlineElement}
+        </div>
+      </div>
+    );
+  }
+);
+
+export const TextBox = ({
   id,
   label,
   className,
@@ -74,6 +139,7 @@ export const Input = ({
   inputClassName,
   inputGroupClassname,
   inlineElement,
+  resize = false,
   ...props
 }) => {
   return (
@@ -100,19 +166,15 @@ export const Input = ({
             inputGroupClassname
           )}
         >
-          <input
-            type={type}
+          <textarea
+            type="textarea"
             className={twMerge(
               "w-full appearance-none border-none bg-transparent py-2 px-3 text-sm autofill:bg-transparent focus:outline-none focus:ring-0 focus-visible:outline-none lg:text-base",
+              resize ? "resize" : "resize-none",
               inputClassName
             )}
             {...props}
           />
-          {unit && (
-            <span className="pointer-events-none flex items-center justify-center bg-gray-700 px-4 text-gray-400">
-              {unit}
-            </span>
-          )}
         </div>
         {inlineElement}
       </div>

@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 
 export const Modal = ({ isOpen, onClose, centered = true, children }) => (
   <Transition appear show={isOpen} as={Fragment}>
-    <Dialog as="div" className="relative z-10" onClose={onClose}>
+    <Dialog as="div" className="relative z-50" onClose={onClose}>
       <Transition.Child
         as={Fragment}
         enter="transition ease-out duration-200"
@@ -14,13 +14,12 @@ export const Modal = ({ isOpen, onClose, centered = true, children }) => (
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
       >
-        <div className="fixed inset-0 bg-gray-900/75" />
+        <div className="fixed inset-0 bg-gray-900/80" />
       </Transition.Child>
 
       <div
         className={twMerge(
-          "fixed inset-0 flex justify-center overflow-y-auto",
-          centered ? "items-center" : "mt-24 items-start"
+          "fixed inset-0 flex justify-center overflow-auto py-4"
         )}
       >
         <Transition.Child
@@ -32,7 +31,7 @@ export const Modal = ({ isOpen, onClose, centered = true, children }) => (
           leaveFrom="opacity-100 scale-100"
           leaveTo="opacity-0 scale-95"
         >
-          <Dialog.Panel className="w-[90vw] max-w-lg transform overflow-hidden rounded-xl bg-gray-700 p-6 text-left align-middle text-gray-100 shadow-xl transition">
+          <Dialog.Panel className="my-auto w-[90vw] max-w-lg transform rounded-xl bg-gray-700 p-6 text-left align-middle text-gray-100 shadow-xl transition">
             {children}
           </Dialog.Panel>
         </Transition.Child>

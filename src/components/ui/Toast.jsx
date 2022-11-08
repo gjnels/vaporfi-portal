@@ -19,7 +19,7 @@ export const showToast = (msg, options) => {
     (t) => (
       <div
         className={twMerge(
-          "max-w-md rounded-md p-3 font-semibold text-gray-100 shadow-lg",
+          "max-w-sm rounded-md p-3 font-semibold text-gray-100 shadow-lg",
           t.visible
             ? animations[toastOptions.position.split("-")[1]]?.enter ||
                 animations[toastOptions.position.split("-")[0]]?.enter

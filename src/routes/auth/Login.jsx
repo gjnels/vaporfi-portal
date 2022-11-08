@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { useSessionContext } from "../contexts/sessionContext";
-import { PageTitle } from "../components/ui/PageTitle";
-import { Input } from "../components/ui/FormInputs";
-import { Button } from "../components/ui/Button";
+import { Navigate, useLocation } from "react-router-dom";
+import { useSessionContext } from "../../contexts/sessionContext";
+import { PageTitle } from "../../components/ui/PageTitle";
+import { Input } from "../../components/ui/FormInputs";
+import { Button } from "../../components/ui/Button";
+import { Link } from "../../components/ui/Links";
 
 export const Login = () => {
   const { session, signIn, loading } = useSessionContext();
@@ -51,10 +52,17 @@ export const Login = () => {
         {error && <span className="self-center text-rose-400">{error}</span>}
         <Button
           type="submit"
-          disabled={loading || (!credentials.email && !credentials.password)}
+          disabled={loading || !credentials.email || !credentials.password}
         >
           Login
         </Button>
+        <Link
+          to="/reset-password"
+          state={{ forgot: true }}
+          className="self-center"
+        >
+          Forgot your password?
+        </Link>
       </form>
     </>
   );

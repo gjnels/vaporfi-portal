@@ -1,11 +1,11 @@
 import { createDisplayBlendString } from "../lib/strings";
 
 export const Promo = ({ promo }) => (
-  <div className="max-w-lg overflow-hidden rounded-lg border border-gray-600 bg-gray-900 shadow-md">
+  <div className="w-full max-w-lg overflow-hidden rounded-lg border border-gray-600 bg-gray-900 shadow-md">
     {promo.img_url && (
       <img className="w-full" src={promo.img_url} alt={promo.title} />
     )}
-    <div className="space-y-3 p-6">
+    <div className="flex flex-col gap-3 p-6">
       <h2 className="text-xl font-bold tracking-wide lg:text-2xl">
         {promo.title}
       </h2>

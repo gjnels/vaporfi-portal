@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { PageTitle } from "../components/ui/PageTitle";
 import { Input } from "../components/ui/FormInputs";
-import { Spinner } from "../components/ui/Spinner";
 import { Button } from "../components/ui/Button";
 import { createBlendString, createDisplayBlendString } from "../lib/strings";
 import { BlendForm } from "../components/forms/BlendForm";
@@ -13,6 +12,7 @@ import { useAccess } from "../hooks/useAccess";
 
 export const NamedBlends = () => {
   const {
+    promos,
     namedMixes: mixes,
     loading,
     insertRow,
@@ -43,6 +43,10 @@ export const NamedBlends = () => {
     return loading || mixes == null
       ? []
       : mixes
+          .map((mix) => {
+            const promo = promos.find((promo) => promo?.mix?.id === mix.id);
+            return { ...mix, promo };
+          })
           .sort((a, b) => {
             const aName = a.name.toLowerCase();
             const bName = b.name.toLowerCase();
@@ -59,6 +63,15 @@ export const NamedBlends = () => {
               return -1;
             }
             if (a.approved && !b.approved) {
+              return 1;
+            }
+            return 0;
+          })
+          .sort((a, b) => {
+            if (a.promo && !b.promo) {
+              return -1;
+            }
+            if (!a.promo && b.promo) {
               return 1;
             }
             return 0;
@@ -116,7 +129,7 @@ export const NamedBlends = () => {
                 openMixModal();
               }}
             >
-              Create New Mix
+              Create New Blend
             </Button>
           )}
           <Input
@@ -149,6 +162,11 @@ export const NamedBlends = () => {
                     {mix.approved ? "Approved" : "Not Approved"}
                   </p>
                 )}
+                {mix.promo && (
+                  <p className="text-base font-semibold text-violet-300 lg:text-lg">
+                    Current Promotion: {mix.promo.title}
+                  </p>
+                )}
                 <p className="text-lg lg:text-xl">{mix.name}</p>
                 <p className="ml-1 text-gray-400">
                   {createDisplayBlendString(mix.blend)}
@@ -163,7 +181,7 @@ export const NamedBlends = () => {
                 >
                   Copy
                 </Button>
-                {accessByLevel(2) && (
+                {(mix.promo ? accessByLevel(3) : accessByLevel(2)) && (
                   <Button
                     variant="small secondary"
                     onClick={() => {
@@ -180,7 +198,6 @@ export const NamedBlends = () => {
                       console.log(
                         confirm(`Are you sure you want to delete ${mix.name}?`)
                       );
-                      return;
                       const error = await deleteRow("named_mixes", mix.id);
                       if (error) {
                         showToast("Could not delete blend.", { type: "error" });

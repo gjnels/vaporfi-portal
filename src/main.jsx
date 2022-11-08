@@ -7,7 +7,7 @@ import { SupabaseProvider } from "./contexts/supabaseContext";
 import { Toaster } from "react-hot-toast";
 import { Layout } from "./components/Layout";
 import { ErrorPage } from "./routes/ErrorPage";
-import { Login } from "./routes/Login";
+import { Login } from "./routes/auth/Login";
 import { Promos } from "./routes/Promos";
 import { FlavorPicker } from "./routes/FlavorPicker";
 import { NicotineCalculator } from "./routes/Nicotine";
@@ -20,6 +20,10 @@ import { Profile } from "./routes/Profile";
 import { Orders } from "./routes/orders/Orders";
 import { Order } from "./routes/orders/[id]";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { Paperwork } from "./routes/paperwork/Paperwork";
+import { SetPassword } from "./routes/auth/SetPassword";
+import { ResetPassword } from "./routes/auth/ResetPassword";
+import { ChangeEmail } from "./routes/auth/ChangeEmail";
 
 const router = createBrowserRouter([
   {
@@ -38,32 +42,41 @@ const router = createBrowserRouter([
             index: true,
             element: <Promos />,
           },
-          // {
-          //   path: "login",
-          //   element: <Login />,
-          // },
+          {
+            path: "login",
+            element: <Login />,
+          },
+          {
+            path: "reset-password",
+            element: <ResetPassword />,
+          },
+          {
+            path: "change-email",
+            element: <ChangeEmail />,
+          },
           {
             path: "custom-blends",
             element: <FlavorPicker />,
           },
-          // {
-          //   path: "named-blends",
-          //   element: <NamedBlends />,
-          // },
+          {
+            path: "named-blends",
+            element: <NamedBlends />,
+          },
           {
             path: "nicotine-calculator",
             element: <NicotineCalculator />,
           },
-          // {
-          //   path: "profile",
-          //   element: (
-          //     <ProtectedRoute>
-          //       <Profile />
-          //     </ProtectedRoute>
-          //   ),
-          // },
+          {
+            path: "profile",
+            element: (
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            ),
+          },
           // {
           //   path: "orders",
+          //   element: <ProtectedRoute />,
           //   children: [
           //     {
           //       index: true,
@@ -76,30 +89,46 @@ const router = createBrowserRouter([
           //   ],
           // },
           // {
-          //   path: "admin",
-          //   element: <ProtectedRoute access={3} />,
-          //   children: [
-          //     {
-          //       index: true,
-          //       element: <AdminDashboard />,
-          //     },
-          //     {
-          //       path: "transfers",
-          //       element: <Transfers />,
-          //     },
-          //     {
-          //       path: "square",
-          //       element: <Square />,
-          //     },
-          //     {
-          //       path: "promos",
-          //       element: <EditPromos />,
-          //     },
-          //   ],
+          //   path: "paperwork",
+          //   element: (
+          //     <ProtectedRoute>
+          //       <Paperwork />
+          //     </ProtectedRoute>
+          //   ),
           // },
+          {
+            path: "admin",
+            element: <ProtectedRoute access={3} />,
+            children: [
+              // {
+              //   index: true,
+              //   element: <AdminDashboard />,
+              // },
+              // {
+              //   path: "transfers",
+              //   element: <Transfers />,
+              // },
+              // {
+              //   path: "square",
+              //   element: <Square />,
+              // },
+              {
+                path: "promos",
+                element: <EditPromos />,
+              },
+            ],
+          },
         ],
       },
     ],
+  },
+  {
+    path: "set-password",
+    element: (
+      <div className="grid h-screen content-center bg-gray-800 p-6">
+        <SetPassword />
+      </div>
+    ),
   },
 ]);
 

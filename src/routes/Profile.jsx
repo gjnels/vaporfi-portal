@@ -4,9 +4,11 @@ import { Spinner } from "../components/ui/Spinner";
 import { Input, Select } from "../components/ui/FormInputs";
 import { Button } from "../components/ui/Button";
 import { capitalize } from "../lib/strings";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAccess } from "../hooks/useAccess";
 import { showToast } from "../components/ui/Toast";
+import { Link } from "../components/ui/Links";
+import { AuthRedirect } from "../components/AuthRedirect";
 
 export const Profile = () => {
   const { profile, roles, locations, loading, updateRow } =
@@ -17,6 +19,20 @@ export const Profile = () => {
     role: profile?.role?.id,
     location: profile?.location?.id,
   });
+
+  useEffect(() => {
+    setFormData({
+      ...profile,
+      role: profile?.role?.id,
+      location: profile?.location?.id,
+    });
+  }, [profile]);
+
+  const changesMade =
+    !loading &&
+    (formData.name !== profile.name ||
+      formData.role !== profile?.role?.id ||
+      formData.location !== profile?.location?.id);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,7 +46,19 @@ export const Profile = () => {
   };
 
   return (
-    <>
+    <AuthRedirect
+      redirectTo="/profile"
+      hashString="type=change_email"
+      errorLink={
+        <p>
+          Go back to{" "}
+          <Link to="/change-email" replace={true}>
+            Change Email Page
+          </Link>{" "}
+          to send another link
+        </p>
+      }
+    >
       <PageTitle title="My Profile" />
       <div className="flex justify-center">
         {!profile && loading ? (
@@ -46,9 +74,6 @@ export const Profile = () => {
               type="email"
               disabled={true}
               defaultValue={formData.email}
-              // inlineElement={
-              //   <Button variant="small secondary">Change Email</Button>
-              // }
             />
             <Input
               id="name"
@@ -68,11 +93,17 @@ export const Profile = () => {
               onChange={(e) => {
                 setFormData((prev) => ({ ...prev, role: +e.target.value }));
               }}
-              options={roles.map((role) => ({
-                id: role.id,
-                value: role.id,
-                label: capitalize(role.name),
-              }))}
+              options={roles
+                .filter((role) =>
+                  role.name === "owner"
+                    ? accessByLevel(role.access_level)
+                    : true
+                )
+                .map((role) => ({
+                  id: role.id,
+                  value: role.id,
+                  label: capitalize(role.name),
+                }))}
             />
             <Select
               id="location"
@@ -82,7 +113,10 @@ export const Profile = () => {
               notSelectedValue="Choose a location"
               value={formData.location}
               onChange={(e) => {
-                setFormData((prev) => ({ ...prev, location: +e.target.value }));
+                setFormData((prev) => ({
+                  ...prev,
+                  location: +e.target.value,
+                }));
               }}
               options={locations.map((location) => ({
                 id: location.id,
@@ -90,12 +124,20 @@ export const Profile = () => {
                 label: capitalize(location.name),
               }))}
             />
-            <Button type="submit" className="mt-2">
+            <Button
+              type="submit"
+              className="mt-2"
+              disabled={loading || !changesMade}
+            >
               Update Details
             </Button>
+            <div className="flex gap-8 self-center">
+              <Link to="/change-email">Change My Email</Link>
+              <Link to="/reset-password">Change My Password</Link>
+            </div>
           </form>
         )}
       </div>
-    </>
+    </AuthRedirect>
   );
 };
