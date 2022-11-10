@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { showToast } from "../components/ui/Toast";
 import supabase from "../lib/supabaseClient";
 
@@ -10,28 +9,35 @@ export function useSessionContext() {
 }
 
 export function SessionProvider({ children }) {
-  const [session, setSession] = useState(supabase.auth.session());
+  const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (import.meta.env.DEV) console.log("✅ subscribing to auth changes");
-    const { data: authSubscription } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (import.meta.env.DEV) console.log("auth state change:", event);
-        setSession(session);
-      }
-    );
+    (async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setSession(session);
+    })();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (import.meta.env.DEV) console.log("auth state change:", event);
+      setSession(session);
+    });
 
     return () => {
       if (import.meta.env.DEV) console.log("🛑 unsubscribed from auth changes");
-      authSubscription.unsubscribe();
+      subscription.unsubscribe();
     };
   }, []);
 
   const signIn = async (credentials) => {
     try {
       setLoading(true);
-      const { error } = await supabase.auth.signIn(credentials);
+      const { error } = await supabase.auth.signInWithPassword(credentials);
       if (error) throw error;
     } catch (error) {
       return error;

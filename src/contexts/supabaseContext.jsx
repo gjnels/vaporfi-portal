@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   createContext,
   useCallback,
@@ -33,19 +34,7 @@ export const SupabaseProvider = ({ children }) => {
   const [priorities, setPriorities] = useState([]);
 
   useEffect(() => {
-    session
-      ? fetchRow(
-          "profiles",
-          "*, role(*), location(*)",
-          "id",
-          session.user.id,
-          setProfile
-        )
-      : setProfile(null);
-  }, [session]);
-
-  useEffect(() => {
-    fetchTable("profiles", "*, roles(*), locations(*)", setAllProfiles);
+    fetchTable("profiles", "*, role(*), location(*)", setAllProfiles);
     fetchTable("promos", "*, priority(*), mix(*)", setPromos);
     fetchTable("flavors", "*, category(name)", setFlavors);
     fetchTable("flavor_categories", "*", setFlavorCategories);
@@ -57,47 +46,7 @@ export const SupabaseProvider = ({ children }) => {
 
     if (import.meta.env.DEV) console.log("✅ subscribing to supabase tables");
 
-    supabase
-      .from("profiles")
-      .on("INSERT", async (payload) => {
-        setLoading(true);
-        const newValue = await fetchNewValue(
-          payload.new,
-          "profiles",
-          "role(*), location(*)"
-        );
-        setAllProfiles((prev) => [...prev, newValue]);
-        if (session && session.user.id === newValue.id) {
-          setProfile(newValue);
-        }
-        setLoading(false);
-      })
-      .on("UPDATE", async (payload) => {
-        setLoading(true);
-        const newValue = await fetchNewValue(
-          payload.new,
-          "profiles",
-          "role(*), location(*)"
-        );
-        setAllProfiles((prev) =>
-          prev.map((value) => (value.id === newValue.id ? newValue : value))
-        );
-        if (session && session.user.id === newValue.id) {
-          setProfile(newValue);
-        }
-        setLoading(false);
-      })
-      .on("DELETE", (payload) => {
-        setAllProfiles((prev) =>
-          prev.filter((value) => value.id !== payload.old.id)
-        );
-        if (session && session.user.id === payload.old.id) {
-          setProfile(null);
-        }
-      })
-      .subscribe();
-
-    // createListener("profiles", setAllProfiles, "roles(*), locations(*)");
+    createListener("profiles", setAllProfiles, "role(*), location(*)");
 
     createListener("promos", setPromos, "priority(*), mix(*)");
 
@@ -109,44 +58,59 @@ export const SupabaseProvider = ({ children }) => {
 
     createListener("nicotine_packets", setNicotinePackets);
 
-    createListener("roles", setRoles);
-
-    createListener("locations", setLocations);
-
-    createListener("promo_priority_levels", setPriorities);
-
+    console.log(supabase.getChannels());
     setLoading(false);
 
     return async () => {
       if (import.meta.env.DEV) console.log("⛔️ unsubscribing from all tables");
-      await supabase.removeAllSubscriptions();
+      await supabase.removeAllChannels();
     };
   }, []);
 
+  useEffect(() => {
+    setProfile(
+      allProfiles.find((profile) => profile.id === session?.user?.id) ?? null
+    );
+  }, [session, allProfiles]);
+
   const createListener = useCallback((table, setState, foreignKeys) =>
     supabase
-      .from(table)
-      .on("INSERT", async (payload) => {
-        setLoading(true);
-        const newValue = foreignKeys
-          ? await fetchNewValue(payload.new, table, foreignKeys)
-          : payload.new;
-        setState((prev) => [...prev, newValue]);
-        setLoading(false);
-      })
-      .on("UPDATE", async (payload) => {
-        setLoading(true);
-        const newValue = foreignKeys
-          ? await fetchNewValue(payload.new, table, foreignKeys)
-          : payload.new;
-        setState((prev) =>
-          prev.map((value) => (value.id === newValue.id ? newValue : value))
-        );
-        setLoading(false);
-      })
-      .on("DELETE", (payload) => {
-        setState((prev) => prev.filter((value) => value.id !== payload.old.id));
-      })
+      .channel("public:" + table)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: table },
+        async (payload) => {
+          setLoading(true);
+          const newValue = foreignKeys
+            ? await fetchNewValue(payload.new, table, foreignKeys)
+            : payload.new;
+          setState((prev) => [...prev, newValue]);
+          setLoading(false);
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: table },
+        async (payload) => {
+          setLoading(true);
+          const newValue = foreignKeys
+            ? await fetchNewValue(payload.new, table, foreignKeys)
+            : payload.new;
+          setState((prev) =>
+            prev.map((value) => (value.id === newValue.id ? newValue : value))
+          );
+          setLoading(false);
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "DELETE", schema: "public", table: table },
+        (payload) => {
+          setState((prev) =>
+            prev.filter((value) => value.id !== payload.old.id)
+          );
+        }
+      )
       .subscribe()
   );
 

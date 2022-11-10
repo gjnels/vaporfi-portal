@@ -36,13 +36,14 @@ export const Profile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    const error = await updateRow("profiles", formData);
+    const { id, ...newValues } = formData;
+    const error = await updateRow("profiles", newValues, id);
     if (error) {
       console.log(error);
       showToast(JSON.stringify(error), { type: "error" });
+    } else {
+      showToast("Profile updated.", { type: "success" });
     }
-    showToast("Profile updated.", { type: "success" });
   };
 
   return (

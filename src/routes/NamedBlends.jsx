@@ -228,9 +228,10 @@ export const NamedBlends = () => {
           onCancel={closeMixModal}
           onSubmit={async (mix) => {
             // if there is no editMixId, a mix is being created, not updated
+            const { id, ...newValues } = mix;
             const error = editMixId
-              ? await updateRow("named_mixes", mix)
-              : await insertRow("named_mixes", mix);
+              ? await updateRow("named_mixes", newValues, id)
+              : await insertRow("named_mixes", newValues);
             if (error) {
               showToast(
                 error.code === "23505"

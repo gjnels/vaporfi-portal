@@ -133,12 +133,12 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <SessionProvider>
-      <SupabaseProvider>
+  <SessionProvider>
+    <SupabaseProvider>
+      <React.StrictMode>
         <RouterProvider router={router} />
         <Toaster />
-      </SupabaseProvider>
-    </SessionProvider>
-  </React.StrictMode>
+      </React.StrictMode>
+    </SupabaseProvider>
+  </SessionProvider>
 );
