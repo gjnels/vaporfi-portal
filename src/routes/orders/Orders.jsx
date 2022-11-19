@@ -1,7 +1,7 @@
 import { Link } from "../../components/ui/Links";
 import { PageTitle } from "../../components/ui/PageTitle";
 
-export const Orders = () => {
+export function Orders() {
   return (
     <>
       <PageTitle title="Purchase Orders" />
@@ -10,4 +10,4 @@ export const Orders = () => {
       <Link to="3">3</Link>
     </>
   );
-};
+}

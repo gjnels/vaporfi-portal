@@ -1,4 +1,4 @@
-export const calculatePackets = (formData, availablePackets) => {
+export function calculatePackets(formData, availablePackets) {
   const { bottleSize, initialNic, desiredNic, salt } = formData;
 
   if (availablePackets == null || !availablePackets.length) return [];
@@ -39,7 +39,7 @@ export const calculatePackets = (formData, availablePackets) => {
   }
 
   return returnPackets;
-};
+}
 
 // find all packets needed to get the nicotine level as close to the desired level as possible without going over
 function findPacketsBelow(packets, nicToAdd) {

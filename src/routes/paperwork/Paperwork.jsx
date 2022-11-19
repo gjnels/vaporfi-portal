@@ -1,9 +1,9 @@
 import { PageTitle } from "../../components/ui/PageTitle";
 
-export const Paperwork = () => {
+export function Paperwork() {
   return (
     <>
       <PageTitle title="Daily Paperwork" />
     </>
   );
-};
+}

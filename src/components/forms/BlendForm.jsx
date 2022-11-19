@@ -4,14 +4,17 @@ import { QuantityInput } from "../ui/QuantityInput";
 import { Spinner } from "../ui/Spinner";
 import { Button } from "../ui/Button";
 import { Toggle } from "../ui/Toggle";
-import { useSupabaseContext } from "../../contexts/supabaseContext";
+import { useSupabaseRealtime } from "../../hooks/useSupabaseRealtime";
+import { useSupabaseTable } from "../../hooks/useSupabaseTable";
+import { createDisplayBlendString } from "../../lib/strings";
 
-const createSelectOptions = (flavors = []) =>
-  flavors.map((flavor) => ({
+function createSelectOptions(flavors = []) {
+  return flavors.map((flavor) => ({
     id: flavor.id,
     value: flavor.flavor,
     group: flavor.category.name,
   }));
+}
 
 const shots = [
   { id: 1, value: 1, label: "Single Shot" },
@@ -19,7 +22,7 @@ const shots = [
   { id: 3, value: 3, label: "Triple Shot" },
 ];
 
-export const BlendForm = ({
+export function BlendForm({
   title,
   editMix,
   onSubmit,
@@ -28,30 +31,30 @@ export const BlendForm = ({
   namedMix = false,
   copyNamedMix = false,
   admin = false,
-}) => {
-  const {
-    flavors,
-    flavorCategories: categories,
-    loading,
-  } = useSupabaseContext();
+}) {
+  const { data: flavors, loading: flavorsLoading } = useSupabaseRealtime(
+    "flavors",
+    ["category"]
+  );
+  const { data: categories, loading: categoriesLoading } =
+    useSupabaseTable("flavor_categories");
 
-  const [bottleCount, setBottleCount] = useState(1);
-  const [nicotine, setNicotine] = useState("");
-  const [mix, setMix] = useState({
-    name: "",
-    blend: [{ flavor: "", shots: "" }],
-  });
+  const [bottleCount, setBottleCount] = useState(editMix?.bottleCount ?? 1);
+  const [nicotine, setNicotine] = useState(editMix?.nicotine ?? "");
+  const [mix, setMix] = useState(
+    editMix ?? {
+      name: "",
+      blend: [{ flavor: "", shots: "" }],
+    }
+  );
 
   useEffect(() => {
-    setBottleCount((prev) => editMix?.bottleCount ?? 1);
-    setNicotine((prev) => editMix?.nicotine ?? "");
-    setMix(
-      (prev) =>
-        editMix ?? {
-          name: "",
-          blend: [{ flavor: "", shots: "" }],
-        }
-    );
+    if (!editMix) return;
+
+    const { id, bottleCount, nicotine, ...mix } = editMix;
+    setBottleCount(bottleCount);
+    setNicotine(nicotine);
+    setMix(mix);
   }, [editMix]);
 
   const flavorCount = useMemo(() => mix.blend.length, [mix]);
@@ -91,14 +94,16 @@ export const BlendForm = ({
     [mix, flavorCount]
   );
 
-  const handleSubmit = (e) => {
+  function handleSubmit(e) {
     e.preventDefault();
     const newMix =
       namedMix && !copyNamedMix
         ? { ...editMix, ...mix }
         : { ...editMix, ...mix, bottleCount, nicotine };
     if (onSubmit != null) onSubmit(newMix);
-  };
+  }
+
+  const loading = flavorsLoading || categoriesLoading;
 
   return (
     <div className="mx-auto w-full max-w-lg">
@@ -242,14 +247,14 @@ export const BlendForm = ({
             <Button
               variant="danger"
               onClick={() => {
-                setBottleCount((prev) => 1);
-                setNicotine((prev) => "");
+                setBottleCount(1);
+                setNicotine("");
                 if (!copyNamedMix) {
-                  setMix((prev) => ({
+                  setMix({
                     ...mix,
                     name: "",
                     blend: [{ flavor: "", shots: "" }],
-                  }));
+                  });
                 }
               }}
             >
@@ -260,4 +265,76 @@ export const BlendForm = ({
       )}
     </div>
   );
-};
+}
+
+export function CopyBlendForm({ mix, onCancel, onSubmit }) {
+  const [nicotine, setNicotine] = useState("");
+  const [bottleCount, setBottleCount] = useState(1);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    onSubmit({ ...mix, nicotine, bottleCount });
+  }
+
+  return (
+    <div>
+      <h2 className="mb-4 text-center text-xl font-semibold lg:text-2xl">
+        Copy Named Blend
+      </h2>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6 rounded-md">
+        <div className="space-y-1">
+          <p className="text-center text-lg font-semibold lg:text-xl">
+            {mix.name}
+          </p>
+          <p className="text-center">{createDisplayBlendString(mix.blend)}</p>
+        </div>
+        <Input
+          required={true}
+          value={nicotine}
+          onChange={(e) => {
+            const nic =
+              e.target.value === "" ||
+              isNaN(+e.target.value) ||
+              +e.target.value < 0
+                ? ""
+                : +e.target.value;
+            setNicotine(nic);
+          }}
+          unit="mg"
+          id="nicotine"
+          label="Nicotine Level"
+          type="number"
+          step="any"
+          min={0}
+        />
+        <QuantityInput
+          title="Number of Bottles"
+          count={bottleCount}
+          decrease={() => {
+            bottleCount > 1 && setBottleCount((prev) => prev - 1);
+          }}
+          increase={() => {
+            bottleCount < 99 && setBottleCount((prev) => prev + 1);
+          }}
+        />
+        <div className="flex gap-4 self-center">
+          <Button type="submit">Submit</Button>
+
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button
+            variant="danger"
+            onClick={() => {
+              setBottleCount(1);
+              setNicotine("");
+            }}
+          >
+            Reset
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+}

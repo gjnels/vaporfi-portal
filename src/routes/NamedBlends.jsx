@@ -1,30 +1,33 @@
 import { useMemo, useState } from "react";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useAuthContext } from "../contexts/authContext";
 import { PageTitle } from "../components/ui/PageTitle";
 import { Input } from "../components/ui/FormInputs";
 import { Button } from "../components/ui/Button";
 import { createBlendString, createDisplayBlendString } from "../lib/strings";
-import { BlendForm } from "../components/forms/BlendForm";
+import { BlendForm, CopyBlendForm } from "../components/forms/BlendForm";
 import { Modal } from "../components/ui/Modal";
 import { showToast } from "../components/ui/Toast";
-import { useSupabaseContext } from "../contexts/supabaseContext";
 import { Pagination } from "../components/ui/Pagination";
-import { useAccess } from "../hooks/useAccess";
+import { useSupabaseRealtime } from "../hooks/useSupabaseRealtime";
+import { Spinner } from "../components/ui/Spinner";
 
-export const NamedBlends = () => {
+export function NamedBlends() {
+  const { data: promos, loading: promosLoading } = useSupabaseRealtime(
+    "promos",
+    ["mix"]
+  );
   const {
-    promos,
-    namedMixes: mixes,
-    loading,
-    insertRow,
-    updateRow,
-    deleteRow,
-  } = useSupabaseContext();
+    data: mixes,
+    loading: mixesLoading,
+    remove: deleteMix,
+  } = useSupabaseRealtime("named_mixes");
 
-  const { accessByLevel } = useAccess();
+  const { canAccess } = useAuthContext();
+
+  const navigate = useNavigate();
 
   const [search, setSearch] = useState("");
-  const [mixModalIsOpen, setMixModalIsOpen] = useState(false);
-  const [editMixId, setEditMixId] = useState(null);
   const [copyModalIsOpen, setCopyModalIsOpen] = useState(false);
   const [copyMixId, setCopyMixId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -37,6 +40,8 @@ export const NamedBlends = () => {
     return [firstPageIndex, lastPageIndex];
   }, [currentPage]);
 
+  const loading = promosLoading || mixesLoading;
+
   const filteredMixes = useMemo(() => {
     const searchTerms = search.trim().toLowerCase().split(" ");
 
@@ -47,6 +52,7 @@ export const NamedBlends = () => {
             const promo = promos.find((promo) => promo?.mix?.id === mix.id);
             return { ...mix, promo };
           })
+          // Sort alphabetically by name
           .sort((a, b) => {
             const aName = a.name.toLowerCase();
             const bName = b.name.toLowerCase();
@@ -58,6 +64,7 @@ export const NamedBlends = () => {
             }
             return 0;
           })
+          // Put unapproved blends at the top
           .sort((a, b) => {
             if (!a.approved && b.approved) {
               return -1;
@@ -67,6 +74,7 @@ export const NamedBlends = () => {
             }
             return 0;
           })
+          // Put promotion blends at the top
           .sort((a, b) => {
             if (a.promo && !b.promo) {
               return -1;
@@ -76,7 +84,7 @@ export const NamedBlends = () => {
             }
             return 0;
           })
-          .filter((mix) => (!accessByLevel(3) ? mix.approved : true))
+          // Change to new access function
           .filter((mix) =>
             searchTerms.every(
               (term) =>
@@ -88,45 +96,31 @@ export const NamedBlends = () => {
           );
   }, [search, mixes]);
 
-  const openMixModal = (id) => {
-    if (id) setEditMixId(id);
-    setMixModalIsOpen(true);
-  };
-
-  const closeMixModal = () => {
-    setMixModalIsOpen(false);
-    // timeout runs while modal is animating closing and prevents user from seeing the form update with no mix
-    setTimeout(
-      () => setEditMixId(null),
-      import.meta.env.VITE_MODAL_CLOSE_TIMEOUT
-    );
-  };
-
-  const openCopyModal = (id) => {
+  function openCopyModal(id) {
     setCopyMixId(id);
     setCopyModalIsOpen(true);
-  };
+  }
 
-  const closeCopyModal = () => {
+  function closeCopyModal() {
     setCopyModalIsOpen(false);
     // timeout runs while modal is animating closing and prevents user from seeing the form update with no mix
     setTimeout(
       () => setCopyMixId(null),
-      import.meta.env.VITE_MODAL_CLOSE_TIMEOUT
+      import.meta.env.VITE_MODAL_CLOSE_TIMEOUT ?? 150
     );
-  };
+  }
 
   return (
     <>
       <PageTitle title="Named Custom Blends" />
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-4">
         <div className="flex w-full justify-between gap-8 self-center">
-          {accessByLevel(2) && (
+          {canAccess(2) && (
             <Button
               variant="small secondary"
               className="shrink-0"
               onClick={() => {
-                openMixModal();
+                navigate("new");
               }}
             >
               Create New Blend
@@ -147,119 +141,90 @@ export const NamedBlends = () => {
           onPageChange={setCurrentPage}
         />
         <ul className="flex w-full flex-col divide-y divide-gray-600 self-center">
-          {filteredMixes.slice(...pageIndeces).map((mix) => (
-            <li
-              key={mix.id}
-              className="flex items-center justify-between gap-8 py-2 px-1"
-            >
-              <div>
-                {accessByLevel(3) && (
-                  <p
-                    className={`font-semibold ${
-                      mix.approved ? "text-green-400" : "text-rose-400"
-                    }`}
-                  >
-                    {mix.approved ? "Approved" : "Not Approved"}
+          {filteredMixes
+            .filter((mix) => (canAccess(3) ? true : mix.approved))
+            .slice(...pageIndeces)
+            .map((mix) => (
+              <li
+                key={mix.id}
+                className="flex items-center justify-between gap-8 py-2 px-1"
+              >
+                <div>
+                  {canAccess(3) && (
+                    <p
+                      className={`font-semibold ${
+                        mix.approved ? "text-green-400" : "text-rose-400"
+                      }`}
+                    >
+                      {mix.approved ? "Approved" : "Not Approved"}
+                    </p>
+                  )}
+                  {mix.promo && (
+                    <p className="text-base font-semibold text-violet-300 lg:text-lg">
+                      Current Promotion: {mix.promo.title}
+                    </p>
+                  )}
+                  <p className="text-lg lg:text-xl">{mix.name}</p>
+                  <p className="ml-1 text-gray-400">
+                    {createDisplayBlendString(mix.blend)}
                   </p>
-                )}
-                {mix.promo && (
-                  <p className="text-base font-semibold text-violet-300 lg:text-lg">
-                    Current Promotion: {mix.promo.title}
-                  </p>
-                )}
-                <p className="text-lg lg:text-xl">{mix.name}</p>
-                <p className="ml-1 text-gray-400">
-                  {createDisplayBlendString(mix.blend)}
-                </p>
-              </div>
-              <div className="flex gap-4">
-                <Button
-                  variant="small"
-                  onClick={() => {
-                    openCopyModal(mix.id);
-                  }}
-                >
-                  Copy
-                </Button>
-                {(mix.promo ? accessByLevel(3) : accessByLevel(2)) && (
+                </div>
+                <div className="flex gap-4">
                   <Button
-                    variant="small secondary"
+                    variant="small"
                     onClick={() => {
-                      openMixModal(mix.id);
+                      openCopyModal(mix.id);
                     }}
                   >
-                    Edit
+                    Copy
                   </Button>
-                )}
-                {accessByLevel(3) && (
-                  <Button
-                    variant="small danger"
-                    onClick={async () => {
-                      console.log(
-                        confirm(`Are you sure you want to delete ${mix.name}?`)
-                      );
-                      const error = await deleteRow("named_mixes", mix.id);
-                      if (error) {
-                        showToast("Could not delete blend.", { type: "error" });
-                      } else {
-                        showToast("Blend deleted successfully.", {
-                          type: "success",
-                        });
-                      }
-                    }}
-                  >
-                    Delete
-                  </Button>
-                )}
-              </div>
-            </li>
-          ))}
+                  {(mix.promo ? canAccess(3) : canAccess(2)) && (
+                    <Button
+                      variant="small secondary"
+                      onClick={() => {
+                        navigate(`${mix.id}`);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                  )}
+                  {canAccess(3) && (
+                    <Button
+                      variant="small danger"
+                      onClick={() => {
+                        if (
+                          !confirm(
+                            `Are you sure you want to delete ${mix.name}?`
+                          )
+                        )
+                          return;
+
+                        deleteMix(mix.id)
+                          .then(({ error }) => {
+                            if (error) throw error;
+                            showToast("Blend deleted successfully.", {
+                              type: "success",
+                            });
+                          })
+                          .catch((error) => {
+                            showToast("Could not delete blend.", {
+                              type: "error",
+                            });
+                          });
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  )}
+                </div>
+              </li>
+            ))}
         </ul>
       </div>
 
-      {/* edit/create named blend form */}
-      <Modal isOpen={mixModalIsOpen} onClose={closeMixModal}>
-        <BlendForm
-          title={`${editMixId ? "Update" : "Create"} Named Blend`}
-          namedMix={true}
-          showSpinner={false}
-          editMix={mixes.find((mix) => mix.id === editMixId)}
-          admin={accessByLevel(3)}
-          onCancel={closeMixModal}
-          onSubmit={async (mix) => {
-            // if there is no editMixId, a mix is being created, not updated
-            const { id, ...newValues } = mix;
-            const error = editMixId
-              ? await updateRow("named_mixes", newValues, id)
-              : await insertRow("named_mixes", newValues);
-            if (error) {
-              showToast(
-                error.code === "23505"
-                  ? "This name already exists."
-                  : editMixId
-                  ? "Error updating blend."
-                  : "Error creating blend.",
-                { type: "error" }
-              );
-            } else {
-              // mixes created without admin access are not approved and must wait approval by an admin
-              showToast(
-                editMixId
-                  ? "Blend updated successfully."
-                  : `Blend created successfully.${
-                      !accessByLevel(3) ? "\nPending approval." : ""
-                    }`,
-                { type: "success" }
-              );
-              closeMixModal();
-            }
-          }}
-        />
-      </Modal>
-
       {/* copy blend form to get bottle count and nicotine level */}
       <Modal isOpen={copyModalIsOpen} onClose={closeCopyModal}>
-        <BlendForm
+        <CopyBlendForm
           title="Copy Named Blend"
           onCancel={closeCopyModal}
           onSubmit={async (mix) => {
@@ -273,12 +238,81 @@ export const NamedBlends = () => {
             }
             closeCopyModal();
           }}
-          namedMix={true}
-          copyNamedMix={true}
-          showSpinner={false}
-          editMix={mixes.find((mix) => mix.id === copyMixId)}
+          mix={mixes.find((mix) => mix.id === copyMixId)}
         />
       </Modal>
     </>
   );
-};
+}
+
+export function CreateNamedBlend() {
+  const { insert } = useSupabaseRealtime("named_mixes");
+  const { canAccess } = useAuthContext();
+  const navigate = useNavigate();
+
+  return (
+    <BlendForm
+      title={"Create Named Blend"}
+      namedMix={true}
+      admin={canAccess(3)}
+      onCancel={() => navigate("..")}
+      onSubmit={async (mix) => {
+        insert(mix).then(({ error }) => {
+          if (error) {
+            showToast(
+              error.code === "23505"
+                ? "This name already exists."
+                : "Error creating blend.",
+              { type: "error" }
+            );
+          } else {
+            showToast("Blend created successfully.", { type: "success" });
+            navigate("..");
+          }
+        });
+      }}
+    />
+  );
+}
+
+export function EditNamedBlend() {
+  const { id } = useParams();
+  const { data: mixes, loading, update } = useSupabaseRealtime("named_mixes");
+  const { canAccess } = useAuthContext();
+  const navigate = useNavigate();
+
+  const mix = useMemo(() => {
+    return mixes.find((mix) => mix.id == id);
+  }, [mixes]);
+
+  async function handleSubmit(mix) {
+    try {
+      const { error } = await update(mix);
+      if (error) throw error;
+      showToast("Blend updated successfully.", { type: "success" });
+      navigate("..");
+    } catch (error) {
+      showToast(
+        error.code === "23505"
+          ? "This name already exists."
+          : "Error updating blend.",
+        { type: "error" }
+      );
+    }
+  }
+
+  return loading ? (
+    <Spinner />
+  ) : mix == null ? (
+    <Navigate to=".." replace />
+  ) : (
+    <BlendForm
+      title={"Update Named Blend"}
+      namedMix={true}
+      editMix={mix}
+      admin={canAccess(3)}
+      onCancel={() => navigate("..")}
+      onSubmit={handleSubmit}
+    />
+  );
+}

@@ -3,25 +3,31 @@ import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/FormInputs";
 import { Link } from "../../components/ui/Links";
 import { PageTitle } from "../../components/ui/PageTitle";
-import { useSessionContext } from "../../contexts/sessionContext";
+import { useAuthContext } from "../../contexts/authContext";
 import supabase from "../../lib/supabaseClient";
 
-export const ResetPassword = () => {
-  const { session } = useSessionContext();
+export function PasswordRecovery() {
+  const { session } = useAuthContext();
   const [email, setEmail] = useState(session?.user?.email ?? "");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
     setMessage("");
-    setSubmitting(true);
-    await supabase.auth.api.resetPasswordForEmail(email);
-    setSubmitting(false);
-    setMessage(
-      "Check your email for a password recovery link.\nYou may need to check your spam folder."
-    );
-  };
+    try {
+      setSubmitting(true);
+      const { error } = await supabase.auth.api.resetPasswordForEmail(email);
+      if (error) throw error;
+      setMessage(
+        "Check your email for a password recovery link.\nYou may need to check your spam folder."
+      );
+    } catch (error) {
+      setMessage(error.error_description || error.message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <>
@@ -54,4 +60,4 @@ export const ResetPassword = () => {
       </form>
     </>
   );
-};
+}

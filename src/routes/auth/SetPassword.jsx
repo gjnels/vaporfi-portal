@@ -1,72 +1,62 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { AuthRedirect } from "../../components/AuthRedirect";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/FormInputs";
-import { Link } from "../../components/ui/Links";
 import { PageTitle } from "../../components/ui/PageTitle";
+import { Spinner } from "../../components/ui/Spinner";
 import { showToast } from "../../components/ui/Toast";
 import { Toggle } from "../../components/ui/Toggle";
+import { useAuthContext } from "../../contexts/authContext";
+import { useForm } from "../../hooks/useForm";
 import supabase from "../../lib/supabaseClient";
 
-export const SetPassword = () => {
+export function SetPassword() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { session, loading } = useAuthContext();
 
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formData, handleChange] = useForm({
+    newPassword: "",
+    confirmNewPassword: "",
+  });
   const [showPasswords, setShowPasswords] = useState(false);
   const [formError, setFormError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
+
     setFormError("");
-    setSubmitting(true);
-    if (password !== confirmPassword) {
+    const { newPassword, confirmNewPassword } = formData;
+    if (newPassword !== confirmNewPassword) {
       setFormError("Passwords must match");
       return;
     }
-    const { error } = await supabase.auth.update({ password });
-    if (error) {
-      setFormError(error.message);
-      setSubmitting(false);
-      return;
-    } else {
-      showToast("Password updated", { type: "success" });
-      navigate("/", { replace: true });
-    }
-  };
 
-  return (
-    <AuthRedirect
-      redirectTo="/set-password"
-      hashString="type=recovery"
-      errorLink={
-        <p>
-          Go back to{" "}
-          <Link to="/reset-password" replace={true}>
-            Reset Password Page
-          </Link>
-        </p>
-      }
-      checkForUser={true}
-      noUserLink={
-        <>
-          <p>
-            You must be logged in to change your password. Login{" "}
-            <Link to="/login" replace={true}>
-              here
-            </Link>{" "}
-          </p>
-          <p>
-            If you forgot your password, reset it{" "}
-            <Link to="/reset-password" replace={true}>
-              here
-            </Link>
-          </p>
-        </>
-      }
-    >
+    try {
+      setSubmitting(true);
+      const { error } = await supabase.auth.updateUser({
+        password: formData.newPassword,
+        data: { newUser: null },
+      });
+
+      if (error) throw error;
+
+      showToast("Password updated", { type: "success" });
+      navigate(location.state?.prevLocation ?? "/", { replace: true });
+    } catch (error) {
+      setFormError(error.message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return loading ? (
+    <Spinner />
+  ) : session === null ? (
+    <Navigate to="/login" replace state={{ prevLocation: location.pathname }} />
+  ) : (
+    <>
       <PageTitle title="Set Password" />
       <form
         className="mx-auto flex w-full max-w-lg flex-col gap-4"
@@ -78,12 +68,12 @@ export const SetPassword = () => {
           id="email"
           name="email"
           autoComplete="email"
-          defaultValue={supabase.auth.user().email}
+          defaultValue={session.user.email}
           title="Current email address"
           placeholder="email"
           className="hidden"
           aria-hidden="true"
-          disabled="true"
+          disabled={true}
         />
 
         <Input
@@ -97,7 +87,7 @@ export const SetPassword = () => {
           minLength={8}
           autoFocus
           title="Enter a new password at least 8 characters long"
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={handleChange}
           disabled={submitting}
         />
         <Input
@@ -110,7 +100,7 @@ export const SetPassword = () => {
           required
           minLength={8}
           title="Confirm your new password"
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          onChange={handleChange}
           disabled={submitting}
         />
         <Toggle
@@ -124,11 +114,13 @@ export const SetPassword = () => {
         </p>
         <Button
           type="submit"
-          disabled={!password || !confirmPassword || submitting}
+          disabled={
+            !formData.newPassword || !formData.confirmNewPassword || submitting
+          }
         >
           Set New Password
         </Button>
       </form>
-    </AuthRedirect>
+    </>
   );
-};
+}

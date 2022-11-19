@@ -1,68 +1,58 @@
-import { useSupabaseContext } from "../contexts/supabaseContext";
 import { PageTitle } from "../components/ui/PageTitle";
 import { Spinner } from "../components/ui/Spinner";
 import { Input, Select } from "../components/ui/FormInputs";
 import { Button } from "../components/ui/Button";
 import { capitalize } from "../lib/strings";
-import { useEffect, useState } from "react";
-import { useAccess } from "../hooks/useAccess";
+import { useEffect } from "react";
 import { showToast } from "../components/ui/Toast";
 import { Link } from "../components/ui/Links";
-import { AuthRedirect } from "../components/AuthRedirect";
+import { useForm } from "../hooks/useForm";
+import { useAuthContext } from "../contexts/authContext";
+import { useSupabaseTable } from "../hooks/useSupabaseTable";
+import { Navigate, useLocation } from "react-router-dom";
 
-export const Profile = () => {
-  const { profile, roles, locations, loading, updateRow } =
-    useSupabaseContext();
-  const { accessByLevel } = useAccess();
-  const [formData, setFormData] = useState({
-    ...profile,
-    role: profile?.role?.id,
-    location: profile?.location?.id,
-  });
+export function Profile() {
+  const {
+    profile,
+    loading: profileLoading,
+    updateProfile,
+    canAccess,
+  } = useAuthContext();
+  const { data: roles, loading: rolesLoading } = useSupabaseTable("roles");
+  const { data: locations, loading: locationsLoading } =
+    useSupabaseTable("locations");
+  const [formData, handleChange, setFormData] = useForm(profile);
+
+  const location = useLocation();
 
   useEffect(() => {
-    setFormData({
-      ...profile,
-      role: profile?.role?.id,
-      location: profile?.location?.id,
-    });
+    setFormData(profile);
   }, [profile]);
 
-  const changesMade =
-    !loading &&
-    (formData.name !== profile.name ||
-      formData.role !== profile?.role?.id ||
-      formData.location !== profile?.location?.id);
-
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
-    const { id, ...newValues } = formData;
-    const error = await updateRow("profiles", newValues, id);
+
+    const data = { ...formData };
+
+    // Make sure the role and location are the foreign key IDs, not the foreign key values
+    data.role = data.role?.id ?? data.role;
+    data.location = data.location?.id ?? data.location;
+
+    const error = await updateProfile(data);
     if (error) {
-      console.log(error);
-      showToast(JSON.stringify(error), { type: "error" });
+      showToast("Error updating profile.", { type: "error" });
     } else {
       showToast("Profile updated.", { type: "success" });
     }
-  };
+  }
+
+  const loading = profileLoading || rolesLoading || locationsLoading;
 
   return (
-    <AuthRedirect
-      redirectTo="/profile"
-      hashString="type=change_email"
-      errorLink={
-        <p>
-          Go back to{" "}
-          <Link to="/change-email" replace={true}>
-            Change Email Page
-          </Link>{" "}
-          to send another link
-        </p>
-      }
-    >
+    <>
       <PageTitle title="My Profile" />
       <div className="flex justify-center">
-        {!profile && loading ? (
+        {loading ? (
           <Spinner />
         ) : (
           <form
@@ -79,26 +69,28 @@ export const Profile = () => {
             <Input
               id="name"
               label="Name"
+              name="name"
+              disabled={profile.role.name === "store"}
               value={formData.name}
-              onChange={(e) => {
-                setFormData((prev) => ({ ...prev, name: e.target.value }));
-              }}
+              onChange={handleChange}
             />
             <Select
               id="role"
               label="Role"
+              name="role"
               required={true}
-              disabled={!accessByLevel(3)}
+              disabled={!canAccess(3)}
               notSelectedValue="Choose a role"
-              value={formData.role}
+              value={formData.role.id}
               onChange={(e) => {
-                setFormData((prev) => ({ ...prev, role: +e.target.value }));
+                setFormData((current) => ({
+                  ...current,
+                  role: roles.find((role) => role.id == e.target.value) ?? "",
+                }));
               }}
               options={roles
                 .filter((role) =>
-                  role.name === "owner"
-                    ? accessByLevel(role.access_level)
-                    : true
+                  role.name === "owner" ? canAccess("owner") : true
                 )
                 .map((role) => ({
                   id: role.id,
@@ -110,13 +102,16 @@ export const Profile = () => {
               id="location"
               label="Location"
               required={true}
-              disabled={!accessByLevel(3)}
+              disabled={!canAccess(3)}
               notSelectedValue="Choose a location"
-              value={formData.location}
+              value={formData.location.id}
               onChange={(e) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  location: +e.target.value,
+                setFormData((current) => ({
+                  ...current,
+                  location:
+                    locations.find(
+                      (location) => location.id == e.target.value
+                    ) ?? "",
                 }));
               }}
               options={locations.map((location) => ({
@@ -128,17 +123,20 @@ export const Profile = () => {
             <Button
               type="submit"
               className="mt-2"
-              disabled={loading || !changesMade}
+              disabled={loading || profile.role.name === "store"}
             >
               Update Details
             </Button>
-            <div className="flex gap-8 self-center">
-              <Link to="/change-email">Change My Email</Link>
-              <Link to="/reset-password">Change My Password</Link>
-            </div>
+            <Link
+              className="self-center"
+              to="/set-password"
+              state={{ prevLocation: location.pathname }}
+            >
+              Change My Password
+            </Link>
           </form>
         )}
       </div>
-    </AuthRedirect>
+    </>
   );
-};
+}

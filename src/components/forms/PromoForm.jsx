@@ -2,9 +2,9 @@ import { Button } from "../ui/Button";
 import { Input, Select, TextBox } from "../../components/ui/FormInputs";
 import { Toggle } from "../ui/Toggle";
 import { useRef, useState } from "react";
-import { useSupabaseContext } from "../../contexts/supabaseContext";
 import { createDisplayBlendString } from "../../lib/strings";
 import { twMerge } from "tailwind-merge";
+import { useSupabaseTable } from "../../hooks/useSupabaseTable";
 
 const defaultPromo = {
   title: "",
@@ -18,7 +18,11 @@ const defaultPromo = {
 };
 
 export function PromoForm({ onSubmit, onCancel, promo, title }) {
-  const { priorities, namedMixes } = useSupabaseContext();
+  const { data: priorities, loading: prioritiesLoading } = useSupabaseTable(
+    "promo_priority_levels"
+  );
+  const { data: mixes, loading: mixesLoading } =
+    useSupabaseTable("named_mixes");
 
   const [formData, setFormData] = useState(promo || defaultPromo);
   const [validUrl, setValidUrl] = useState(false);
@@ -40,9 +44,9 @@ export function PromoForm({ onSubmit, onCancel, promo, title }) {
 
     if (data.blend) {
       data.mix = data.mix?.id || data.mix; // make sure the mix is an id, not the entire mix object
-      delete data.brand;
+      data.brand = null; // remove the brand since this is a blend
     } else {
-      delete data.mix;
+      data.mix = null; // remove the blend since this is a brand
     }
 
     data.priority = data.priority?.id || data.priority; // make sure priority is an id, not the entire priority object
@@ -84,7 +88,7 @@ export function PromoForm({ onSubmit, onCancel, promo, title }) {
               label="Custom Blend Mix"
               required
               notSelectedValue="Select a Mix"
-              options={namedMixes
+              options={mixes
                 .sort((a, b) => (a.name < b.name ? -1 : 1))
                 .map((mix) => ({
                   id: mix.id,
@@ -103,7 +107,7 @@ export function PromoForm({ onSubmit, onCancel, promo, title }) {
               <p className="mt-2 ml-2">
                 {createDisplayBlendString(
                   formData.mix?.blend ??
-                    namedMixes.find((mix) => formData.mix === mix.id).blend
+                    mixes.find((mix) => formData.mix === mix.id).blend
                 )}
               </p>
             )}

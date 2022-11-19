@@ -1,38 +1,45 @@
+import "./index.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import "./index.css";
-import { SessionProvider } from "./contexts/sessionContext";
-import { SupabaseProvider } from "./contexts/supabaseContext";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
+import { AuthProvider } from "./contexts/authContext";
 import { Toaster } from "react-hot-toast";
 import { Layout } from "./components/Layout";
 import { ErrorPage } from "./routes/ErrorPage";
 import { Login } from "./routes/auth/Login";
-import { Promos } from "./routes/Promos";
+import { SetPassword } from "./routes/auth/SetPassword";
+import { PasswordRecovery } from "./routes/auth/PasswordRecovery";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { Dashboard } from "./routes/Dashboard";
 import { FlavorPicker } from "./routes/FlavorPicker";
 import { NicotineCalculator } from "./routes/Nicotine";
-import { NamedBlends } from "./routes/NamedBlends";
+import {
+  NamedBlends,
+  CreateNamedBlend,
+  EditNamedBlend,
+} from "./routes/NamedBlends";
 import { AdminDashboard } from "./routes/admin/AdminDashboard";
 import { Transfers } from "./routes/admin/Transfers";
 import { Square } from "./routes/admin/Square";
-import { EditPromos } from "./routes/admin/EditPromos";
 import { Profile } from "./routes/Profile";
 import { Orders } from "./routes/orders/Orders";
 import { Order } from "./routes/orders/[id]";
-import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Paperwork } from "./routes/paperwork/Paperwork";
-import { SetPassword } from "./routes/auth/SetPassword";
-import { ResetPassword } from "./routes/auth/ResetPassword";
-import { ChangeEmail } from "./routes/auth/ChangeEmail";
+import { CenteredContainer } from "./components/ui/CenteredContainer";
+import { Promotions, CreatePromo, EditPromo } from "./routes/admin/Promotions";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
     errorElement: (
-      <div className="h-screen">
+      <CenteredContainer>
         <ErrorPage />
-      </div>
+      </CenteredContainer>
     ),
     children: [
       {
@@ -40,19 +47,7 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Promos />,
-          },
-          {
-            path: "login",
-            element: <Login />,
-          },
-          {
-            path: "reset-password",
-            element: <ResetPassword />,
-          },
-          {
-            path: "change-email",
-            element: <ChangeEmail />,
+            element: <Dashboard />,
           },
           {
             path: "custom-blends",
@@ -60,7 +55,20 @@ const router = createBrowserRouter([
           },
           {
             path: "named-blends",
-            element: <NamedBlends />,
+            children: [
+              {
+                index: true,
+                element: <NamedBlends />,
+              },
+              {
+                path: "new",
+                element: <CreateNamedBlend />,
+              },
+              {
+                path: ":id",
+                element: <EditNamedBlend />,
+              },
+            ],
           },
           {
             path: "nicotine-calculator",
@@ -68,11 +76,13 @@ const router = createBrowserRouter([
           },
           {
             path: "profile",
-            element: (
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            ),
+            element: <ProtectedRoute />,
+            children: [
+              {
+                index: true,
+                element: <Profile />,
+              },
+            ],
           },
           // {
           //   path: "orders",
@@ -113,8 +123,21 @@ const router = createBrowserRouter([
               //   element: <Square />,
               // },
               {
-                path: "promos",
-                element: <EditPromos />,
+                path: "promotions",
+                children: [
+                  {
+                    index: true,
+                    element: <Promotions />,
+                  },
+                  {
+                    path: "new",
+                    element: <CreatePromo />,
+                  },
+                  {
+                    path: ":id",
+                    element: <EditPromo />,
+                  },
+                ],
               },
             ],
           },
@@ -123,22 +146,56 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "set-password",
+    path: "/set-password",
     element: (
-      <div className="grid h-screen content-center bg-gray-800 p-6">
+      <CenteredContainer>
         <SetPassword />
-      </div>
+      </CenteredContainer>
     ),
+    errorElement: (
+      <CenteredContainer>
+        <ErrorPage />
+      </CenteredContainer>
+    ),
+  },
+  {
+    path: "/login",
+    element: (
+      <CenteredContainer>
+        <Login />
+      </CenteredContainer>
+    ),
+    errorElement: (
+      <CenteredContainer>
+        <ErrorPage />
+      </CenteredContainer>
+    ),
+  },
+  {
+    path: "/password-recovery",
+    element: (
+      <CenteredContainer>
+        <PasswordRecovery />
+      </CenteredContainer>
+    ),
+    errorElement: (
+      <CenteredContainer>
+        <ErrorPage />
+      </CenteredContainer>
+    ),
+  },
+  {
+    path: "*",
+    element: <Navigate to="/" replace />,
   },
 ]);
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <SessionProvider>
-    <SupabaseProvider>
-      <React.StrictMode>
-        <RouterProvider router={router} />
-        <Toaster />
-      </React.StrictMode>
-    </SupabaseProvider>
-  </SessionProvider>
+const root = document.getElementById("root");
+ReactDOM.createRoot(root).render(
+  <React.StrictMode>
+    <AuthProvider>
+      <Toaster />
+      <RouterProvider router={router} />
+    </AuthProvider>
+  </React.StrictMode>
 );

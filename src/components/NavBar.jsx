@@ -6,12 +6,10 @@ import {
   UserCircleIcon,
 } from "@heroicons/react/20/solid";
 import { Logo } from "./ui/Logo";
-import { useSessionContext } from "../contexts/sessionContext";
+import { useAuthContext } from "../contexts/authContext";
 import { Link, NavLink } from "./ui/Links";
 import { Button } from "./ui/Button";
-import { useSupabaseContext } from "../contexts/supabaseContext";
 import { useLocation } from "react-router-dom";
-import { useAccess } from "../hooks/useAccess";
 
 const links = [
   { to: "/", title: "Dashboard", access: 0, end: true },
@@ -24,31 +22,29 @@ const links = [
   // { to: "/admin", title: "Admin Dashboard", access: 3, end: true },
   // { to: "/admin/transfers", title: "Transfers", access: 3 },
   // { to: "/admin/square", title: "Square", access: 3 },
-  { to: "/admin/promos", title: "Edit Promotions", access: 3 },
+  { to: "/admin/promotions", title: "Edit Promotions", access: 3 },
 ];
 
-export const NavBar = () => {
-  const { session, signOut } = useSessionContext();
-  const { profile } = useSupabaseContext();
-  const { accessByLevel } = useAccess();
+export function NavBar() {
+  const { session, profile, signOut, canAccess } = useAuthContext();
   const location = useLocation();
 
   return (
     <>
       {/* desktop menu */}
-      <div className="hidden w-48 shrink-0 flex-col divide-y divide-gray-700 border-r border-gray-700 lg:flex">
+      <div className="fixed top-0 left-0 bottom-0 hidden w-48 shrink-0 flex-col divide-y divide-gray-700 border-r border-gray-700 bg-gray-900 lg:flex">
         <div className="mx-auto p-4">
           <Logo />
         </div>
         <div className="flex grow flex-col divide-y divide-gray-700 overflow-auto py-2 px-4">
           <LinkGroup links={links.filter((link) => link.access === 0)} />
-          {accessByLevel(1) && (
+          {canAccess(1) && (
             <LinkGroup links={links.filter((link) => link.access === 1)} />
           )}
-          {accessByLevel(2) && (
+          {canAccess(2) && (
             <LinkGroup links={links.filter((link) => link.access === 2)} />
           )}
-          {accessByLevel(3) && (
+          {canAccess(3) && (
             <LinkGroup links={links.filter((link) => link.access === 3)} />
           )}
         </div>
@@ -86,8 +82,11 @@ export const NavBar = () => {
       </div>
 
       {/* mobile menu */}
-      <div className="sticky top-0 z-40 border-b border-gray-700 bg-gray-900 lg:hidden">
-        <Menu as="div" className="flex items-center justify-between py-2 px-4">
+      <div className="fixed left-0 right-0 top-0 z-40 flex h-16 items-center border-b border-gray-700 bg-gray-900 lg:hidden">
+        <Menu
+          as="div"
+          className="flex grow items-center justify-between py-2 px-4"
+        >
           <Logo />
           <div className="flex items-center gap-4">
             {profile && (
@@ -116,17 +115,17 @@ export const NavBar = () => {
               <MobileLinkGroup
                 links={links.filter((link) => link.access === 0)}
               />
-              {accessByLevel(1) && (
+              {canAccess(1) && (
                 <MobileLinkGroup
                   links={links.filter((link) => link.access === 1)}
                 />
               )}
-              {accessByLevel(2) && (
+              {canAccess(2) && (
                 <MobileLinkGroup
                   links={links.filter((link) => link.access === 2)}
                 />
               )}
-              {accessByLevel(3) && (
+              {canAccess(3) && (
                 <MobileLinkGroup
                   links={links.filter((link) => link.access === 3)}
                 />
@@ -163,42 +162,48 @@ export const NavBar = () => {
       </div>
     </>
   );
-};
+}
 
-const LinkGroup = ({ links }) =>
-  links.length > 0 && (
-    <div className="space-y-2 py-2">
-      {links.map((link) =>
-        link?.end ? (
-          <NavLink key={link.to} to={link.to} end>
-            {link.title}
-          </NavLink>
-        ) : (
-          <NavLink key={link.to} to={link.to}>
-            {link.title}
-          </NavLink>
-        )
-      )}
-    </div>
+function LinkGroup({ links }) {
+  return (
+    links.length > 0 && (
+      <div className="space-y-2 py-2">
+        {links.map((link) =>
+          link?.end ? (
+            <NavLink key={link.to} to={link.to} end>
+              {link.title}
+            </NavLink>
+          ) : (
+            <NavLink key={link.to} to={link.to}>
+              {link.title}
+            </NavLink>
+          )
+        )}
+      </div>
+    )
   );
+}
 
-const MobileLinkGroup = ({ links }) =>
-  links.length > 0 && (
-    <div className="space-y-1 py-1">
-      {links.map((link) => (
-        <Menu.Item key={link.to}>
-          {({ active }) =>
-            link?.end ? (
-              <NavLink to={link.to} mobile={true} mobileActive={active} end>
-                {link.title}
-              </NavLink>
-            ) : (
-              <NavLink to={link.to} mobile={true} mobileActive={active}>
-                {link.title}
-              </NavLink>
-            )
-          }
-        </Menu.Item>
-      ))}
-    </div>
+function MobileLinkGroup({ links }) {
+  return (
+    links.length > 0 && (
+      <div className="space-y-1 py-1">
+        {links.map((link) => (
+          <Menu.Item key={link.to}>
+            {({ active }) =>
+              link?.end ? (
+                <NavLink to={link.to} mobile={true} mobileActive={active} end>
+                  {link.title}
+                </NavLink>
+              ) : (
+                <NavLink to={link.to} mobile={true} mobileActive={active}>
+                  {link.title}
+                </NavLink>
+              )
+            }
+          </Menu.Item>
+        ))}
+      </div>
+    )
   );
+}

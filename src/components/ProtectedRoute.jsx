@@ -1,35 +1,44 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useSessionContext } from "../contexts/sessionContext";
-import { useSupabaseContext } from "../contexts/supabaseContext";
+import { Outlet, useLocation } from "react-router-dom";
+import { useAuthContext } from "../contexts/authContext";
 import { ErrorPage } from "../routes/ErrorPage";
 import { Spinner } from "../components/ui/Spinner";
+import { Link } from "./ui/Links";
 
-export const ProtectedRoute = ({ access, children }) => {
-  const { session } = useSessionContext();
-  const { profile } = useSupabaseContext();
+export function ProtectedRoute({ access, children }) {
+  const { session, loading, canAccess } = useAuthContext();
   const location = useLocation();
 
-  if (session && !profile) {
-    return <Spinner />;
+  if (loading) return <Spinner />;
+
+  if (session === null) {
+    return (
+      <ErrorPage
+        manualError={{
+          message: `You must be logged in to view this page.`,
+        }}
+        customLink={
+          <Link to="/login" state={{ prevLocation: location.pathname }}>
+            Login
+          </Link>
+        }
+        unauthorized={true}
+      />
+    );
   }
 
-  if (session) {
-    if (access != null && profile.role.access_level < access) {
-      return (
-        <ErrorPage
-          manualError={{
-            message: `You do not have access to this page.`,
-          }}
-        />
-      );
-    }
-    return children ?? <Outlet />;
+  // Only check after checking session is not null
+  // Waiting on profile and roles to load
+
+  if (canAccess(access) === false) {
+    return (
+      <ErrorPage
+        manualError={{
+          message: `You do not have access to this page.`,
+        }}
+        unauthorized={true}
+      />
+    );
   }
-  return (
-    <Navigate
-      to="/login"
-      replace={true}
-      state={{ prevLocation: location.pathname }}
-    />
-  );
-};
+
+  return children ?? <Outlet />;
+}

@@ -1,9 +1,9 @@
 import { PageTitle } from "../../components/ui/PageTitle";
 
-export const Transfers = () => {
+export function Transfers() {
   return (
     <>
       <PageTitle title="Transfers" />
     </>
   );
-};
+}

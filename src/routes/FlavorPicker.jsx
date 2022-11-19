@@ -9,25 +9,38 @@ import { createBlendString } from "../lib/strings";
 
 const MAX_MIXES = 10;
 
-export const FlavorPicker = () => {
-  const { get, set } = useLocalStorage("vf-custom-blends");
-  const [mixes, setMixes] = useState(get());
+export function FlavorPicker() {
+  const { get: getMixes, set: saveMixes } = useLocalStorage("vf-custom-blends");
+  const [mixes, setMixes] = useState(getMixes());
   const [editMixId, setEditMixId] = useState(null);
 
-  const onBlendSubmit = (mix) => {
+  function onBlendSubmit(mix) {
     const newMix = editMixId === null ? { ...mix, id: uuid() } : mix;
     const updatedMixes = [
       newMix,
       ...mixes.filter((m) => m.id !== newMix.id),
     ].slice(0, MAX_MIXES);
     setMixes(updatedMixes);
-    set(updatedMixes);
+    saveMixes(updatedMixes);
     setEditMixId(null);
-  };
 
-  const onBlendCancel = () => {
+    copyBlend(newMix);
+  }
+
+  function onBlendCancel() {
     setEditMixId(null);
-  };
+  }
+
+  async function copyBlend(mix) {
+    try {
+      await navigator.clipboard.writeText(createBlendString(mix));
+      showToast("Copied to clipboard!");
+    } catch (error) {
+      showToast("Error copying to clipboard. Try again.", {
+        type: "error",
+      });
+    }
+  }
 
   return (
     <>
@@ -52,21 +65,7 @@ export const FlavorPicker = () => {
                 >
                   <p>{createBlendString(mix)}</p>
                   <div className="flex gap-2">
-                    <Button
-                      variant="small"
-                      onClick={async () => {
-                        try {
-                          await navigator.clipboard.writeText(
-                            createBlendString(mix)
-                          );
-                          showToast("Copied to clipboard!");
-                        } catch (error) {
-                          showToast("Error copying to clipboard. Try again.", {
-                            type: "error",
-                          });
-                        }
-                      }}
-                    >
+                    <Button variant="small" onClick={() => copyBlend(mix)}>
                       Copy
                     </Button>
                     <Button
@@ -91,11 +90,11 @@ export const FlavorPicker = () => {
             </ul>
           ) : (
             <p className="text-center italic text-gray-500">
-              No created mixes.
+              No created custom blends.
             </p>
           )}
         </div>
       </div>
     </>
   );
-};
+}

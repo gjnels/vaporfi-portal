@@ -119,7 +119,7 @@ export const Input = forwardRef(
               {...props}
             />
             {unit && (
-              <span className="pointer-events-none flex items-center justify-center bg-gray-700 px-4 text-gray-400">
+              <span className="pointer-events-none flex items-center justify-center bg-gray-500 px-4 font-semibold">
                 {unit}
               </span>
             )}

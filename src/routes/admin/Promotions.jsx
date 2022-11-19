@@ -1,52 +1,35 @@
-import { useSupabaseContext } from "../../contexts/supabaseContext";
+import { useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useSupabaseRealtime } from "../../hooks/useSupabaseRealtime";
+import { createDisplayBlendString } from "../../lib/strings";
+import { PromoForm } from "../../components/forms/PromoForm";
 import { PageTitle } from "../../components/ui/PageTitle";
 import { Button } from "../../components/ui/Button";
-import { Modal } from "../../components/ui/Modal";
-import { createDisplayBlendString } from "../../lib/strings";
-import { useMemo, useState } from "react";
-import { PromoForm } from "../../components/forms/PromoForm";
 import { Input } from "../../components/ui/FormInputs";
 import { showToast } from "../../components/ui/Toast";
+import { Spinner } from "../../components/ui/Spinner";
 
-export const EditPromos = () => {
-  const { promos, insertRow, updateRow, deleteRow } = useSupabaseContext();
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [editPromoId, setEditPromoId] = useState();
+export function Promotions() {
+  const {
+    data: promos,
+    loading,
+    remove,
+  } = useSupabaseRealtime("promos", ["mix", "priority"]);
+
+  const navigate = useNavigate();
+
   const [query, setQuery] = useState("");
   const searchTerms = useMemo(
     () => query.trim().toLowerCase().split(" "),
     [query]
   );
 
-  function openModal(id) {
-    setEditPromoId(id);
-    setModalIsOpen(true);
-  }
-
-  function closeModal() {
-    setModalIsOpen(false);
-    setTimeout(() => setEditPromoId(undefined), 150);
-  }
-
-  async function createPromo(promo) {
-    console.log("Creating promo:", promo);
-    return await insertRow("promos", promo);
-  }
-
-  async function updatePromo(promo) {
-    console.log("Updating promo:", promo);
-    const { id, ...newData } = promo;
-    return await updateRow("promos", newData, id);
-  }
-
-  async function deletePromo(id) {
-    const promo = promos.find((p) => p.id === id);
+  async function deletePromo(promo) {
     if (
       !confirm("Are you sure you want to delete the promotion:\n" + promo.title)
     )
       return;
-    console.log("Deleting promo", promo.title);
-    const error = await deleteRow("promos", id);
+    const { error } = await remove(promo.id);
     if (error) {
       showToast("Error deleting promotion.", { type: "error" });
     } else {
@@ -54,7 +37,9 @@ export const EditPromos = () => {
     }
   }
 
-  return (
+  return loading ? (
+    <Spinner />
+  ) : (
     <>
       <PageTitle title="Edit Promotions" />
       <div className="mx-auto flex max-w-6xl flex-col gap-8">
@@ -62,7 +47,7 @@ export const EditPromos = () => {
           <Button
             variant="small"
             onClick={() => {
-              setModalIsOpen(true);
+              navigate("new");
             }}
           >
             Create New Promotion
@@ -79,11 +64,11 @@ export const EditPromos = () => {
         <table className="w-full">
           <thead>
             <tr className="border-b-2 border-gray-500 text-left text-base lg:text-lg">
-              <th className="px-4 py-2">Title</th>
-              <th className="px-4 py-2">Product</th>
-              <th className="px-4 py-2">Sale</th>
-              <th className="px-4 py-2">Notes</th>
-              <th className="px-4 py-2">Actions</th>
+              <th className="px-3 py-2">Title</th>
+              <th className="px-3 py-2">Product</th>
+              <th className="px-3 py-2">Sale</th>
+              <th className="px-3 py-2">Priority</th>
+              {/* <th className="px-4 py-2"></th> */}
             </tr>
           </thead>
           <tbody>
@@ -122,20 +107,24 @@ export const EditPromos = () => {
                   <td className="whitespace-pre-wrap px-4 py-2">
                     <p>{promo.sale}</p>
                   </td>
-                  <td className="whitespace-pre-wrap px-4 py-2">
-                    <p>{promo.notes}</p>
+                  <td className="px-4 py-2">
+                    <p>{promo.priority.name}</p>
                   </td>
                   <td className="px-4 py-2">
                     <div className="flex flex-col gap-4 md:flex-row">
                       <Button
                         variant="small secondary"
-                        onClick={() => openModal(promo.id)}
+                        onClick={() => {
+                          navigate(`${promo.id}`);
+                        }}
                       >
                         Edit
                       </Button>
                       <Button
                         variant="small danger"
-                        onClick={() => deletePromo(promo.id)}
+                        onClick={() => {
+                          deletePromo(promo);
+                        }}
                       >
                         Delete
                       </Button>
@@ -146,38 +135,69 @@ export const EditPromos = () => {
           </tbody>
         </table>
       </div>
-
-      <Modal isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)}>
-        <PromoForm
-          promo={promos.find((promo) => promo.id === editPromoId)}
-          onCancel={closeModal}
-          onSubmit={async (promo) => {
-            const error = editPromoId
-              ? await updatePromo(promo)
-              : await createPromo(promo);
-            console.log(error);
-            if (error) {
-              showToast(
-                error.code == "23505"
-                  ? "A promotion with this title already exists."
-                  : editPromoId
-                  ? "Error updating promotion."
-                  : "Error creating promotion.",
-                { type: "error" }
-              );
-            } else {
-              showToast(
-                editPromoId
-                  ? "Promotion updated successfully."
-                  : "Promotion created successfully.",
-                { type: "success" }
-              );
-              closeModal();
-            }
-          }}
-          title={editPromoId ? "Edit Promotion" : "Create Promotion"}
-        />
-      </Modal>
     </>
   );
-};
+}
+
+export function CreatePromo() {
+  const navigate = useNavigate();
+  const { insert } = useSupabaseRealtime("promos");
+
+  async function handleSubmit(data) {
+    try {
+      const { error } = await insert(data);
+      if (error) throw error;
+      navigate("..");
+    } catch (error) {
+      showToast(
+        error.code == 23505
+          ? "This name already exists."
+          : "Error creating promotion.",
+        { type: "error" }
+      );
+    }
+  }
+
+  return (
+    <PromoForm
+      onSubmit={handleSubmit}
+      onCancel={() => navigate("..")}
+      title="Create New Promotion"
+    />
+  );
+}
+
+export function EditPromo() {
+  const { id } = useParams();
+  const { getRow, update, loading } = useSupabaseRealtime("promos", [
+    "mix",
+    "priority",
+  ]);
+  const navigate = useNavigate();
+
+  async function handleSubmit(data) {
+    try {
+      const { error } = await update(data);
+      if (error) throw error;
+      navigate("..");
+    } catch (error) {
+      showToast(
+        error.code == 23505
+          ? "This title already exists."
+          : "Error updating promotion.",
+        { type: "error" }
+      );
+    }
+  }
+
+  return loading ? (
+    <Spinner />
+  ) : (
+    <PromoForm
+      title="Edit Promotion"
+      promo={getRow(id)}
+      onCancel={() => navigate("..")}
+      onSubmit={handleSubmit}
+    />
+  );
+}

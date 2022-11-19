@@ -1,12 +1,17 @@
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuthContext } from "../contexts/authContext";
 import { NavBar } from "./NavBar";
 
-export const Layout = () => {
-  return (
-    <div className="relative flex h-screen flex-col bg-gray-900 text-sm text-gray-100 lg:flex-row lg:text-base">
+export function Layout() {
+  const { newUser } = useAuthContext();
+
+  return newUser ? (
+    <Navigate to="/set-password" />
+  ) : (
+    <div className="relative flex h-screen flex-col text-sm lg:flex-row lg:text-base">
       <NavBar />
-      <main className="grow bg-gray-800 lg:overflow-y-scroll">
-        <div className="container mx-auto py-8 px-4">
+      <main className="mt-16 grow bg-gray-800 lg:ml-48 lg:mt-0">
+        <div className="py-8 px-4 md:px-6">
           <Outlet />
         </div>
       </main>
@@ -15,4 +20,4 @@ export const Layout = () => {
       </footer>
     </div>
   );
-};
+}

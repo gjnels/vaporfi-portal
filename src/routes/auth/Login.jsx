@@ -1,26 +1,33 @@
 import { useState } from "react";
-import { Navigate, useLocation } from "react-router-dom";
-import { useSessionContext } from "../../contexts/sessionContext";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useAuthContext } from "../../contexts/authContext";
 import { PageTitle } from "../../components/ui/PageTitle";
 import { Input } from "../../components/ui/FormInputs";
 import { Button } from "../../components/ui/Button";
 import { Link } from "../../components/ui/Links";
+import { useForm } from "../../hooks/useForm";
 
-export const Login = () => {
-  const { session, signIn, loading } = useSessionContext();
+export function Login() {
+  const { session, signIn, loading } = useAuthContext();
+  const [credentials, handleChange] = useForm({ email: "", password: "" });
+  const [error, setError] = useState("");
   const location = useLocation();
-  const [credentials, setCredentials] = useState({ email: "", password: "" });
-  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    setError(null);
+  async function handleSubmit(e) {
     e.preventDefault();
-    const error = await signIn(credentials);
-    if (error) setError(error.error_description || error.message);
-  };
+    setError("");
+    try {
+      const error = await signIn(credentials);
+      if (error) throw error;
+      navigate(location.state?.prevLocation ?? "/", { replace: true });
+    } catch (error) {
+      setError(error.error_description || error.message);
+    }
+  }
 
   return session ? (
-    <Navigate to={location.state?.prevLocation || "/"} replace={true} />
+    <Navigate to={location.state?.prevLocation ?? "/"} replace />
   ) : (
     <>
       <PageTitle title="Login to Your Account" />
@@ -30,24 +37,22 @@ export const Login = () => {
       >
         <Input
           type="email"
+          name="email"
+          placeholder="Email"
           required
           autoFocus
           autoComplete="email"
-          placeholder="Email"
           disabled={loading}
-          onChange={(e) =>
-            setCredentials((prev) => ({ ...prev, email: e.target.value }))
-          }
+          onChange={handleChange}
         />
         <Input
           type="password"
+          name="password"
+          placeholder="Password"
           required
           autoComplete="current-password"
-          placeholder="Password"
           disabled={loading}
-          onChange={(e) =>
-            setCredentials((prev) => ({ ...prev, password: e.target.value }))
-          }
+          onChange={handleChange}
         />
         {error && <span className="self-center text-rose-400">{error}</span>}
         <Button
@@ -56,14 +61,10 @@ export const Login = () => {
         >
           Login
         </Button>
-        <Link
-          to="/reset-password"
-          state={{ forgot: true }}
-          className="self-center"
-        >
+        <Link to="/set-password" className="self-center">
           Forgot your password?
         </Link>
       </form>
     </>
   );
-};
+}

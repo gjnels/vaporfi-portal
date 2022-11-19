@@ -2,8 +2,9 @@ import { useParams } from "react-router-dom";
 import { Link } from "../../components/ui/Links";
 import { PageTitle } from "../../components/ui/PageTitle";
 
-export const Order = () => {
+export function Order() {
   const { id } = useParams();
+
   return (
     <>
       <PageTitle title="Purchase Order" />
@@ -11,4 +12,4 @@ export const Order = () => {
       <p>Order #{id}</p>
     </>
   );
-};
+}

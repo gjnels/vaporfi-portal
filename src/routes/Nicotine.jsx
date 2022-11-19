@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { useSupabaseContext } from "../contexts/supabaseContext";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { Button } from "../components/ui/Button";
 import { PageTitle } from "../components/ui/PageTitle";
@@ -9,6 +8,7 @@ import { Input, Select } from "../components/ui/FormInputs";
 import { showToast } from "../components/ui/Toast";
 import { capitalize } from "../lib/strings";
 import { calculatePackets } from "../lib/nicotine";
+import { useSupabaseTable } from "../hooks/useSupabaseTable";
 
 const packetColors = {
   yellow: {
@@ -79,10 +79,12 @@ const sortPackets = (packets) => {
   });
 };
 
-export const NicotineCalculator = () => {
-  const { nicotinePackets, loading } = useSupabaseContext();
-  const { get, set } = useLocalStorage("vf-nicotine-packet-preferences");
-  const [preferences, setPreferences] = useState(get());
+export function NicotineCalculator() {
+  const { data: nicotinePackets, loading } =
+    useSupabaseTable("nicotine_packets");
+  const { get: getPacketPreferences, set: setPacketPreferences } =
+    useLocalStorage("vf-nicotine-packet-preferences");
+  const [preferences, setPreferences] = useState(getPacketPreferences());
   const [neededPackets, setNeededPackets] = useState([]);
   const [formData, setFormData] = useState({
     bottleSize: 30,
@@ -99,7 +101,7 @@ export const NicotineCalculator = () => {
         available: true,
       }));
       setPreferences(initialPreferences);
-      set(initialPreferences);
+      setPacketPreferences(initialPreferences);
     }
   }, [nicotinePackets]);
 
@@ -125,19 +127,19 @@ export const NicotineCalculator = () => {
     [neededPackets]
   );
 
-  const togglePreference = (id, available) => {
+  function togglePreference(id, available) {
     const newPreferences = preferences.map((preference) =>
       preference.id === id ? { ...preference, available } : preference
     );
     setPreferences(newPreferences);
-  };
+  }
 
-  const savePreferences = () => {
-    set(preferences);
+  function savePreferences() {
+    setPacketPreferences(preferences);
     showToast("Nicotine preferences saved");
-  };
+  }
 
-  const handleSubmit = (e) => {
+  function handleSubmit(e) {
     e.preventDefault();
     const data = Object.fromEntries(
       Object.entries(formData).map(([key, value]) =>
@@ -146,11 +148,11 @@ export const NicotineCalculator = () => {
     );
     setDesiredNic(data.desiredNic);
     setNeededPackets(calculatePackets(data, packets) ?? []);
-  };
+  }
 
-  const handleInputChange = (name, value) => {
+  function handleInputChange(name, value) {
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  }
 
   return (
     <>
@@ -312,9 +314,9 @@ export const NicotineCalculator = () => {
       </div>
     </>
   );
-};
+}
 
-const PacketResult = ({ finalNicLevel, packets, title }) => {
+function PacketResult({ finalNicLevel, packets, title }) {
   return (
     <div className="flex flex-col gap-3 text-center">
       {title && (
@@ -347,4 +349,4 @@ const PacketResult = ({ finalNicLevel, packets, title }) => {
       })}
     </div>
   );
-};
+}
