@@ -8,7 +8,7 @@ export function ProtectedRoute({ access, children }) {
   const { session, loading, canAccess } = useAuthContext();
   const location = useLocation();
 
-  if (loading) return <Spinner />;
+  if (loading) return null;
 
   if (session === null) {
     return (
@@ -27,8 +27,6 @@ export function ProtectedRoute({ access, children }) {
   }
 
   // Only check after checking session is not null
-  // Waiting on profile and roles to load
-
   if (canAccess(access) === false) {
     return (
       <ErrorPage

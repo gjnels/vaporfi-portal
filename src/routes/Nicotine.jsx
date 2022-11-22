@@ -8,7 +8,7 @@ import { Input, Select } from "../components/ui/FormInputs";
 import { showToast } from "../components/ui/Toast";
 import { capitalize } from "../lib/strings";
 import { calculatePackets } from "../lib/nicotine";
-import { useSupabaseTable } from "../hooks/useSupabaseTable";
+import { useSupabaseContext } from "../contexts/supabaseContext";
 
 const packetColors = {
   yellow: {
@@ -80,8 +80,9 @@ const sortPackets = (packets) => {
 };
 
 export function NicotineCalculator() {
-  const { data: nicotinePackets, loading } =
-    useSupabaseTable("nicotine_packets");
+  const {
+    nicotinePackets: { data: nicotinePackets, loading },
+  } = useSupabaseContext();
   const { get: getPacketPreferences, set: setPacketPreferences } =
     useLocalStorage("vf-nicotine-packet-preferences");
   const [preferences, setPreferences] = useState(getPacketPreferences());

@@ -4,7 +4,7 @@ import { Toggle } from "../ui/Toggle";
 import { useRef, useState } from "react";
 import { createDisplayBlendString } from "../../lib/strings";
 import { twMerge } from "tailwind-merge";
-import { useSupabaseTable } from "../../hooks/useSupabaseTable";
+import { useSupabaseContext } from "../../contexts/supabaseContext";
 
 const defaultPromo = {
   title: "",
@@ -18,11 +18,10 @@ const defaultPromo = {
 };
 
 export function PromoForm({ onSubmit, onCancel, promo, title }) {
-  const { data: priorities, loading: prioritiesLoading } = useSupabaseTable(
-    "promo_priority_levels"
-  );
-  const { data: mixes, loading: mixesLoading } =
-    useSupabaseTable("named_mixes");
+  const {
+    promoPriorities: { data: priorities, loading: prioritiesLoading },
+    namedMixes: { data: mixes, loading: mixesLoading },
+  } = useSupabaseContext();
 
   const [formData, setFormData] = useState(promo || defaultPromo);
   const [validUrl, setValidUrl] = useState(false);

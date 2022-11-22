@@ -9,19 +9,14 @@ import { BlendForm, CopyBlendForm } from "../components/forms/BlendForm";
 import { Modal } from "../components/ui/Modal";
 import { showToast } from "../components/ui/Toast";
 import { Pagination } from "../components/ui/Pagination";
-import { useSupabaseRealtime } from "../hooks/useSupabaseRealtime";
 import { Spinner } from "../components/ui/Spinner";
+import { useSupabaseContext } from "../contexts/supabaseContext";
 
 export function NamedBlends() {
-  const { data: promos, loading: promosLoading } = useSupabaseRealtime(
-    "promos",
-    ["mix"]
-  );
   const {
-    data: mixes,
-    loading: mixesLoading,
-    remove: deleteMix,
-  } = useSupabaseRealtime("named_mixes");
+    promos: { data: promos, loading: promosLoading },
+    namedMixes: { data: mixes, loading: mixesLoading, remove: deleteMix },
+  } = useSupabaseContext();
 
   const { canAccess } = useAuthContext();
 
@@ -246,7 +241,9 @@ export function NamedBlends() {
 }
 
 export function CreateNamedBlend() {
-  const { insert } = useSupabaseRealtime("named_mixes");
+  const {
+    namedMixes: { insert },
+  } = useSupabaseContext();
   const { canAccess } = useAuthContext();
   const navigate = useNavigate();
 
@@ -277,7 +274,9 @@ export function CreateNamedBlend() {
 
 export function EditNamedBlend() {
   const { id } = useParams();
-  const { data: mixes, loading, update } = useSupabaseRealtime("named_mixes");
+  const {
+    namedMixes: { data: mixes, loading, update },
+  } = useSupabaseContext();
   const { canAccess } = useAuthContext();
   const navigate = useNavigate();
 

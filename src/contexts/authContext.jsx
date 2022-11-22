@@ -11,32 +11,43 @@ export function useAuthContext() {
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Get session on app load
     (async () => {
-      const {
-        data: { session },
-        error,
-      } = await supabase.auth.getSession();
-      if (error) {
-        setSession(null);
-      } else {
-        setSession(session);
+      try {
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.getSession();
+        if (error) throw error;
+        if (session) {
+          setSession(session);
+          await fetchProfile(session);
+        }
+      } catch (error) {
+        if (import.meta.env.DEV) console.log(error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     })();
 
     // Listen for auth changes
     if (import.meta.env.DEV) console.log("✅ subscribing to auth changes");
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (import.meta.env.DEV)
         console.log("auth state change:", event, session);
-      setSession(session);
+      if (session) {
+        setSession(session);
+        await fetchProfile(session);
+      } else {
+        setSession(null);
+        setProfile(null);
+      }
     });
 
     return () => {
@@ -45,31 +56,21 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
-  // Update profile on session change
-  useEffect(() => {
-    if (session == null) {
-      setProfile(null);
+  async function fetchProfile(session) {
+    // Prevent unecessary refreshes when changing focus back to the browser fires a SIGNED_IN event
+    if (profile && session.user.id === profile.id) {
       return;
     }
 
-    setLoading(true);
-    supabase
+    await supabase
       .from("profiles")
       .select("*, role(*), location(*)")
       .eq("id", session.user.id)
       .single()
-      .then(({ data, error }) => {
-        if (error) throw error;
-        setProfile(data);
-      })
-      .catch((error) => {
-        if (import.meta.env.DEV) console.log("profile error:", error);
-        setProfile(null);
-      })
-      .finally(() => {
-        setLoading(false);
+      .then(({ data }) => {
+        if (data) setProfile(data);
       });
-  }, [session]);
+  }
 
   const signIn = async (credentials) => {
     try {
@@ -106,7 +107,7 @@ export function AuthProvider({ children }) {
   }
 
   function canAccess(access = 1) {
-    if (!profile) return false;
+    if (!session || !profile) return false;
 
     if (typeof access === "number") {
       return profile.role.access_level >= access;

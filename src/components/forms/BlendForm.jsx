@@ -4,9 +4,8 @@ import { QuantityInput } from "../ui/QuantityInput";
 import { Spinner } from "../ui/Spinner";
 import { Button } from "../ui/Button";
 import { Toggle } from "../ui/Toggle";
-import { useSupabaseRealtime } from "../../hooks/useSupabaseRealtime";
-import { useSupabaseTable } from "../../hooks/useSupabaseTable";
 import { createDisplayBlendString } from "../../lib/strings";
+import { useSupabaseContext } from "../../contexts/supabaseContext";
 
 function createSelectOptions(flavors = []) {
   return flavors.map((flavor) => ({
@@ -32,12 +31,10 @@ export function BlendForm({
   copyNamedMix = false,
   admin = false,
 }) {
-  const { data: flavors, loading: flavorsLoading } = useSupabaseRealtime(
-    "flavors",
-    ["category"]
-  );
-  const { data: categories, loading: categoriesLoading } =
-    useSupabaseTable("flavor_categories");
+  const {
+    flavors: { data: flavors, loading: flavorsLoading },
+    flavorCategories: { data: categories, loading: categoriesLoading },
+  } = useSupabaseContext();
 
   const [bottleCount, setBottleCount] = useState(editMix?.bottleCount ?? 1);
   const [nicotine, setNicotine] = useState(editMix?.nicotine ?? "");

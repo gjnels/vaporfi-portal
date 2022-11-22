@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 site-plan.md
+# Local Netlify folder
+.netlify

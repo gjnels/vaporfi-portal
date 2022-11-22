@@ -101,6 +101,9 @@ function findPacketsAbove(packets, nicToAdd) {
           p.nic_level === packet.nic_level * packet.count && p.id !== packet.id
       );
 
+      // This is only looking for multiples of one packet that can be traded for another (2 greens = 1 blue)
+      // Need to also check if any of the packets can be added to make another packet (1 Purple + 1 Blue = 1 Brown)
+
       const foundPacket = higherPackets.find(
         (packet) => packet.id === betterPacket?.id
       );

@@ -8,8 +8,8 @@ import { showToast } from "../components/ui/Toast";
 import { Link } from "../components/ui/Links";
 import { useForm } from "../hooks/useForm";
 import { useAuthContext } from "../contexts/authContext";
-import { useSupabaseTable } from "../hooks/useSupabaseTable";
-import { Navigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useSupabaseContext } from "../contexts/supabaseContext";
 
 export function Profile() {
   const {
@@ -18,9 +18,10 @@ export function Profile() {
     updateProfile,
     canAccess,
   } = useAuthContext();
-  const { data: roles, loading: rolesLoading } = useSupabaseTable("roles");
-  const { data: locations, loading: locationsLoading } =
-    useSupabaseTable("locations");
+  const {
+    roles: { data: roles, loading: rolesLoading },
+    locations: { data: locations, loading: locationsLoading },
+  } = useSupabaseContext();
   const [formData, handleChange, setFormData] = useForm(profile);
 
   const location = useLocation();

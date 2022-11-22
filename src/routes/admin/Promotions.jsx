@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSupabaseRealtime } from "../../hooks/useSupabaseRealtime";
 import { createDisplayBlendString } from "../../lib/strings";
 import { PromoForm } from "../../components/forms/PromoForm";
 import { PageTitle } from "../../components/ui/PageTitle";
@@ -8,13 +7,12 @@ import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/FormInputs";
 import { showToast } from "../../components/ui/Toast";
 import { Spinner } from "../../components/ui/Spinner";
+import { useSupabaseContext } from "../../contexts/supabaseContext";
 
 export function Promotions() {
   const {
-    data: promos,
-    loading,
-    remove,
-  } = useSupabaseRealtime("promos", ["mix", "priority"]);
+    promos: { data: promos, loading, remove },
+  } = useSupabaseContext();
 
   const navigate = useNavigate();
 
@@ -141,7 +139,9 @@ export function Promotions() {
 
 export function CreatePromo() {
   const navigate = useNavigate();
-  const { insert } = useSupabaseRealtime("promos");
+  const {
+    promos: { insert },
+  } = useSupabaseContext();
 
   async function handleSubmit(data) {
     try {
@@ -169,10 +169,9 @@ export function CreatePromo() {
 
 export function EditPromo() {
   const { id } = useParams();
-  const { getRow, update, loading } = useSupabaseRealtime("promos", [
-    "mix",
-    "priority",
-  ]);
+  const {
+    promos: { data: promos, update, loading },
+  } = useSupabaseContext();
   const navigate = useNavigate();
 
   async function handleSubmit(data) {
@@ -190,12 +189,14 @@ export function EditPromo() {
     }
   }
 
+  const promo = promos.find((promo) => promo.id == id);
+
   return loading ? (
     <Spinner />
   ) : (
     <PromoForm
       title="Edit Promotion"
-      promo={getRow(id)}
+      promo={promo}
       onCancel={() => navigate("..")}
       onSubmit={handleSubmit}
     />

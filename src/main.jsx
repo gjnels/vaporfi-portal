@@ -31,6 +31,8 @@ import { Order } from "./routes/orders/[id]";
 import { Paperwork } from "./routes/paperwork/Paperwork";
 import { CenteredContainer } from "./components/ui/CenteredContainer";
 import { Promotions, CreatePromo, EditPromo } from "./routes/admin/Promotions";
+import { CreateUser, EditUser, Users } from "./routes/admin/Users";
+import { SupabaseProvider } from "./contexts/supabaseContext";
 
 const router = createBrowserRouter([
   {
@@ -123,6 +125,23 @@ const router = createBrowserRouter([
               //   element: <Square />,
               // },
               {
+                path: "users",
+                children: [
+                  {
+                    index: true,
+                    element: <Users />,
+                  },
+                  {
+                    path: "new",
+                    element: <CreateUser />,
+                  },
+                  {
+                    path: ":id",
+                    element: <EditUser />,
+                  },
+                ],
+              },
+              {
                 path: "promotions",
                 children: [
                   {
@@ -194,8 +213,10 @@ const root = document.getElementById("root");
 ReactDOM.createRoot(root).render(
   <React.StrictMode>
     <AuthProvider>
-      <Toaster />
-      <RouterProvider router={router} />
+      <SupabaseProvider>
+        <Toaster />
+        <RouterProvider router={router} />
+      </SupabaseProvider>
     </AuthProvider>
   </React.StrictMode>
 );
