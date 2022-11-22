@@ -145,7 +145,6 @@ function findPacketsAbove(packets, nicToAdd) {
       }
     }
   }
-  console.log(filteredDuplicatePackets);
 
   return filteredAdditivePackets;
 }
