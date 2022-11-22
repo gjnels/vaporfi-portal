@@ -162,7 +162,7 @@ export function NicotineCalculator() {
         {loading ? (
           <Spinner />
         ) : (
-          <div className="flex gap-8">
+          <div className="flex items-start gap-8">
             <div className="flex flex-col gap-2">
               <h3 className="mb-1 text-base lg:text-lg">
                 Available Nicotine Packets

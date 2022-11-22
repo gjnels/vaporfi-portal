@@ -93,16 +93,15 @@ function findPacketsAbove(packets, nicToAdd) {
     }
   }
 
-  return higherPackets
+  // Filter the results to look for packets that have multiple counts that can be combined to a equal a packet of a higher nicotine level
+  // e.g. if there are 2 blue packets (180mg) and purple packets (360mg) are available, remove the 2 blue packets and add one purple packet
+  const filteredDuplicatePackets = higherPackets
     .reverse()
     .map((packet) => {
       const betterPacket = packets.find(
         (p) =>
           p.nic_level === packet.nic_level * packet.count && p.id !== packet.id
       );
-
-      // This is only looking for multiples of one packet that can be traded for another (2 greens = 1 blue)
-      // Need to also check if any of the packets can be added to make another packet (1 Purple + 1 Blue = 1 Brown)
 
       const foundPacket = higherPackets.find(
         (packet) => packet.id === betterPacket?.id
@@ -117,6 +116,38 @@ function findPacketsAbove(packets, nicToAdd) {
     })
     .filter((packet) => packet != null)
     .reverse();
+
+  // Filter packets to find packets that can be added together to make a higher packet
+  // e.g. if there is a blue packet (180mg) and a purple packet (360mg) and brown packets (540mg) are available, remove the blue and purple and add a brown
+  // Since the multiples of the same packet have already been reduced above, the counts should be one here
+  const filteredAdditivePackets = [...filteredDuplicatePackets];
+  for (let i = 0; i < filteredAdditivePackets.length; i++) {
+    for (let j = i + 1; j < filteredAdditivePackets.length; j++) {
+      const found = packets.find(
+        (p) =>
+          p.nic_level ===
+          filteredAdditivePackets[i].nic_level +
+            filteredAdditivePackets[j].nic_level
+      );
+
+      if (found) {
+        const packetInResultIndex = filteredAdditivePackets.findIndex(
+          (p) => p.id === found.id
+        );
+        if (packetInResultIndex >= 0) {
+          filteredAdditivePackets[packetInResultIndex].count++;
+          filteredAdditivePackets.splice(j, 1);
+          filteredAdditivePackets.splice(i, 1);
+        } else {
+          filteredAdditivePackets[i] = { ...found, count: 1 };
+          filteredAdditivePackets.splice(j, 1);
+        }
+      }
+    }
+  }
+  console.log(filteredDuplicatePackets);
+
+  return filteredAdditivePackets;
 }
 
 // find the packet that is closest to the current nicotine level to be added without being less than that nicotine level
