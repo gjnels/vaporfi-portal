@@ -10,7 +10,7 @@ export function useSessionContext() {
 }
 
 export function SessionProvider({ children }) {
-  const [session, setSession] = useState(supabase.auth.session());
+  const [session, setSession] = useState();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
