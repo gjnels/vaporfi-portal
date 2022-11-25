@@ -16,19 +16,12 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-export default handler = async function (event) {
+export async function handler(event) {
   const eventBody = JSON.parse(event.body);
-  const { email, password } = eventBody;
+  const { email } = eventBody;
 
   try {
-    const { data, error } = await supabase.auth.admin.createUser({
-      email,
-      password,
-      user_metadata: {
-        newUser: true,
-      },
-      email_confirm: true,
-    });
+    const { data, error } = await supabase.auth.admin.inviteUserByEmail(email);
 
     if (error) throw error;
 
@@ -37,6 +30,7 @@ export default handler = async function (event) {
       body: JSON.stringify({ data }),
     };
   } catch (error) {
+    console.log(error);
     if (error.status) {
       return {
         statusCode: error.status,
@@ -49,4 +43,4 @@ export default handler = async function (event) {
       };
     }
   }
-};
+}

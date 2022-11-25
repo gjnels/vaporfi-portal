@@ -93,17 +93,27 @@ function findPacketsAbove(packets, nicToAdd) {
     }
   }
 
-  // Filter the results to look for packets that have multiple counts that can be combined to a equal a packet of a higher nicotine level
-  // e.g. if there are 2 blue packets (180mg) and purple packets (360mg) are available, remove the 2 blue packets and add one purple packet
-  const filteredDuplicatePackets = higherPackets
-    .reverse()
+  const filteredDuplicatePackets = findDuplicatePackets(higherPackets, packets);
+
+  const filteredAdditivePackets = findAdditivePackets(
+    filteredDuplicatePackets,
+    packets
+  );
+
+  return filteredAdditivePackets;
+}
+
+// Filter the results to look for packets that have multiple counts that can be combined to a equal a packet of a higher nicotine level
+// e.g. if there are 2 blue packets (180mg) and purple packets (360mg) are available, remove the 2 blue packets and add one purple packet
+function findDuplicatePackets(currentPackets, allPackets) {
+  return [...currentPackets]
     .map((packet) => {
-      const betterPacket = packets.find(
+      const betterPacket = allPackets.find(
         (p) =>
           p.nic_level === packet.nic_level * packet.count && p.id !== packet.id
       );
 
-      const foundPacket = higherPackets.find(
+      const foundPacket = currentPackets.find(
         (packet) => packet.id === betterPacket?.id
       );
 
@@ -114,16 +124,16 @@ function findPacketsAbove(packets, nicToAdd) {
 
       return betterPacket ? { count: 1, ...betterPacket } : packet;
     })
-    .filter((packet) => packet != null)
-    .reverse();
+    .filter((packet) => packet != null);
+}
 
-  // Filter packets to find packets that can be added together to make a higher packet
-  // e.g. if there is a blue packet (180mg) and a purple packet (360mg) and brown packets (540mg) are available, remove the blue and purple and add a brown
-  // Since the multiples of the same packet have already been reduced above, the counts should be one here
-  const filteredAdditivePackets = [...filteredDuplicatePackets];
+// Filter packets to find packets that can be added together to make a higher packet
+// e.g. if there is a blue packet (180mg) and a purple packet (360mg) and brown packets (540mg) are available, remove the blue and purple and add a brown
+function findAdditivePackets(currentPackets, allPackets) {
+  const filteredAdditivePackets = [...currentPackets];
   for (let i = 0; i < filteredAdditivePackets.length; i++) {
     for (let j = i + 1; j < filteredAdditivePackets.length; j++) {
-      const found = packets.find(
+      const found = allPackets.find(
         (p) =>
           p.nic_level ===
           filteredAdditivePackets[i].nic_level +
@@ -145,8 +155,9 @@ function findPacketsAbove(packets, nicToAdd) {
       }
     }
   }
-
-  return filteredAdditivePackets;
+  // Search again for duplicates that can be turned into another packet
+  const filtered = findDuplicatePackets(filteredAdditivePackets, allPackets);
+  return filtered;
 }
 
 // find the packet that is closest to the current nicotine level to be added without being less than that nicotine level

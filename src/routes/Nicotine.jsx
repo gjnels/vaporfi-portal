@@ -193,7 +193,7 @@ export function NicotineCalculator() {
               </Button>
             </div>
             <form
-              className="flex flex-1 flex-col gap-4"
+              className="mx-auto flex max-w-lg flex-1 flex-col gap-4"
               onSubmit={handleSubmit}
             >
               <h3 className="mb-1 text-center text-lg font-semibold lg:text-xl">

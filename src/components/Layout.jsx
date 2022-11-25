@@ -6,7 +6,7 @@ export function Layout() {
   const { newUser } = useAuthContext();
 
   return newUser ? (
-    <Navigate to="/set-password" />
+    <Navigate to="/set-password" state={{ newUser }} />
   ) : (
     <div className="relative flex h-screen flex-col text-sm lg:flex-row lg:text-base">
       <NavBar />

@@ -25,15 +25,6 @@ export function NamedBlends() {
   const [search, setSearch] = useState("");
   const [copyModalIsOpen, setCopyModalIsOpen] = useState(false);
   const [copyMixId, setCopyMixId] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const pageSize = 10;
-
-  const pageIndeces = useMemo(() => {
-    const firstPageIndex = (currentPage - 1) * pageSize;
-    const lastPageIndex = firstPageIndex + pageSize;
-    return [firstPageIndex, lastPageIndex];
-  }, [currentPage]);
 
   const loading = promosLoading || mixesLoading;
 
@@ -129,20 +120,13 @@ export function NamedBlends() {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <Pagination
-          currentPage={currentPage}
-          pageSize={pageSize}
-          totalCount={filteredMixes.length}
-          onPageChange={setCurrentPage}
-        />
         <ul className="flex w-full flex-col divide-y divide-gray-600 self-center">
           {filteredMixes
             .filter((mix) => (canAccess(3) ? true : mix.approved))
-            .slice(...pageIndeces)
             .map((mix) => (
               <li
                 key={mix.id}
-                className="flex items-center justify-between gap-8 py-2 px-1"
+                className="flex items-center justify-between gap-8 p-2 focus-within:bg-gray-700 hover:bg-gray-700"
               >
                 <div>
                   {canAccess(3) && (
@@ -240,6 +224,8 @@ export function NamedBlends() {
   );
 }
 
+// TODO: blends submitted by access lower than admin are automatically unapproved with notification stating it will be waiting approval
+
 export function CreateNamedBlend() {
   const {
     namedMixes: { insert },
@@ -254,6 +240,9 @@ export function CreateNamedBlend() {
       admin={canAccess(3)}
       onCancel={() => navigate("..")}
       onSubmit={async (mix) => {
+        if (!canAccess(3)) {
+          mix.approved = false;
+        }
         insert(mix).then(({ error }) => {
           if (error) {
             showToast(
@@ -263,7 +252,12 @@ export function CreateNamedBlend() {
               { type: "error" }
             );
           } else {
-            showToast("Blend created successfully.", { type: "success" });
+            showToast(
+              canAccess(3)
+                ? "Blend created successfully."
+                : "Blend created successfully. Pending approval.",
+              { type: "success" }
+            );
             navigate("..");
           }
         });
@@ -285,10 +279,19 @@ export function EditNamedBlend() {
   }, [mixes]);
 
   async function handleSubmit(mix) {
+    const { id, ...updates } = mix;
+    if (!canAccess(3)) {
+      updates.approved = false;
+    }
     try {
-      const { error } = await update(mix);
+      const { error } = await update(id, updates);
       if (error) throw error;
-      showToast("Blend updated successfully.", { type: "success" });
+      showToast(
+        canAccess(3)
+          ? "Blend updated successfully."
+          : "Blend updated successfully. Pending approval.",
+        { type: "success" }
+      );
       navigate("..");
     } catch (error) {
       showToast(

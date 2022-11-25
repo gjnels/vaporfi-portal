@@ -14,7 +14,7 @@ export function SupabaseProvider({ children }) {
   const profiles = useSupabaseRealtime("profiles", ["role", "location"]);
   const nicotinePackets = useSupabaseRealtime("nicotine_packets");
   const namedMixes = useSupabaseRealtime("named_mixes");
-  const flavors = useSupabaseRealtime("flavors", ["flavor_categories"]);
+  const flavors = useSupabaseRealtime("flavors", ["category"]);
   const flavorCategories = useSupabaseRealtime("flavor_categories");
   const roles = useSupabaseTable("roles");
   const locations = useSupabaseTable("locations");

@@ -27,10 +27,10 @@ export function useSupabaseRealtime(table, foreignKeys = []) {
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: table },
-        (payload) => {
+        async (payload) => {
           const newValue =
             foreignKeys.length > 0
-              ? fetchRow(payload.new.id).then(({ data }) => {
+              ? await fetchRow(payload.new.id).then(({ data }) => {
                   return data;
                 })
               : payload.new;
@@ -40,10 +40,10 @@ export function useSupabaseRealtime(table, foreignKeys = []) {
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: table },
-        (payload) => {
+        async (payload) => {
           const newValue =
             foreignKeys.length > 0
-              ? fetchRow(payload.new.id).then(({ data }) => {
+              ? await fetchRow(payload.new.id).then(({ data }) => {
                   return data;
                 })
               : payload.new;
@@ -84,8 +84,7 @@ export function useSupabaseRealtime(table, foreignKeys = []) {
     return supabase.from(table).insert(data);
   }
 
-  function update(data) {
-    const { id, ...updates } = data;
+  function update(id, updates) {
     return supabase.from(table).update(updates).eq("id", id);
   }
 

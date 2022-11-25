@@ -10,20 +10,23 @@ export function PasswordRecovery() {
   const { session } = useAuthContext();
   const [email, setEmail] = useState(session?.user?.email ?? "");
   const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setMessage("");
+    setError("");
+
     try {
       setSubmitting(true);
-      const { error } = await supabase.auth.api.resetPasswordForEmail(email);
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
       if (error) throw error;
       setMessage(
         "Check your email for a password recovery link.\nYou may need to check your spam folder."
       );
     } catch (error) {
-      setMessage(error.error_description || error.message);
+      setError(error.error_description || error.message);
     } finally {
       setSubmitting(false);
     }
@@ -56,7 +59,10 @@ export function PasswordRecovery() {
             Login
           </Link>
         )}
-        <p className="whitespace-pre-wrap text-center">{message}</p>
+        {message && (
+          <p className="whitespace-pre-wrap text-center">{message}</p>
+        )}
+        {error && <p className="self-center text-rose-400">{error}</p>}
       </form>
     </>
   );

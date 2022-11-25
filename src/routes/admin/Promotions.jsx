@@ -66,7 +66,6 @@ export function Promotions() {
               <th className="px-3 py-2">Product</th>
               <th className="px-3 py-2">Sale</th>
               <th className="px-3 py-2">Priority</th>
-              {/* <th className="px-4 py-2"></th> */}
             </tr>
           </thead>
           <tbody>
@@ -74,7 +73,7 @@ export function Promotions() {
               .filter((promo) =>
                 searchTerms.every(
                   (q) =>
-                    promo.title.toLowerCase().includes(q) ||
+                    promo.title?.toLowerCase()?.includes(q) ||
                     promo.brand?.toLowerCase()?.includes(q) ||
                     promo.mix?.name?.toLowerCase()?.includes(q) ||
                     promo.mix?.blend?.some(({ flavor }) =>
@@ -86,7 +85,10 @@ export function Promotions() {
               )
               .sort((a, b) => (a.updated_at > b.updated_at ? -1 : 1))
               .map((promo) => (
-                <tr key={promo.id} className="border-b border-gray-500">
+                <tr
+                  key={promo.id}
+                  className="border-b border-gray-500 focus-within:bg-gray-700 hover:bg-gray-700"
+                >
                   <td className="px-4 py-2 font-semibold">
                     <p className="text-base lg:text-lg">{promo.title}</p>
                   </td>
@@ -175,8 +177,9 @@ export function EditPromo() {
   const navigate = useNavigate();
 
   async function handleSubmit(data) {
+    const { id, ...updates } = data;
     try {
-      const { error } = await update(data);
+      const { error } = await update(id, updates);
       if (error) throw error;
       navigate("..");
     } catch (error) {

@@ -14,6 +14,7 @@ export function SetPassword() {
   const navigate = useNavigate();
   const location = useLocation();
   const { session, loading } = useAuthContext();
+  console.log(session);
 
   const [formData, handleChange] = useForm({
     newPassword: "",
@@ -45,6 +46,7 @@ export function SetPassword() {
       showToast("Password updated", { type: "success" });
       navigate(location.state?.prevLocation ?? "/", { replace: true });
     } catch (error) {
+      if (import.meta.env.DEV) console.log(error);
       setFormError(error.message);
     } finally {
       setSubmitting(false);

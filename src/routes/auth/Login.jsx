@@ -22,6 +22,7 @@ export function Login() {
       if (error) throw error;
       navigate(location.state?.prevLocation ?? "/", { replace: true });
     } catch (error) {
+      console.error(error);
       setError(error.error_description || error.message);
     }
   }
@@ -61,7 +62,7 @@ export function Login() {
         >
           Login
         </Button>
-        <Link to="/set-password" className="self-center">
+        <Link to="/forgot-password" className="self-center">
           Forgot your password?
         </Link>
       </form>

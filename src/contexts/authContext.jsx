@@ -14,6 +14,12 @@ export function AuthProvider({ children }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Used to redirect logged in user to set password page if they are marked as a new user
+  const newUser = useMemo(() => {
+    if (session == null) return false;
+    return session.user.user_metadata?.newUser != null;
+  }, [session]);
+
   useEffect(() => {
     // Get session on app load
     (async () => {
@@ -37,7 +43,7 @@ export function AuthProvider({ children }) {
     // Listen for auth changes
     if (import.meta.env.DEV) console.log("✅ subscribing to auth changes");
     const {
-      data: { subscription },
+      data: { subscription: authSubscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (import.meta.env.DEV)
         console.log("auth state change:", event, session);
@@ -52,9 +58,14 @@ export function AuthProvider({ children }) {
 
     return () => {
       if (import.meta.env.DEV) console.log("🛑 unsubscribed from auth changes");
-      subscription.unsubscribe();
+      authSubscription.unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    // Set up listener for profile changes
+    // const profileSubscription
+  }, [session]);
 
   async function fetchProfile(session) {
     // Prevent unecessary refreshes when changing focus back to the browser fires a SIGNED_IN event
@@ -67,8 +78,27 @@ export function AuthProvider({ children }) {
       .select("*, role(*), location(*)")
       .eq("id", session.user.id)
       .single()
-      .then(({ data }) => {
-        if (data) setProfile(data);
+      .then(({ data, error }) => {
+        if (error) throw error;
+        if (!data) throw new Error("User deleted");
+        setProfile(data);
+      })
+      .catch((error) => {
+        if (import.meta.env.DEV) console.log(error);
+        // There is a session but no profile, meaning the user account has been deleted
+        // Cannot call logout as it will result in an error
+        // Remove the session from localStorage
+        // This is a temporary fix for when a logged in user no longer has an account
+        // USER_DELETED event is not yet triggered in onAuthStateChange, waiting for bug fix
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key.startsWith("sb-") && key.endsWith("-auth-token")) {
+            localStorage.removeItem(key);
+            setSession(null);
+            setProfile(null);
+            return;
+          }
+        }
       });
   }
 
@@ -90,11 +120,11 @@ export function AuthProvider({ children }) {
     }
   };
 
-  async function updateProfile({ id, email, role, location, ...rest }) {
+  async function updateProfile({ id, role, location, name }) {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .update({ role: role.id, location: location.id, ...rest })
+        .update({ role, location, name })
         .eq("id", id)
         .select("*, role(*), location(*)")
         .single();
@@ -115,12 +145,6 @@ export function AuthProvider({ children }) {
       return profile.role.name === access;
     }
   }
-
-  // Used to redirect logged in user to set password page if they are marked as a new user
-  const newUser = useMemo(() => {
-    if (session == null) return false;
-    return session.user.user_metadata.newUser ?? false;
-  }, [session]);
 
   const value = {
     session,

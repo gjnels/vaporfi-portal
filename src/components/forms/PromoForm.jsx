@@ -35,11 +35,11 @@ export function PromoForm({ onSubmit, onCancel, promo, title }) {
     setSubmitting(true);
     const data = { ...formData };
 
-    if (data.img_url && !validUrl) {
-      imageInputRef.current.focus();
-      setSubmitting(false);
-      return;
-    }
+    // if (data.img_url && !validUrl) {
+    //   imageInputRef.current.focus();
+    //   setSubmitting(false);
+    //   return;
+    // }
 
     if (data.blend) {
       data.mix = data.mix?.id || data.mix; // make sure the mix is an id, not the entire mix object
@@ -115,7 +115,6 @@ export function PromoForm({ onSubmit, onCancel, promo, title }) {
           <Input
             id="brand"
             label="Brand"
-            required
             value={formData.brand}
             onChange={(e) =>
               setFormData((currentData) => ({
@@ -125,7 +124,8 @@ export function PromoForm({ onSubmit, onCancel, promo, title }) {
             }
           />
         )}
-        <div className="flex gap-2">
+        {/* Temporarily removing ability to add images to promotions */}
+        {/* <div className="flex gap-2">
           <div className="flex grow flex-col gap-1">
             <Input
               ref={imageInputRef}
@@ -165,7 +165,7 @@ export function PromoForm({ onSubmit, onCancel, promo, title }) {
               }}
             />
           )}
-        </div>
+        </div> */}
         <TextBox
           id="sale"
           label="Sale"

@@ -72,7 +72,7 @@ export function Profile() {
               label="Name"
               name="name"
               disabled={profile.role.name === "store"}
-              value={formData.name}
+              value={formData.name ?? ""}
               onChange={handleChange}
             />
             <Select

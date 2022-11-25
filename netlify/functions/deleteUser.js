@@ -1,14 +1,3 @@
-/*
-  update a user's data
-  service role key will be required
-
-  what can we update?
-  - email
-  - password
-  - user_metadata
-    - newUser: true if resetting password, otherwise null
-*/
-
 const { createClient } = require("@supabase/supabase-js");
 
 const supabase = createClient(
@@ -18,21 +7,16 @@ const supabase = createClient(
 
 export async function handler(event) {
   const eventBody = JSON.parse(event.body);
-  const { id, updates } = eventBody;
+  const { id } = eventBody;
 
   try {
-    const { data, error } = await supabase.auth.admin.updateUserById(
-      id,
-      updates
-    );
-
-    console.log(error);
+    const { error } = await supabase.auth.admin.deleteUser(id);
 
     if (error) throw error;
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ data }),
+      body: JSON.stringify({ success: true }),
     };
   } catch (error) {
     if (error.status) {

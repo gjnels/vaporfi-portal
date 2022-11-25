@@ -23,6 +23,7 @@ const links = [
   // { to: "/admin/transfers", title: "Transfers", access: 3 },
   // { to: "/admin/square", title: "Square", access: 3 },
   { to: "/admin/promotions", title: "Edit Promotions", access: 3 },
+  { to: "/admin/users", title: "Users", access: 3 },
 ];
 
 export function NavBar() {
@@ -53,10 +54,10 @@ export function NavBar() {
             <div className="flex flex-col gap-2">
               {profile && (
                 <Link
-                  className="whitespace-pre-wrap no-underline"
+                  className="w-full overflow-hidden text-ellipsis whitespace-pre-wrap text-sm no-underline"
                   to="/profile"
                 >
-                  {profile.name ?? profile.email}
+                  {profile.name || profile.email}
                 </Link>
               )}
               <Button variant="secondary link" onClick={signOut}>
