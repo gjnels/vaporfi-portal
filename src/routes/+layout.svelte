@@ -8,11 +8,11 @@
 </svelte:head>
 
 <div class="flex h-full flex-col">
-  <header class="border-b-2 border-gray-800 px-4 md:px-6">
+  <header class="border-b border-zinc-700 px-4 md:px-6">
     <div class="flex items-center py-1">
       <Logo />
     </div>
-    <nav class="-mb-0.5 flex gap-4 overflow-x-scroll">
+    <nav class="-mb-px flex gap-4 overflow-x-scroll">
       <Navlink
         href="/"
         label="Promotions"
@@ -24,7 +24,7 @@
     <slot />
   </main>
 
-  <footer class="border-t border-gray-800 p-2 text-center text-xs font-light">
+  <footer class="border-t border-zinc-700 p-2 text-center text-xs font-light">
     Created by Garrett Nelson &copy;2023
   </footer>
 </div>

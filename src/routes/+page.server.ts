@@ -1,15 +1,6 @@
+import type { Blend } from '$lib/types/flavors'
 import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
 import type { PageServerLoad } from './$types'
-
-type Blend = {
-  name: string
-  flavor1: { flavor: string }
-  flavor2: { flavor: string } | null
-  flavor3: { flavor: string } | null
-  shots1: number
-  shots2: number | null
-  shots3: number | null
-} | null
 
 export const load = (async ({ locals: { supabase } }) => {
   const today = new Date().toISOString()
@@ -33,7 +24,7 @@ export const load = (async ({ locals: { supabase } }) => {
     .order('valid_from', { ascending: false })
     .order('valid_until')
     .order('title')
-    .returns<Array<DatabaseRow<'promos'> & Blend>>()
+    .returns<Array<DatabaseRow<'promos'> & { blend: Blend | null }>>()
 
   return { promos }
 }) satisfies PageServerLoad

@@ -11,7 +11,7 @@
 <a
   {href}
   class={twMerge(
-    'rounded-t-md border-b-2 border-transparent px-2 py-1 outline-none transition hover:bg-gray-800 hover:text-gray-100 focus-visible:bg-gray-800 focus-visible:text-gray-100',
-    active ? 'border-gray-300' : 'text-gray-400/80'
+    'rounded-t-md border-b-2 border-transparent px-2 py-1 outline-none transition hover:bg-zinc-800 hover:text-zinc-100 focus-visible:bg-zinc-800 focus-visible:text-zinc-100',
+    active ? 'border-zinc-300' : 'text-zinc-400/80'
   )}>{label}</a
 >

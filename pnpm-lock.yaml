@@ -7,6 +7,9 @@ dependencies:
   '@supabase/supabase-js':
     specifier: ^2.13.1
     version: 2.13.1
+  dayjs:
+    specifier: ^1.11.7
+    version: 1.11.7
   tailwind-merge:
     specifier: ^1.11.0
     version: 1.11.0
@@ -863,6 +866,10 @@ packages:
     dependencies:
       es5-ext: 0.10.62
       type: 1.2.0
+    dev: false
+
+  /dayjs@1.11.7:
+    resolution: {integrity: sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==}
     dev: false
 
   /debug@2.6.9:
