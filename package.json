@@ -37,6 +37,7 @@
     "@supabase/auth-helpers-sveltekit": "^0.9.0",
     "@supabase/supabase-js": "^2.13.1",
     "dayjs": "^1.11.7",
+    "svelte-hero-icons": "^5.0.0",
     "tailwind-merge": "^1.11.0"
   }
 }
