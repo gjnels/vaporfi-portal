@@ -1,4 +1,15 @@
-<h1>Welcome to SvelteKit</h1>
-<p>
-  Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
-</p>
+<script lang="ts">
+  import { PageLayout, PageTitle } from '$lib/components'
+  import type { PageData } from './$types'
+
+  export let data: PageData
+</script>
+
+<PageLayout>
+  <PageTitle
+    title="Promotions"
+    slot="header"
+  />
+
+  <span> promotions </span>
+</PageLayout>

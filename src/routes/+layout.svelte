@@ -8,11 +8,13 @@
 </svelte:head>
 
 <div class="flex h-full flex-col">
-  <header class="flex h-12 items-center border-b border-slate-600 px-4 md:h-16">
+  <header
+    class="flex h-12 items-center border-b border-slate-600 px-4 md:h-16 md:px-6"
+  >
     <Logo />
   </header>
 
-  <main class="mx-auto w-full max-w-screen-2xl grow p-4">
+  <main class="grow">
     <slot />
   </main>
 
