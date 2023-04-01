@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <link
       rel="icon"
-      href="%sveltekit.assets%/favicon.png"
+      href="%sveltekit.assets%/favicon.ico"
     />
     <meta
       name="viewport"
@@ -12,7 +12,31 @@
     />
     %sveltekit.head%
   </head>
-  <body data-sveltekit-preload-data="hover">
-    <div style="display: contents">%sveltekit.body%</div>
+
+  <noscript>
+    <style>
+      .app {
+        display: none;
+      }
+    </style>
+
+    <div class="grid h-screen w-screen place-content-center">
+      <span class="text-xl"
+        >JavaScript is currently disabled. In order for this site to work properly, JavaScript needs
+        to be enabled.</span
+      >
+    </div>
+  </noscript>
+
+  <body
+    data-sveltekit-preload-data="hover"
+    class="bg-slate-800 text-slate-300"
+  >
+    <div
+      style="display: contents"
+      class="app"
+    >
+      %sveltekit.body%
+    </div>
   </body>
 </html>
