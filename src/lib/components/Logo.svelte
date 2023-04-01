@@ -4,7 +4,7 @@
   x="0px"
   y="0px"
   viewBox="0 0 245 80"
-  class="h-full py-1 text-green-500"
+  class="h-12 text-green-500"
 >
   <g>
     <g>

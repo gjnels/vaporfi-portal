@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Logo } from '../lib/components'
+  import { Logo, Navlink } from '../lib/components'
   import '../tailwind.css'
 </script>
 
@@ -8,17 +8,23 @@
 </svelte:head>
 
 <div class="flex h-full flex-col">
-  <header
-    class="flex h-12 items-center border-b border-slate-600 px-4 md:h-16 md:px-6"
-  >
-    <Logo />
+  <header class="border-b-2 border-gray-800 px-4 md:px-6">
+    <div class="flex items-center py-1">
+      <Logo />
+    </div>
+    <nav class="-mb-0.5 flex gap-4 overflow-x-scroll">
+      <Navlink
+        href="/"
+        label="Promotions"
+      />
+    </nav>
   </header>
 
   <main class="grow">
     <slot />
   </main>
 
-  <footer class="border-t border-slate-600 p-2 text-center text-xs font-light">
+  <footer class="border-t border-gray-800 p-2 text-center text-xs font-light">
     Created by Garrett Nelson &copy;2023
   </footer>
 </div>

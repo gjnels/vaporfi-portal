@@ -1,5 +1,5 @@
 {#if $$slots.header}
-  <div class="border-b border-slate-600">
+  <div class="border-b border-gray-800">
     <div
       class="mx-auto flex w-full max-w-screen-2xl items-center px-4 py-6 md:px-6"
     >
