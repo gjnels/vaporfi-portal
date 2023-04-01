@@ -17,6 +17,10 @@
         href="/"
         label="Promotions"
       />
+      <Navlink
+        href="/flavor-picker"
+        label="Flavor Picker"
+      />
     </nav>
   </header>
 
