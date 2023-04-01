@@ -7,7 +7,7 @@
   "singleAttributePerLine": true,
   "svelteAllowShorthand": true,
   "svelteIndentScriptAndStyle": true,
-  "svelteBracketNewLine": true,
+  "bracketSameLine": false,
   "svelteSortOrder": "scripts-markup-options-styles",
   "printWidth": 80,
   "pluginSearchDirs": ["."],

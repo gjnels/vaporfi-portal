@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html
+  lang="en"
+  class="h-full"
+>
   <head>
     <meta charset="utf-8" />
     <link
@@ -20,23 +23,30 @@
       }
     </style>
 
-    <div class="grid h-screen w-screen place-content-center">
-      <span class="text-xl"
-        >JavaScript is currently disabled. In order for this site to work properly, JavaScript needs
-        to be enabled.</span
+    <div
+      class="absolute inset-0 grid place-content-center gap-2 text-center text-2xl"
+    >
+      <span>
+        For full functionality of this site it is necessary to enable
+        JavaScript.</span
       >
+      <span
+        >Here are the
+        <a
+          href="https://www.enable-javascript.com/"
+          class="text-green-300 underline hover:text-green-500 focus:text-green-500"
+          target="_blank"
+        >
+          instructions how to enable JavaScript in your web browser</a
+        >.
+      </span>
     </div>
   </noscript>
 
   <body
     data-sveltekit-preload-data="hover"
-    class="bg-slate-800 text-slate-300"
+    class="h-full bg-black text-slate-300"
   >
-    <div
-      style="display: contents"
-      class="app"
-    >
-      %sveltekit.body%
-    </div>
+    <div class="app contents h-full">%sveltekit.body%</div>
   </body>
 </html>
