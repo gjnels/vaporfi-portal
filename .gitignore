@@ -22,7 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-.*
-!.netlify
+.env*
 
 site-plan.md

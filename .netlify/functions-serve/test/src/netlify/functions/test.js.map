@@ -1,8 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../../../../Users/garrett/github/vaporfi/vaporfi-portal/netlify/functions/test.js"],
-  "sourceRoot": "/var/folders/rl/145tspdx2z915xyk_4g4q40h0000gn/T/tmp-40023-f5GKfqgLyepI",
-  "sourcesContent": ["export async function handler(event) {\n  console.log(\"EVENT:\", event);\n\n  return {\n    statusCode: 200,\n    body: JSON.stringify({ message: \"Hello\" }),\n  };\n}\n"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,uBAA8B,OAAO;AACnC,UAAQ,IAAI,UAAU,KAAK;AAE3B,SAAO;AAAA,IACL,YAAY;AAAA,IACZ,MAAM,KAAK,UAAU,EAAE,SAAS,QAAQ,CAAC;AAAA,EAC3C;AACF;",
-  "names": []
-}
