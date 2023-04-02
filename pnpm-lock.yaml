@@ -10,12 +10,21 @@ dependencies:
   dayjs:
     specifier: ^1.11.7
     version: 1.11.7
+  svelte-french-toast:
+    specifier: 1.0.4-beta.0
+    version: 1.0.4-beta.0(svelte@3.58.0)
   svelte-hero-icons:
     specifier: ^5.0.0
     version: 5.0.0
+  sveltekit-superforms:
+    specifier: ^0.6.6
+    version: 0.6.6(@sveltejs/kit@1.15.0)(svelte@3.58.0)(zod@3.21.4)
   tailwind-merge:
     specifier: ^1.11.0
     version: 1.11.0
+  zod:
+    specifier: ^3.21.4
+    version: 3.21.4
 
 devDependencies:
   '@sveltejs/adapter-auto':
@@ -2022,6 +2031,15 @@ packages:
       - sugarss
     dev: true
 
+  /svelte-french-toast@1.0.4-beta.0(svelte@3.58.0):
+    resolution: {integrity: sha512-PkYNukEQAPZyV5ei+JzeYEsbaXFSbJS8/SDTdC8giYa5Atxp2SRepFnPDWx6mu7rV53g886FNLktPMLwRljkpw==}
+    peerDependencies:
+      svelte: ^3.57.0
+    dependencies:
+      svelte: 3.58.0
+      svelte-writable-derived: 3.0.1(svelte@3.58.0)
+    dev: false
+
   /svelte-hero-icons@5.0.0:
     resolution: {integrity: sha512-xKMI/Z0f/6831I0R1YKJjVbAw9VBD6XKysvng6LtomlS4n3ZD1lZNAfLrrCmnc1pmiLr/8sVeQA8kgHLQwYlRg==}
     engines: {node: '>=14.0.0'}
@@ -2085,9 +2103,29 @@ packages:
       typescript: 4.9.5
     dev: true
 
+  /svelte-writable-derived@3.0.1(svelte@3.58.0):
+    resolution: {integrity: sha512-zBWCS5c3MA9o4NT/UJHP3KoPOhtmH2ZQ/QRK31w9LzLdPP7MNncUcBGIu4iH2RVt17iRfR6agm7nEqwNvsYuMw==}
+    peerDependencies:
+      svelte: ^3.2.1
+    dependencies:
+      svelte: 3.58.0
+    dev: false
+
   /svelte@3.58.0:
     resolution: {integrity: sha512-brIBNNB76mXFmU/Kerm4wFnkskBbluBDCjx/8TcpYRb298Yh2dztS2kQ6bhtjMcvUhd5ynClfwpz5h2gnzdQ1A==}
     engines: {node: '>= 8'}
+
+  /sveltekit-superforms@0.6.6(@sveltejs/kit@1.15.0)(svelte@3.58.0)(zod@3.21.4):
+    resolution: {integrity: sha512-VooUgwz4bV4yoC4oZIki3YKZtVWP1XxXHNqw3lMkn0pnuf71Ncwr/Ld3EPnHShT+WYKEW7LKACvIKL6xIL+K4g==}
+    peerDependencies:
+      '@sveltejs/kit': 1.x
+      svelte: 3.x
+      zod: 3.x
+    dependencies:
+      '@sveltejs/kit': 1.15.0(svelte@3.58.0)(vite@4.2.1)
+      svelte: 3.58.0
+      zod: 3.21.4
+    dev: false
 
   /tailwind-merge@1.11.0:
     resolution: {integrity: sha512-oG3/328Y7LrfPMfkgMNxoqEk1ZQdXBxdphf9FFrreo8q0EtVIHt3bQf2IyFhQuVt8puB57lCRBNbazGhYAyz9w==}
@@ -2363,3 +2401,7 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  /zod@3.21.4:
+    resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
+    dev: false
