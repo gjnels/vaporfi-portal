@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Divider, PageLayout, PageTitle } from '$lib/components'
+  import { Divider, PageLayout, PageTitle } from '$components'
   import { formatPromoDate } from '$lib/utils/dates'
   import { createDisplayBlendString } from '$lib/utils/flavors'
   import type { PageData } from './$types'
