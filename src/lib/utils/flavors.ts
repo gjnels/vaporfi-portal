@@ -1,6 +1,10 @@
 import type { Blend } from '$lib/types/flavors.types'
+import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
 
 type BlendFlavors = Omit<Blend, 'name'>
+
+export const categoriesFromFlavors = (flavors: DatabaseRow<'flavors'>[]) =>
+  Array.from(new Set(flavors.map((flavor) => flavor.category)))
 
 const blendFlavorsToArray = (data: BlendFlavors) => {
   const blend = [
@@ -37,7 +41,7 @@ export const createDisplayBlendString = (blend: BlendFlavors) => {
 }
 
 export const createBlendString = (
-  mix: BlendFlavors & { name?: string; bottleCount: number; nicotine: number }
+  mix: Blend & { bottleCount: number; nicotine: number }
 ) => {
   return `${mix.bottleCount} x ${mix.nicotine}mg ${
     mix.name ? `${mix.name} ` : ''

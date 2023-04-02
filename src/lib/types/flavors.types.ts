@@ -2,7 +2,7 @@ import type { flavorPickerSchema } from '$lib/schemas/flavors'
 import type { z } from 'zod'
 
 export type Blend = {
-  name: string
+  name?: string
   flavor1: { flavor: string } | string
   flavor2: { flavor: string } | string | null
   flavor3: { flavor: string } | string | null
