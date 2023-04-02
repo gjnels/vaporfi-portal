@@ -52,17 +52,17 @@ export interface Database {
       }
       flavors: {
         Row: {
-          category: Database["public"]["Enums"]["flavorcategory"]
+          category: Database['public']['Enums']['flavorcategory']
           flavor: string
           id: number
         }
         Insert: {
-          category: Database["public"]["Enums"]["flavorcategory"]
+          category: Database['public']['Enums']['flavorcategory']
           flavor: string
           id?: number
         }
         Update: {
-          category?: Database["public"]["Enums"]["flavorcategory"]
+          category?: Database['public']['Enums']['flavorcategory']
           flavor?: string
           id?: number
         }
@@ -189,17 +189,17 @@ export interface Database {
         Row: {
           id: string
           name: string | null
-          role: Database["public"]["Enums"]["role"] | null
+          role: Database['public']['Enums']['role'] | null
         }
         Insert: {
           id: string
           name?: string | null
-          role?: Database["public"]["Enums"]["role"] | null
+          role?: Database['public']['Enums']['role'] | null
         }
         Update: {
           id?: string
           name?: string | null
-          role?: Database["public"]["Enums"]["role"] | null
+          role?: Database['public']['Enums']['role'] | null
         }
       }
       promos: {
@@ -324,7 +324,7 @@ export interface Database {
       authorize_role: {
         Args: {
           user_id: string
-          required_role: Database["public"]["Enums"]["role"]
+          required_role: Database['public']['Enums']['role']
         }
         Returns: boolean
       }
@@ -355,14 +355,14 @@ export interface Database {
     }
     Enums: {
       flavorcategory:
-        | "Fruit"
-        | "Candy"
-        | "Dessert"
-        | "Tobacco"
-        | "Menthol"
-        | "Drinks"
-        | "Other"
-      role: "Store" | "Manager" | "Admin"
+        | 'Fruit'
+        | 'Candy'
+        | 'Dessert'
+        | 'Tobacco'
+        | 'Menthol'
+        | 'Drinks'
+        | 'Other'
+      role: 'Store' | 'Manager' | 'Admin'
     }
     CompositeTypes: {
       [_ in never]: never
