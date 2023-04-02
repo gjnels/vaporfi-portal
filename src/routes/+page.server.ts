@@ -1,4 +1,4 @@
-import type { Blend } from '$lib/types/flavors'
+import type { Blend } from '$lib/types/flavors.types'
 import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
 import type { PageServerLoad } from './$types'
 

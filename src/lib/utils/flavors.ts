@@ -1,6 +1,8 @@
-import type { Blend } from '$lib/types/flavors'
+import type { Blend } from '$lib/types/flavors.types'
 
-const blendFlavorToArray = (data: Blend) => {
+type BlendFlavors = Omit<Blend, 'name'>
+
+const blendFlavorsToArray = (data: BlendFlavors) => {
   const blend = [
     {
       flavor:
@@ -28,8 +30,18 @@ const blendFlavorToArray = (data: Blend) => {
   return blend
 }
 
-export const createDisplayBlendString = (blend: Blend) => {
-  return blendFlavorToArray(blend)
+export const createDisplayBlendString = (blend: BlendFlavors) => {
+  return blendFlavorsToArray(blend)
     .map(({ flavor, shots }) => `${shots} ${flavor}`)
     .join(' - ')
+}
+
+export const createBlendString = (
+  mix: BlendFlavors & { name?: string; bottleCount: number; nicotine: number }
+) => {
+  return `${mix.bottleCount} x ${mix.nicotine}mg ${
+    mix.name ? `${mix.name} ` : ''
+  }(${blendFlavorsToArray(mix)
+    .map(({ flavor, shots }) => `${shots} ${flavor}`)
+    .join(' - ')})`
 }

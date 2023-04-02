@@ -1,3 +1,6 @@
+import type { flavorPickerSchema } from '$lib/schemas/flavors'
+import type { z } from 'zod'
+
 export type Blend = {
   name: string
   flavor1: { flavor: string } | string
@@ -7,3 +10,5 @@ export type Blend = {
   shots2: number | null
   shots3: number | null
 }
+
+export type FlavorPickerBlend = z.infer<typeof flavorPickerSchema>
