@@ -9,11 +9,11 @@
 </svelte:head>
 
 <div class="flex h-full flex-col">
-  <header class="border-b border-zinc-700 px-4 md:px-6">
-    <div class="flex items-center py-1">
+  <header class="border-b border-zinc-700">
+    <div class="flex items-center px-4 py-1 md:px-6">
       <Logo />
     </div>
-    <nav class="-mb-px flex gap-4 overflow-x-scroll">
+    <nav class="-mb-px flex gap-4 overflow-x-scroll px-4 md:px-6">
       <Navlink
         href="/"
         label="Promotions"
