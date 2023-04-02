@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Toaster } from 'svelte-french-toast'
   import { Logo, Navlink } from '../lib/components'
   import '../tailwind.css'
 </script>
@@ -32,3 +33,5 @@
     Created by Garrett Nelson &copy;2023
   </footer>
 </div>
+
+<Toaster />
