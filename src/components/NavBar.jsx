@@ -20,15 +20,6 @@ export const NavBar = () => {
         </div>
         <div className='flex grow flex-col divide-y divide-gray-700 overflow-auto py-2 px-4'>
           <LinkGroup links={links.filter((link) => link.access === 0)} />
-          {accessByLevel(1) && (
-            <LinkGroup links={links.filter((link) => link.access === 1)} />
-          )}
-          {accessByLevel(2) && (
-            <LinkGroup links={links.filter((link) => link.access === 2)} />
-          )}
-          {accessByLevel(3) && (
-            <LinkGroup links={links.filter((link) => link.access === 3)} />
-          )}
         </div>
         <footer className='p-4'>
           <p className='text-center text-xs text-gray-500'>
@@ -61,21 +52,6 @@ export const NavBar = () => {
               <MobileLinkGroup
                 links={links.filter((link) => link.access === 0)}
               />
-              {accessByLevel(1) && (
-                <MobileLinkGroup
-                  links={links.filter((link) => link.access === 1)}
-                />
-              )}
-              {accessByLevel(2) && (
-                <MobileLinkGroup
-                  links={links.filter((link) => link.access === 2)}
-                />
-              )}
-              {accessByLevel(3) && (
-                <MobileLinkGroup
-                  links={links.filter((link) => link.access === 3)}
-                />
-              )}
             </Menu.Items>
           </Transition>
         </Menu>
