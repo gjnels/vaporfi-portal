@@ -8,7 +8,7 @@
   <title>VaporFi Columbus</title>
 </svelte:head>
 
-<div class="flex h-full flex-col">
+<div class="flex min-h-full flex-col">
   <header class="border-b border-zinc-700">
     <div class="flex items-center px-4 py-1 md:px-6">
       <Logo />

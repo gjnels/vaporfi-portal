@@ -3,7 +3,7 @@ import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
 import type { PageServerLoad } from './$types'
 
 export const load = (async ({ locals: { supabase } }) => {
-  const today = new Date().toISOString()
+  const today = new Date().toLocaleDateString()
 
   const { data: promos } = await supabase
     .from('promos')
@@ -21,8 +21,8 @@ export const load = (async ({ locals: { supabase } }) => {
     )
     .lte('valid_from', today)
     .gte('valid_until', today)
-    .order('valid_from', { ascending: false })
     .order('valid_until')
+    .order('valid_from', { ascending: false })
     .order('title')
     .returns<Array<DatabaseRow<'promos'> & { blend: Blend | null }>>()
 

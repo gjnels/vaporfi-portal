@@ -46,7 +46,7 @@
 
           <!-- details -->
           {#if promo.details}
-            <p class="whitespace-pre-wrap px-2 text-white">
+            <p class="whitespace-pre-line px-2 text-white">
               {promo.details}
             </p>
             <Divider />
@@ -56,14 +56,14 @@
           <div class="flex flex-wrap gap-x-8 gap-y-2 px-2">
             <p class="flex flex-col">
               <span class="text-lg font-light underline">Begins</span>
-              <span class="whitespace-pre-wrap font-medium text-white"
+              <span class="font-medium text-white"
                 >{formatPromoDate(promo.valid_from)}</span
               >
             </p>
             <!-- date promo ends (inclusive) -->
             <p class="flex flex-col">
               <span class="text-lg font-light underline">Ends</span>
-              <span class="whitespace-pre-wrap font-medium text-white"
+              <span class="font-medium text-white"
                 >{formatPromoDate(promo.valid_until)}</span
               >
             </p>
@@ -74,13 +74,13 @@
           <!-- sale -->
           <p class="flex flex-col px-2">
             <span class="text-lg font-light underline">Sale</span>
-            <span class="whitespace-pre-wrap text-white">{promo.sale}</span>
+            <span class="whitespace-pre-line text-white">{promo.sale}</span>
           </p>
 
           <!-- notes -->
           {#if promo.notes}
             <Divider />
-            <span class="whitespace-pre-wrap px-2 opacity-80">
+            <span class="whitespace-pre-line px-2 opacity-80">
               {promo.notes}
             </span>
           {/if}
