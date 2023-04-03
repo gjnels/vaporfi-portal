@@ -1,4 +1,4 @@
-import type { flavorPickerSchema } from '$lib/schemas/flavors'
+import type { flavorPickerSchema } from '$lib/schemas/customBlends'
 import type { z } from 'zod'
 
 export type Blend = {

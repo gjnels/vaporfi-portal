@@ -1,5 +1,5 @@
 import { browser } from '$app/environment'
-import { flavorPickerRefinedSchema } from '$lib/schemas/flavors'
+import { flavorPickerRefinedSchema } from '$lib/schemas/customBlends'
 import type { FlavorPickerBlend } from '$lib/types/flavors.types'
 import { get, writable } from 'svelte/store'
 

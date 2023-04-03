@@ -4,7 +4,7 @@ import { superValidate } from 'sveltekit-superforms/server'
 import {
   flavorPickerSchema,
   flavorPickerRefinedSchema
-} from '$lib/schemas/flavors'
+} from '$lib/schemas/customBlends'
 
 export const load = (async ({ locals: { supabase } }) => {
   const { data: flavors, error: err } = await supabase
