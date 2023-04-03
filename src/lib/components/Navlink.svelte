@@ -4,8 +4,11 @@
 
   export let href: string
   export let label: string
+  export let activePath = ''
 
-  $: active = $page.url.pathname === href
+  $: active = activePath
+    ? $page.url.pathname.startsWith(activePath)
+    : $page.url.pathname === href
 </script>
 
 <a
