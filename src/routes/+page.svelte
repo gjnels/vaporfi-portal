@@ -6,8 +6,6 @@
 
   export let data: PageData
   $: ({ promos } = data)
-
-  console.log(data.today)
 </script>
 
 <svelte:head>
