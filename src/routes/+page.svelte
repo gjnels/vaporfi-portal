@@ -8,6 +8,10 @@
   $: ({ promos } = data)
 </script>
 
+<svelte:head>
+  <title>VF Columbus | Active Promotions</title>
+</svelte:head>
+
 <PageLayout>
   <PageTitle
     title="Active Promotions"

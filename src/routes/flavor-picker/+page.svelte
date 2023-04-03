@@ -75,6 +75,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>VF Columbus | Flavor Picker</title>
+</svelte:head>
+
 <PageLayout>
   <PageTitle
     title="Flavor Picker"
