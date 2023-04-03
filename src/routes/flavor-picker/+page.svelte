@@ -4,13 +4,20 @@
   import { Form, Input, RadioGroup, Select } from '$components/forms'
   import { numberProxy, superForm } from 'sveltekit-superforms/client'
   import { writable } from 'svelte/store'
-  import { categoriesFromFlavors } from '$lib/utils/flavors'
+  import { categoriesFromFlavors, createBlendString } from '$lib/utils/flavors'
   import { toast } from 'svelte-french-toast'
+  import { savedBlends, storeSavedBlends } from '$lib/stores/savedBlends'
+  import cuid2 from '@paralleldrive/cuid2'
+  import { Icon, Pencil, Trash } from 'svelte-hero-icons'
+  import type { FlavorPickerBlend } from '$lib/types/flavors.types'
 
   export let data: PageData
 
   $: flavors = data.flavors
   $: categories = categoriesFromFlavors(flavors)
+
+  // Maximum number of blends to save in local storage
+  const MAX_SAVED_BLENDS = 10
 
   const { form, enhance, errors, constraints } = superForm(data.form, {
     applyAction: false,
@@ -18,17 +25,62 @@
     dataType: 'json',
     clearOnSubmit: 'none',
     multipleSubmits: 'prevent',
-    onResult: ({ result: { type } }) => {
-      type === 'success'
-        ? toast.success('Validation passed!')
-        : toast.error('Validation failed')
+    onUpdated: ({ form }) => {
+      if (form.valid) {
+        const blend = form.data
+
+        if (blend.id) {
+          // Existing blend, update it and move it to the top of the list
+          $savedBlends = [
+            blend,
+            ...$savedBlends.filter((savedBlend) => savedBlend.id !== blend.id)
+          ]
+
+          // Reset form to prevent unwanted update of a saved blend
+          resetForm()
+        } else {
+          // Create a new blend with a cuid
+          $savedBlends = [
+            { ...blend, id: cuid2.createId() },
+            ...$savedBlends
+          ].slice(0, MAX_SAVED_BLENDS)
+        }
+
+        // Save blends to storage
+        storeSavedBlends()
+
+        // Copy blend string to clipboard
+        copyBlendToClipboard(blend)
+      }
     }
   })
 
+  // Ensure nicotine and bottleCount remain numbers and not strings
   const nicotine = numberProxy(form, 'nicotine')
   const bottleCount = numberProxy(form, 'bottleCount')
 
   const flavorCount = writable<1 | 2 | 3>(1)
+
+  // Create blend string and copy to clipboard (if possible)
+  // Shows a toast notification as the promise resolves/rejects
+  const copyBlendToClipboard = (blend: FlavorPickerBlend) => {
+    toast.promise(navigator.clipboard.writeText(createBlendString(blend)), {
+      loading: 'Copying custom blend to clipboard...',
+      error: 'Copy to clipboard failed',
+      success: 'Custom blend copied to clipboard.'
+    })
+  }
+
+  // Set form values to the selected blend to edit
+  const setEditBlend = (blend: FlavorPickerBlend) => {
+    $flavorCount = blend.flavor3 ? 3 : blend.flavor2 ? 2 : 1
+    $form = { ...$form, ...blend }
+  }
+
+  const resetForm = () => {
+    $flavorCount = 1 // Reset flavor count
+    $form = data.form.data // Reset rest of form values
+  }
 
   const shotOptions = [
     { value: 1, label: 'Single Shot' },
@@ -79,7 +131,7 @@
   <title>VF Columbus | Flavor Picker</title>
 </svelte:head>
 
-<PageLayout>
+<PageLayout contentContainerStyles="flex [&>*]:grow gap-10 flex-wrap">
   <PageTitle
     title="Flavor Picker"
     slot="header"
@@ -192,10 +244,83 @@
       />
     </div>
 
-    <Button
-      type="submit"
-      slot="actions"
-      color="green">Create</Button
-    >
+    <svelte:fragment slot="actions">
+      {#if $form.id}
+        <!-- Editing a blend -->
+        <Button
+          type="submit"
+          color="green">Update Blend</Button
+        >
+        <Button
+          color="purple"
+          onclick={resetForm}>Cancel</Button
+        >
+      {:else}
+        <!-- Creating a new blend -->
+        <Button
+          type="submit"
+          color="green">Create Blend</Button
+        >
+        <Button
+          color="gray"
+          onclick={resetForm}>Reset Form</Button
+        >
+      {/if}
+    </svelte:fragment>
   </Form>
+
+  <div>
+    <div class="mb-4 flex items-center justify-between gap-4">
+      <h2 class="text-2xl font-semibold">Saved Blends</h2>
+      <Button
+        color="red"
+        small
+        onclick={() => {
+          $savedBlends = []
+          storeSavedBlends()
+        }}>Clear All</Button
+      >
+    </div>
+    {#if $savedBlends.length === 0}
+      <p class="font-light italic text-zinc-400">No saved blends found</p>
+    {:else}
+      <ul class="flex flex-col gap-2">
+        {#each $savedBlends as blend (blend.id)}
+          <li
+            class="flex rounded-lg border border-transparent bg-zinc-900 p-2 transition duration-100 hover:border-zinc-700"
+          >
+            <Button
+              styles="border-none text-left font-normal px-2 py-1 hover:bg-zinc-600"
+              onclick={() => copyBlendToClipboard(blend)}
+              >{createBlendString(blend)}</Button
+            >
+            <Button
+              icon
+              color="green"
+              styles="ml-auto"
+              onclick={() => setEditBlend(blend)}
+              ><Icon
+                src={Pencil}
+                solid
+              /></Button
+            >
+            <Button
+              icon
+              color="red"
+              onclick={() => {
+                $savedBlends = $savedBlends.filter(
+                  (savedBlend) => savedBlend.id !== blend.id
+                )
+                storeSavedBlends()
+              }}
+              ><Icon
+                src={Trash}
+                solid
+              /></Button
+            >
+          </li>
+        {/each}
+      </ul>
+    {/if}
+  </div>
 </PageLayout>
