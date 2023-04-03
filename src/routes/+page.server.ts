@@ -3,7 +3,9 @@ import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
 import type { PageServerLoad } from './$types'
 
 export const load = (async ({ locals: { supabase } }) => {
-  const today = new Date().toLocaleDateString()
+  const today = new Date().toLocaleDateString('en-us', {
+    timeZone: 'America/New_York'
+  })
 
   const { data: promos } = await supabase
     .from('promos')
