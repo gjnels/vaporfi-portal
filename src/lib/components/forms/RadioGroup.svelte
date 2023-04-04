@@ -50,7 +50,7 @@
           bind:group={value}
           value={option.value}
           class={twMerge(
-            'peer cursor-pointer text-zinc-500 focus:ring-0 focus:ring-offset-0',
+            'peer cursor-pointer text-zinc-400 transition focus:ring-white  focus:ring-offset-0',
             color === 'green' && 'text-green-500',
             color === 'purple' && 'text-violet-500',
             radioStyles

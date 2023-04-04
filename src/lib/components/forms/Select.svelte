@@ -34,7 +34,7 @@
   <select
     {name}
     class={twMerge(
-      'cursor-pointer rounded-lg border-[3px] border-transparent bg-zinc-800 px-3 py-2 text-white outline-none focus:border-zinc-300 focus:ring-0',
+      'cursor-pointer rounded-lg border-[3px] border-transparent bg-zinc-800 px-3 py-2 text-white outline-none focus:border-zinc-300 focus:bg-transparent focus:ring-0',
       color === 'green' && 'focus:border-green-400',
       color === 'purple' && 'focus:border-violet-400',
       !!errors && !!errors.length && 'focus:border-rose-400',
