@@ -17,25 +17,36 @@
   {disabled}
   on:click={onclick}
   class={twMerge(
-    'inline-flex items-center justify-center gap-1 rounded-lg border-2 border-transparent bg-transparent px-3 py-2 font-semibold text-white outline-none ring-white transition hover:border-current hover:bg-transparent focus-visible:ring active:scale-95',
+    'inline-flex items-center justify-center gap-1 rounded-lg border-2 border-transparent bg-transparent px-3 py-2 font-semibold text-white outline-none ring-white transition focus-visible:ring active:scale-95',
+    transparent
+      ? ['hover:bg-zinc-800', color && 'hover:text-zinc-950']
+      : 'hover:border-current hover:bg-transparent',
     color === 'green' && [
       icon
         ? 'text-green-500 hover:text-green-400'
+        : transparent
+        ? 'text-green-500 hover:bg-green-500'
         : 'bg-green-600 hover:text-green-500'
     ],
     color === 'purple' && [
       icon
         ? 'text-violet-500 hover:text-violet-400'
+        : transparent
+        ? 'text-violet-500 hover:bg-violet-500'
         : 'bg-violet-600 hover:text-violet-500'
     ],
     color === 'red' && [
       icon
         ? 'text-rose-500 hover:text-rose-500'
+        : transparent
+        ? 'text-rose-500 hover:bg-rose-500'
         : 'bg-rose-600 hover:text-rose-500'
     ],
     color === 'gray' && [
       icon
         ? 'text-zinc-400 hover:text-zinc-300'
+        : transparent
+        ? 'text-zinc-400 hover:bg-zinc-400'
         : 'bg-zinc-500 hover:text-zinc-300'
     ],
     small && 'px-2 py-1 text-sm',
