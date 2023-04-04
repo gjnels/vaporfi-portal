@@ -1,6 +1,6 @@
 import { browser } from '$app/environment'
 import { flavorPickerRefinedSchema } from '$lib/schemas/customBlends'
-import type { FlavorPickerBlend } from '$lib/types/flavors.types'
+import type { SavedFlavorPickerBlend } from '$lib/types/flavors.types'
 import { get, writable } from 'svelte/store'
 
 const STORAGE_KEY = 'vf-portal-saved-blends'
@@ -11,20 +11,23 @@ const getFromStorage = () => {
     if (storedData) {
       const parsedData = JSON.parse(storedData)
       if (Array.isArray(parsedData)) {
-        return parsedData.reduce((blends: FlavorPickerBlend[], savedBlend) => {
-          const result = flavorPickerRefinedSchema.safeParse(savedBlend)
-          if (result.success) {
-            return [...blends, result.data]
-          }
-          return blends
-        }, [])
+        return parsedData.reduce(
+          (blends: SavedFlavorPickerBlend[], savedBlend) => {
+            const result = flavorPickerRefinedSchema.safeParse(savedBlend)
+            if (result.success) {
+              return [...blends, result.data]
+            }
+            return blends
+          },
+          []
+        )
       }
     }
   }
   return []
 }
 
-export const savedBlends = writable<FlavorPickerBlend[]>(getFromStorage())
+export const savedBlends = writable<SavedFlavorPickerBlend[]>(getFromStorage())
 
 export const storeSavedBlends = () => {
   try {

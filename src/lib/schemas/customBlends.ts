@@ -99,3 +99,7 @@ export const flavorPickerRefinedSchema = flavorPickerSchema.superRefine(
     }
   }
 )
+
+export const savedFlavorPickerBlendSchema = flavorPickerSchema.extend({
+  id: z.string().cuid2()
+})

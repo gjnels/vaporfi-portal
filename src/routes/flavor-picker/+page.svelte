@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { PageData } from './$types'
+  import type { PageData, Snapshot } from './$types'
   import { Button, PageLayout, PageTitle } from '$components'
   import { Form, Input, RadioGroup, Select } from '$components/forms'
   import { numberProxy, superForm } from 'sveltekit-superforms/client'
@@ -9,7 +9,7 @@
   import { savedBlends, storeSavedBlends } from '$lib/stores/savedBlends'
   import cuid2 from '@paralleldrive/cuid2'
   import { Icon, Pencil, Trash } from 'svelte-hero-icons'
-  import type { FlavorPickerBlend } from '$lib/types/flavors.types'
+  import type { SavedFlavorPickerBlend } from '$lib/types/flavors.types'
 
   export let data: PageData
 
@@ -19,41 +19,43 @@
   // Maximum number of blends to save in local storage
   const MAX_SAVED_BLENDS = 10
 
-  const { form, enhance, errors, constraints } = superForm(data.form, {
-    applyAction: false,
-    taintedMessage: null,
-    dataType: 'json',
-    clearOnSubmit: 'none',
-    multipleSubmits: 'prevent',
-    onUpdated: ({ form }) => {
-      if (form.valid) {
-        const blend = form.data
+  const { form, enhance, errors, constraints, capture, restore } = superForm(
+    data.form,
+    {
+      applyAction: false,
+      taintedMessage: null,
+      dataType: 'json',
+      clearOnSubmit: 'none',
+      multipleSubmits: 'prevent',
+      onUpdated: ({ form }) => {
+        if (form.valid) {
+          // Get blend data from form
+          // If it does not have an id, create a new one
+          const blend: SavedFlavorPickerBlend = form.data.id
+            ? { ...form.data, id: form.data.id }
+            : { ...form.data, id: cuid2.createId() }
 
-        if (blend.id) {
-          // Existing blend, update it and move it to the top of the list
+          // Store the blend in savedBlends with a limit on the number of saved blends
           $savedBlends = [
             blend,
             ...$savedBlends.filter((savedBlend) => savedBlend.id !== blend.id)
-          ]
-
-          // Reset form to prevent unwanted update of a saved blend
-          resetForm()
-        } else {
-          // Create a new blend with a cuid
-          $savedBlends = [
-            { ...blend, id: cuid2.createId() },
-            ...$savedBlends
           ].slice(0, MAX_SAVED_BLENDS)
+
+          if (form.data.id) {
+            // This is an already existing saved blend
+            // Reset form to prevent unwanted update of a saved blend
+            resetForm()
+          }
+
+          // Save blends to storage
+          storeSavedBlends()
+
+          // Copy blend string to clipboard
+          copyBlendToClipboard(blend)
         }
-
-        // Save blends to storage
-        storeSavedBlends()
-
-        // Copy blend string to clipboard
-        copyBlendToClipboard(blend)
       }
     }
-  })
+  )
 
   // Ensure nicotine and bottleCount remain numbers and not strings
   const nicotine = numberProxy(form, 'nicotine')
@@ -63,7 +65,7 @@
 
   // Create blend string and copy to clipboard (if possible)
   // Shows a toast notification as the promise resolves/rejects
-  const copyBlendToClipboard = (blend: FlavorPickerBlend) => {
+  const copyBlendToClipboard = (blend: SavedFlavorPickerBlend) => {
     toast.promise(navigator.clipboard.writeText(createBlendString(blend)), {
       loading: 'Copying custom blend to clipboard...',
       error: 'Copy to clipboard failed',
@@ -72,9 +74,20 @@
   }
 
   // Set form values to the selected blend to edit
-  const setEditBlend = (blend: FlavorPickerBlend) => {
+  const setEditBlend = (blend: SavedFlavorPickerBlend) => {
     $flavorCount = blend.flavor3 ? 3 : blend.flavor2 ? 2 : 1
     $form = { ...$form, ...blend }
+  }
+
+  // Delete a saved blend from savedBlends and store the new savedBlends to localStorage
+  const deleteBlend = (blendId: string) => {
+    $savedBlends = $savedBlends.filter(
+      (savedBlend) => savedBlend.id !== blendId
+    )
+    storeSavedBlends()
+
+    // If the form is currently editing this deleted blend, reset the entire form
+    if ($form.id === blendId) resetForm()
   }
 
   const resetForm = () => {
@@ -287,10 +300,11 @@
       <ul class="flex flex-col gap-2">
         {#each $savedBlends as blend (blend.id)}
           <li
-            class="flex rounded-lg border border-transparent bg-zinc-900 p-2 transition duration-100 hover:border-zinc-700"
+            class="flex items-center rounded-lg border border-transparent bg-zinc-900 p-2 transition duration-100 hover:border-zinc-700 hover:bg-zinc-950"
           >
             <Button
-              styles="border-none text-left font-normal px-2 py-1 hover:bg-zinc-600"
+              transparent
+              styles="text-left px-2 py-1"
               onclick={() => copyBlendToClipboard(blend)}
               >{createBlendString(blend)}</Button
             >
@@ -307,12 +321,7 @@
             <Button
               icon
               color="red"
-              onclick={() => {
-                $savedBlends = $savedBlends.filter(
-                  (savedBlend) => savedBlend.id !== blend.id
-                )
-                storeSavedBlends()
-              }}
+              onclick={() => deleteBlend(blend.id)}
               ><Icon
                 src={Trash}
                 solid

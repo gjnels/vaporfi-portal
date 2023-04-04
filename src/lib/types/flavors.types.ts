@@ -1,4 +1,7 @@
-import type { flavorPickerSchema } from '$lib/schemas/customBlends'
+import type {
+  flavorPickerSchema,
+  savedFlavorPickerBlendSchema
+} from '$lib/schemas/customBlends'
 import type { z } from 'zod'
 
 export type Blend = {
@@ -12,3 +15,6 @@ export type Blend = {
 }
 
 export type FlavorPickerBlend = z.infer<typeof flavorPickerSchema>
+export type SavedFlavorPickerBlend = z.infer<
+  typeof savedFlavorPickerBlendSchema
+>
