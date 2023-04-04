@@ -5,23 +5,28 @@
 </script>
 
 <div class="flex min-h-full flex-col">
-  <header class="border-b border-zinc-700">
-    <div class="flex items-center px-4 py-1 md:px-6">
-      <Logo />
-    </div>
-    <nav class="-mb-px flex gap-4 overflow-x-scroll px-4 md:px-6">
-      <Navlink
-        href="/"
-        label="Promotions"
-      />
-      <Navlink
-        href="/flavor-picker"
-        label="Flavor Picker"
-      />
-    </nav>
+  <header class="flex items-center px-4 py-1 md:px-6">
+    <Logo />
   </header>
+  <nav
+    class="sticky top-0 flex gap-4 overflow-x-scroll border-b border-zinc-700 bg-black px-4 pt-2 shadow-md md:px-6"
+  >
+    <Navlink
+      href="/"
+      label="Promotions"
+    />
+    <Navlink
+      href="/flavor-picker"
+      label="Flavor Picker"
+    />
+    <Navlink
+      href="/nicotine-calculator/packets"
+      label="Nicotine Calculator"
+      activePath="/nicotine-calculator"
+    />
+  </nav>
 
-  <main class="grow">
+  <main class="flex grow flex-col">
     <slot />
   </main>
 

@@ -3,15 +3,19 @@
   
   Container for the content of each page
 
-  #### Header Wrapper
+  #### Header Container Wrapper
   
-  - Wrapper for the page header section to keep the border going all the way across the screen
+  - Wrapper for the page header container to keep the border going all the way across the screen
 
   #### Header Container
 
   ```slot``` - "header"
   - container for the page header which maintains a maximum width and centers itself on a large enough screen
   - default max width: screen-2xl
+
+  #### Content Container Wrapper
+
+  - Wrapper for the page content container to keep styles going all the way across the screen (such as a different background color)
 
   #### Content Container
 
@@ -21,11 +25,13 @@
 
   ### Props
 
-  @prop ```headerWrapperStyles``` - any extra tailwind classes to add to the wrapper for the page header section
+  @prop ```headerWrapperStyles``` - tailwind classes to add to the wrapper of the page header container
 
-  @prop ```headerContainerStyles``` - any extra styles for the container of the page header
+  @prop ```headerContainerStyles``` - tailwind classes to add to the container of the page header
 
-  @prop ```contentContainerStyles``` - any extra styles for the container of the page content
+  @prop ```contentWrapperStyles``` - tailwind classes to add to the wrapper of the page content container
+
+  @prop ```contentContainerStyles``` - tailwind classes to add to the container of the page content
   
  -->
 
@@ -34,6 +40,7 @@
 
   export let headerWrapperStyles = ''
   export let headerContainerStyles = ''
+  export let contentWrapperStyles = ''
   export let contentContainerStyles = ''
 </script>
 
@@ -50,11 +57,13 @@
   </div>
 {/if}
 
-<div
-  class={twMerge(
-    'mx-auto w-full max-w-screen-2xl px-4 py-8 md:px-6',
-    contentContainerStyles
-  )}
->
-  <slot />
+<div class={twMerge('grow', contentWrapperStyles)}>
+  <div
+    class={twMerge(
+      'mx-auto w-full max-w-screen-2xl px-4 py-8 md:px-6',
+      contentContainerStyles
+    )}
+  >
+    <slot />
+  </div>
 </div>

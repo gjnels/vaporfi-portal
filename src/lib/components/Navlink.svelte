@@ -14,7 +14,13 @@
 <a
   {href}
   class={twMerge(
-    'shrink-0 rounded-t-md border-b-2 border-transparent px-2 py-1 outline-none transition hover:bg-zinc-800 hover:text-green-400 focus-visible:bg-zinc-800 focus-visible:text-green-400',
-    active ? 'border-zinc-300' : 'text-zinc-400/80'
-  )}>{label}</a
+    'group flex shrink-0 flex-col gap-1 outline-none transition',
+    active ? 'text-white' : 'text-zinc-400/80'
+  )}
+  ><span
+    class={twMerge(
+      'rounded-md px-3 py-1 group-hover:bg-zinc-800 group-hover:text-white'
+    )}>{label}</span
+  >
+  <div class={twMerge('mx-2 h-0.5 rounded-full', active && 'bg-white')} /></a
 >

@@ -24,7 +24,7 @@
     <div class="grid gap-8 md:grid-cols-2">
       {#each promos as promo (promo.id)}
         <div
-          class="flex flex-col gap-4 rounded-lg border border-zinc-500 bg-zinc-800 p-4"
+          class="flex flex-col gap-4 rounded-lg border border-zinc-500 bg-zinc-900 p-4"
         >
           <!--  title -->
           <h2 class="text-3xl font-semibold text-white">
