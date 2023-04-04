@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { PageData, Snapshot } from './$types'
+  import type { PageData } from './$types'
   import { Button, PageLayout, PageTitle } from '$components'
   import { Form, Input, RadioGroup, Select } from '$components/forms'
   import { numberProxy, superForm } from 'sveltekit-superforms/client'
@@ -10,6 +10,7 @@
   import cuid2 from '@paralleldrive/cuid2'
   import { Icon, Pencil, Trash } from 'svelte-hero-icons'
   import type { SavedFlavorPickerBlend } from '$lib/types/flavors.types'
+  import { fly, slide } from 'svelte/transition'
 
   export let data: PageData
 
@@ -19,43 +20,40 @@
   // Maximum number of blends to save in local storage
   const MAX_SAVED_BLENDS = 10
 
-  const { form, enhance, errors, constraints, capture, restore } = superForm(
-    data.form,
-    {
-      applyAction: false,
-      taintedMessage: null,
-      dataType: 'json',
-      clearOnSubmit: 'none',
-      multipleSubmits: 'prevent',
-      onUpdated: ({ form }) => {
-        if (form.valid) {
-          // Get blend data from form
-          // If it does not have an id, create a new one
-          const blend: SavedFlavorPickerBlend = form.data.id
-            ? { ...form.data, id: form.data.id }
-            : { ...form.data, id: cuid2.createId() }
+  const { form, enhance, errors, constraints, reset } = superForm(data.form, {
+    applyAction: false,
+    taintedMessage: null,
+    dataType: 'json',
+    clearOnSubmit: 'none',
+    multipleSubmits: 'prevent',
+    onUpdated: ({ form }) => {
+      if (form.valid) {
+        // Get blend data from form
+        // If it does not have an id, create a new one
+        const blend: SavedFlavorPickerBlend = form.data.id
+          ? { ...form.data, id: form.data.id }
+          : { ...form.data, id: cuid2.createId() }
 
-          // Store the blend in savedBlends with a limit on the number of saved blends
-          $savedBlends = [
-            blend,
-            ...$savedBlends.filter((savedBlend) => savedBlend.id !== blend.id)
-          ].slice(0, MAX_SAVED_BLENDS)
+        // Store the blend in savedBlends with a limit on the number of saved blends
+        $savedBlends = [
+          blend,
+          ...$savedBlends.filter((savedBlend) => savedBlend.id !== blend.id)
+        ].slice(0, MAX_SAVED_BLENDS)
 
-          if (form.data.id) {
-            // This is an already existing saved blend
-            // Reset form to prevent unwanted update of a saved blend
-            resetForm()
-          }
-
-          // Save blends to storage
-          storeSavedBlends()
-
-          // Copy blend string to clipboard
-          copyBlendToClipboard(blend)
+        if (form.data.id) {
+          // This is an already existing saved blend
+          // Reset form to prevent unwanted update of a saved blend
+          resetForm()
         }
+
+        // Save blends to storage
+        storeSavedBlends()
+
+        // Copy blend string to clipboard
+        copyBlendToClipboard(blend)
       }
     }
-  )
+  })
 
   // Ensure nicotine and bottleCount remain numbers and not strings
   const nicotine = numberProxy(form, 'nicotine')
@@ -92,7 +90,9 @@
 
   const resetForm = () => {
     $flavorCount = 1 // Reset flavor count
-    $form = data.form.data // Reset rest of form values
+    reset()
+    $form.flavor1 = ''
+    $form.shots1 = 1
   }
 
   const shotOptions = [
@@ -154,7 +154,7 @@
     <RadioGroup
       label="Flavor Count"
       name="flavor-count"
-      bind:value={$flavorCount}
+      bind:group={$flavorCount}
       options={[
         { value: 1, label: '1 Flavor' },
         { value: 2, label: '2 Flavors' },
@@ -164,74 +164,80 @@
       color="purple"
     />
 
-    <Select
-      label="Flavor 1"
-      name="flavor1"
-      bind:value={$form.flavor1}
-      options={flavor1Options}
-      groups={categories}
-      defaultOption={{ value: '', label: 'Select a flavor' }}
-      errors={$errors.flavor1}
-    />
-
-    <RadioGroup
-      name="shots1"
-      bind:value={$form.shots1}
-      options={$flavorCount === 3 || $form.shots2 == 2
-        ? shotOptions.slice(0, 1)
-        : $flavorCount === 2
-        ? shotOptions.slice(0, 2)
-        : shotOptions}
-      errors={$errors.shots1}
-      containerStyles="-mt-3"
-      horizontal
-      color="purple"
-    />
-
-    {#if $flavorCount > 1}
+    <div class="flex flex-col gap-1">
       <Select
-        name="flavor2"
-        label="Flavor 2"
-        bind:value={$form.flavor2}
-        options={flavor2Options}
+        label="Flavor 1"
+        name="flavor1"
+        bind:value={$form.flavor1}
+        options={flavor1Options}
         groups={categories}
-        defaultOption={{ value: null, label: 'Select a flavor' }}
-        errors={$errors.flavor2}
+        defaultOption={{ value: '', label: 'Select a flavor' }}
+        errors={$errors.flavor1}
       />
 
       <RadioGroup
-        name="shots2"
-        bind:value={$form.shots2}
-        options={$flavorCount === 3 || $form.shots1 == 2
+        name="shots1"
+        bind:group={$form.shots1}
+        options={$flavorCount === 3 || $form.shots2 == 2
           ? shotOptions.slice(0, 1)
-          : shotOptions.slice(0, 2)}
-        errors={$errors.shots2}
-        containerStyles="-mt-3"
+          : $flavorCount === 2
+          ? shotOptions.slice(0, 2)
+          : shotOptions}
+        errors={$errors.shots1}
         horizontal
         color="purple"
+        containerStyles="ml-1"
       />
+    </div>
+
+    {#if $flavorCount > 1}
+      <div class="flex flex-col gap-1">
+        <Select
+          name="flavor2"
+          label="Flavor 2"
+          bind:value={$form.flavor2}
+          options={flavor2Options}
+          groups={categories}
+          defaultOption={{ value: null, label: 'Select a flavor' }}
+          errors={$errors.flavor2}
+        />
+
+        <RadioGroup
+          name="shots2"
+          bind:group={$form.shots2}
+          options={$flavorCount === 3 || $form.shots1 == 2
+            ? shotOptions.slice(0, 1)
+            : shotOptions.slice(0, 2)}
+          errors={$errors.shots2}
+          horizontal
+          color="purple"
+          containerStyles="ml-1"
+        />
+      </div>
     {/if}
 
     {#if $flavorCount > 2}
-      <Select
-        name="flavor3"
-        label="Flavor 3"
-        bind:value={$form.flavor3}
-        options={flavor3Options}
-        groups={categories}
-        defaultOption={{ value: null, label: 'Select a flavor' }}
-        errors={$errors.flavor3}
-      />
+      <div class="flex flex-col gap-1">
+        <Select
+          name="flavor3"
+          label="Flavor 3"
+          bind:value={$form.flavor3}
+          options={flavor3Options}
+          groups={categories}
+          defaultOption={{ value: null, label: 'Select a flavor' }}
+          errors={$errors.flavor3}
+        />
 
-      <RadioGroup
-        name="shots3"
-        bind:value={$form.shots3}
-        options={shotOptions.slice(0, 1)}
-        errors={$errors.shots3}
-        containerStyles="-mt-3"
-        horizontal
-        color="purple"
-      />
+        <RadioGroup
+          name="shots3"
+          bind:group={$form.shots3}
+          options={shotOptions.slice(0, 1)}
+          errors={$errors.shots3}
+          horizontal
+          color="purple"
+          containerStyles="ml-1"
+        />
+      </div>
     {/if}
 
     <div class="flex flex-wrap gap-3">

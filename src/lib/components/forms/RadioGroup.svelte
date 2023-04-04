@@ -8,7 +8,7 @@
   export let horizontal = false
   export let label = ''
   export let name: string
-  export let value: Value
+  export let group: Value
   export let options: { value: Value; label: string }[]
   export let errors: string | string[] | undefined = undefined
 
@@ -47,7 +47,7 @@
         <input
           type="radio"
           {name}
-          bind:group={value}
+          bind:group
           value={option.value}
           class={twMerge(
             'peer cursor-pointer text-zinc-400 transition focus:ring-white  focus:ring-offset-0',
