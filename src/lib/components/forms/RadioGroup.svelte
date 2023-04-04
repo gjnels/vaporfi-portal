@@ -60,7 +60,7 @@
 
         <span
           class={twMerge(
-            'peer-checked:text-white',
+            'select-none transition group-focus-within:text-gray-400 group-hover:text-gray-400 peer-checked:text-white',
             color === 'green' &&
               'group-focus-within:text-green-400 group-hover:text-green-400',
             color === 'purple' &&

@@ -10,7 +10,7 @@
 
 <span
   class={twMerge(
-    'ml-1 group-focus-within:text-white',
+    'ml-1 transition group-focus-within:text-white',
     color === 'green' && 'group-focus-within:text-green-400',
     color === 'purple' && 'group-focus-within:text-violet-400',
     hasError && 'text-rose-400 group-focus-within:text-rose-400',
