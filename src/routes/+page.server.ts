@@ -26,5 +26,5 @@ export const load = (async ({ locals: { supabase } }) => {
     .order('title')
     .returns<Array<DatabaseRow<'promos'> & { blend: Blend | null }>>()
 
-  return { promos, today }
+  return { promos }
 }) satisfies PageServerLoad

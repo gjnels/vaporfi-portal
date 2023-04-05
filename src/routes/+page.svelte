@@ -18,8 +18,6 @@
     slot="header"
   />
 
-  <p class="mb-10 text-xl">{formatPromoDate(data.today)}</p>
-
   {#if !promos || promos.length === 0}
     <p class="text-center text-lg text-rose-500">No current promotions found</p>
   {:else}
