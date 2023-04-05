@@ -1,7 +1,8 @@
 import { browser } from '$app/environment'
+import { get, writable } from 'svelte/store'
+
 import { flavorPickerRefinedSchema } from '$lib/schemas/customBlends'
 import type { SavedFlavorPickerBlend } from '$lib/types/flavors.types'
-import { get, writable } from 'svelte/store'
 
 const STORAGE_KEY = 'vf-portal-saved-blends'
 

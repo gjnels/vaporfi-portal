@@ -1,8 +1,10 @@
 <script lang="ts">
-  import { Divider, PageLayout, PageTitle } from '$components'
+  import type { PageData } from './$types'
+
   import { formatPromoDate } from '$lib/utils/dates'
   import { createDisplayBlendString } from '$lib/utils/flavors'
-  import type { PageData } from './$types'
+
+  import { Divider, PageLayout, PageTitle } from '$components'
 
   export let data: PageData
   $: ({ promos } = data)

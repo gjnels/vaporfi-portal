@@ -1,5 +1,6 @@
 <script lang="ts">
   import { twMerge } from 'tailwind-merge'
+
   import type { Color } from '.'
   import Errors from './Errors.svelte'
 

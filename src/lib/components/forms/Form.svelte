@@ -2,7 +2,7 @@
   import type { SubmitFunction } from '$app/forms'
   import type { EnhancedForm } from 'sveltekit-superforms/client'
   import { twMerge } from 'tailwind-merge'
-  import type { z, AnyZodObject } from 'zod'
+  import type { AnyZodObject, z } from 'zod'
 
   type T = $$Generic<AnyZodObject>
   type P = $$Generic<keyof z.infer<T>>

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Toaster } from 'svelte-french-toast'
+
   import { Logo, Navlink } from '../lib/components'
   import '../tailwind.css'
 </script>
@@ -21,8 +22,11 @@
     />
     <Navlink
       href="/nicotine-calculator/packets"
-      label="Nicotine Calculator"
-      activePath="/nicotine-calculator"
+      label="Nicotine Packet Calculator"
+    />
+    <Navlink
+      href="/nicotine-calculator/level"
+      label="Nicotine Level Calculator"
     />
   </nav>
 

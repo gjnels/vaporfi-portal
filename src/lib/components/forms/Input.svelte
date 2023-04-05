@@ -2,6 +2,7 @@
   import type { HTMLInputTypeAttribute } from 'svelte/elements'
   import type { InputConstraint } from 'sveltekit-superforms/index'
   import { twMerge } from 'tailwind-merge'
+
   import type { Color } from '.'
   import Errors from './Errors.svelte'
   import Label from './Label.svelte'

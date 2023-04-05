@@ -1,6 +1,7 @@
+import type { PageServerLoad } from './$types'
+
 import type { Blend } from '$lib/types/flavors.types'
 import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
-import type { PageServerLoad } from './$types'
 
 export const load = (async ({ locals: { supabase } }) => {
   const today = new Date().toUTCString()

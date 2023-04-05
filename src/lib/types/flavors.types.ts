@@ -1,8 +1,9 @@
+import type { z } from 'zod'
+
 import type {
   flavorPickerSchema,
   savedFlavorPickerBlendSchema
 } from '$lib/schemas/customBlends'
-import type { z } from 'zod'
 
 export type Blend = {
   name?: string

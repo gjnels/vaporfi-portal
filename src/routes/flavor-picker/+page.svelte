@@ -1,15 +1,18 @@
 <script lang="ts">
+  import cuid2 from '@paralleldrive/cuid2'
+  import { toast } from 'svelte-french-toast'
+  import { Icon, Pencil, Trash } from 'svelte-hero-icons'
+  import { writable } from 'svelte/store'
+  import { superForm } from 'sveltekit-superforms/client'
+
   import type { PageData } from './$types'
+
+  import { savedBlends, storeSavedBlends } from '$lib/stores/savedBlends'
+  import type { SavedFlavorPickerBlend } from '$lib/types/flavors.types'
+  import { categoriesFromFlavors, createBlendString } from '$lib/utils/flavors'
+
   import { Button, PageLayout, PageTitle } from '$components'
   import { Form, Input, RadioGroup, Select } from '$components/forms'
-  import { superForm } from 'sveltekit-superforms/client'
-  import { writable } from 'svelte/store'
-  import { categoriesFromFlavors, createBlendString } from '$lib/utils/flavors'
-  import { toast } from 'svelte-french-toast'
-  import { savedBlends, storeSavedBlends } from '$lib/stores/savedBlends'
-  import cuid2 from '@paralleldrive/cuid2'
-  import { Icon, Pencil, Trash } from 'svelte-hero-icons'
-  import type { SavedFlavorPickerBlend } from '$lib/types/flavors.types'
 
   export let data: PageData
 

@@ -11,5 +11,8 @@
   "svelteSortOrder": "scripts-markup-options-styles",
   "printWidth": 80,
   "pluginSearchDirs": ["."],
-  "overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }]
+  "overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }],
+  "importOrder": ["\\$types", "\\$lib(.*)$", "\\$components(.*)$", "^[./]"],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true
 }

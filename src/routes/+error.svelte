@@ -1,10 +1,10 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import {
-    Icon,
     ExclamationCircle,
-    ShieldExclamation,
-    ExclamationTriangle
+    ExclamationTriangle,
+    Icon,
+    ShieldExclamation
   } from 'svelte-hero-icons'
 
   let icon = ExclamationCircle

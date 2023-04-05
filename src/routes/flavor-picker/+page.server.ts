@@ -1,9 +1,11 @@
-import type { Actions, PageServerLoad } from './$types'
 import { error, fail } from '@sveltejs/kit'
 import { superValidate } from 'sveltekit-superforms/server'
+
+import type { Actions, PageServerLoad } from './$types'
+
 import {
-  flavorPickerSchema,
-  flavorPickerRefinedSchema
+  flavorPickerRefinedSchema,
+  flavorPickerSchema
 } from '$lib/schemas/customBlends'
 
 export const load = (async ({ locals: { supabase } }) => {

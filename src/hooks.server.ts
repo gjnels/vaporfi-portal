@@ -1,6 +1,7 @@
-import type { Handle } from '@sveltejs/kit'
-import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit'
 import { PUBLIC_SUPABASE_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public'
+import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit'
+import type { Handle } from '@sveltejs/kit'
+
 import type { Database } from '$lib/types/supabase.types'
 
 export const handle = (async ({ event, resolve }) => {
