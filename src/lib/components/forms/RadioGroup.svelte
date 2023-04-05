@@ -1,18 +1,20 @@
 <script lang="ts">
+  import type { InputConstraint } from 'sveltekit-superforms/index'
   import { twMerge } from 'tailwind-merge'
   import type { Color } from '.'
   import Errors from './Errors.svelte'
 
   type Value = $$Generic
 
-  export let horizontal = false
-  export let label = ''
   export let name: string
   export let group: Value
   export let options: { value: Value; label: string }[]
+  export let constraints: InputConstraint | undefined = undefined
   export let errors: string | string[] | undefined = undefined
 
+  export let label = ''
   export let color: Color = 'green'
+  export let horizontal = false
   export let containerStyles = ''
   export let labelStyles = ''
   export let radioStyles = ''
@@ -55,7 +57,7 @@
             color === 'purple' && 'text-violet-500',
             radioStyles
           )}
-          {...$$restProps}
+          {...constraints}
         />
 
         <span

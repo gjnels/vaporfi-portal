@@ -10,13 +10,8 @@
   import cuid2 from '@paralleldrive/cuid2'
   import { Icon, Pencil, Trash } from 'svelte-hero-icons'
   import type { SavedFlavorPickerBlend } from '$lib/types/flavors.types'
-  import { page } from '$app/stores'
 
   export let data: PageData
-
-  const { data: pageData, form: pageForm } = $page
-  $: console.log('page data', pageData)
-  $: console.log('page form', pageForm)
 
   $: flavors = data.flavors
   $: categories = categoriesFromFlavors(flavors)
@@ -157,18 +152,21 @@
         { value: 2, label: '2 Flavors' },
         { value: 3, label: '3 Flavors' }
       ]}
+      constraints={{ min: 1, max: 3, required: true }}
       horizontal
       color="purple"
     />
 
+    <!-- Flavor 1 and shots 1 -->
     <div class="flex flex-col gap-1">
       <Select
-        label="Flavor 1"
         name="flavor1"
+        label="Flavor 1"
         bind:value={$form.flavor1}
         options={flavor1Options}
-        groups={categories}
         defaultOption={{ value: '', label: 'Select a flavor' }}
+        groups={categories}
+        constraints={$constraints.flavor1}
         errors={$errors.flavor1}
       />
 
@@ -180,6 +178,7 @@
           : $flavorCount === 2
           ? shotOptions.slice(0, 2)
           : shotOptions}
+        constraints={$constraints.shots1}
         errors={$errors.shots1}
         horizontal
         color="purple"
@@ -187,6 +186,7 @@
       />
     </div>
 
+    <!-- Flavor 2 and shots 2 -->
     {#if $flavorCount > 1}
       <div class="flex flex-col gap-1">
         <Select
@@ -194,17 +194,19 @@
           label="Flavor 2"
           bind:value={$form.flavor2}
           options={flavor2Options}
-          groups={categories}
           defaultOption={{ value: '', label: 'Select a flavor' }}
+          groups={categories}
+          constraints={$constraints.flavor2}
           errors={$errors.flavor2}
         />
 
         <RadioGroup
           name="shots2"
           bind:group={$form.shots2}
-          options={$flavorCount === 3 || $form.shots1 == 2
+          options={$flavorCount === 3 || $form.shots1 > 1
             ? shotOptions.slice(0, 1)
             : shotOptions.slice(0, 2)}
+          constraints={$constraints.shots2}
           errors={$errors.shots2}
           horizontal
           color="purple"
@@ -213,6 +215,7 @@
       </div>
     {/if}
 
+    <!-- Flavor 3 and shots 3 -->
     {#if $flavorCount > 2}
       <div class="flex flex-col gap-1">
         <Select
@@ -220,8 +223,9 @@
           label="Flavor 3"
           bind:value={$form.flavor3}
           options={flavor3Options}
-          groups={categories}
           defaultOption={{ value: '', label: 'Select a flavor' }}
+          groups={categories}
+          constraints={$constraints.flavor3}
           errors={$errors.flavor3}
         />
 
@@ -229,6 +233,7 @@
           name="shots3"
           bind:group={$form.shots3}
           options={shotOptions.slice(0, 1)}
+          constraints={$constraints.shots3}
           errors={$errors.shots3}
           horizontal
           color="purple"
@@ -240,11 +245,11 @@
     <div class="flex flex-wrap gap-3">
       <Input
         type="number"
-        label="Nicotine level"
         name="nicotine"
+        label="Nicotine level"
         bind:value={$form.nicotine}
         errors={$errors.nicotine}
-        {...$constraints.nicotine}
+        constraints={$constraints.nicotine}
         containerStyles="grow"
       />
 
@@ -254,7 +259,7 @@
         label="Number of bottles"
         bind:value={$form.bottleCount}
         errors={$errors.bottleCount}
-        {...$constraints.bottleCount}
+        constraints={$constraints.bottleCount}
         containerStyles="grow"
       />
     </div>
