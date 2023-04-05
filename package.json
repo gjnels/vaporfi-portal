@@ -40,7 +40,7 @@
     "dayjs": "^1.11.7",
     "svelte-french-toast": "1.0.4-beta.0",
     "svelte-hero-icons": "^5.0.0",
-    "sveltekit-superforms": "^0.6.6",
+    "sveltekit-superforms": "^0.6.8",
     "tailwind-merge": "^1.11.0",
     "zod": "^3.21.4"
   }

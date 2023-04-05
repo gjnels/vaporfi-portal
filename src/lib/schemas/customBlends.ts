@@ -13,14 +13,14 @@ export const flavorPickerBlendSchema = z.object({
     .min(1, 'Cannot be less than 1')
     .max(3, 'Cannot be more than 3')
     .default(1),
-  flavor2: z.string().trim().min(1).nullable().default(null),
+  flavor2: z.string().trim(),
   shots2: z
     .number()
     .min(1, 'Cannot be less than 1')
     .max(2, 'Cannot be more than 2')
     .nullable()
     .default(null),
-  flavor3: z.string().trim().min(1).nullable().default(null),
+  flavor3: z.string().trim(),
   shots3: z
     .number()
     .min(1, 'Cannot be less than 1')
@@ -61,7 +61,7 @@ export const flavorPickerRefinedSchema = flavorPickerSchema.superRefine(
         path: ['flavor3']
       })
     }
-    if (data.flavor1 === data.flavor2) {
+    if (data.flavor2 && data.flavor1 === data.flavor2) {
       ctx.addIssue({
         code: 'custom',
         message: 'Cannot choose the same flavor twice',

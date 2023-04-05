@@ -2,7 +2,7 @@
   import type { PageData } from './$types'
   import { Button, PageLayout, PageTitle } from '$components'
   import { Form, Input, RadioGroup, Select } from '$components/forms'
-  import { numberProxy, superForm } from 'sveltekit-superforms/client'
+  import { superForm } from 'sveltekit-superforms/client'
   import { writable } from 'svelte/store'
   import { categoriesFromFlavors, createBlendString } from '$lib/utils/flavors'
   import { toast } from 'svelte-french-toast'
@@ -10,9 +10,13 @@
   import cuid2 from '@paralleldrive/cuid2'
   import { Icon, Pencil, Trash } from 'svelte-hero-icons'
   import type { SavedFlavorPickerBlend } from '$lib/types/flavors.types'
-  import { fly, slide } from 'svelte/transition'
+  import { page } from '$app/stores'
 
   export let data: PageData
+
+  const { data: pageData, form: pageForm } = $page
+  $: console.log('page data', pageData)
+  $: console.log('page form', pageForm)
 
   $: flavors = data.flavors
   $: categories = categoriesFromFlavors(flavors)
@@ -21,11 +25,8 @@
   const MAX_SAVED_BLENDS = 10
 
   const { form, enhance, errors, constraints, reset } = superForm(data.form, {
-    applyAction: false,
-    taintedMessage: null,
-    dataType: 'json',
     clearOnSubmit: 'none',
-    multipleSubmits: 'prevent',
+    invalidateAll: false,
     onUpdated: ({ form }) => {
       if (form.valid) {
         // Get blend data from form
@@ -54,10 +55,6 @@
       }
     }
   })
-
-  // Ensure nicotine and bottleCount remain numbers and not strings
-  const nicotine = numberProxy(form, 'nicotine')
-  const bottleCount = numberProxy(form, 'bottleCount')
 
   const flavorCount = writable<1 | 2 | 3>(1)
 
@@ -91,8 +88,6 @@
   const resetForm = () => {
     $flavorCount = 1 // Reset flavor count
     reset()
-    $form.flavor1 = ''
-    $form.shots1 = 1
   }
 
   const shotOptions = [
@@ -121,7 +116,8 @@
   // Flavor values and shot values depend on the number of flavors
   $: switch ($flavorCount) {
     case 1:
-      $form.flavor2 = $form.flavor3 = $form.shots2 = $form.shots3 = null
+      $form.flavor2 = $form.flavor3 = ''
+      $form.shots2 = $form.shots3 = null
       break
     case 2:
       if ($form.shots2 === 2) {
@@ -132,7 +128,8 @@
       } else {
         $form.shots2 = 1
       }
-      $form.flavor3 = $form.shots3 = null
+      $form.flavor3 = ''
+      $form.shots3 = null
       break
     case 3:
       $form.shots1 = $form.shots2 = $form.shots3 = 1
@@ -198,7 +195,7 @@
           bind:value={$form.flavor2}
           options={flavor2Options}
           groups={categories}
-          defaultOption={{ value: null, label: 'Select a flavor' }}
+          defaultOption={{ value: '', label: 'Select a flavor' }}
           errors={$errors.flavor2}
         />
 
@@ -224,7 +221,7 @@
           bind:value={$form.flavor3}
           options={flavor3Options}
           groups={categories}
-          defaultOption={{ value: null, label: 'Select a flavor' }}
+          defaultOption={{ value: '', label: 'Select a flavor' }}
           errors={$errors.flavor3}
         />
 
@@ -245,10 +242,9 @@
         type="number"
         label="Nicotine level"
         name="nicotine"
-        bind:value={$nicotine}
+        bind:value={$form.nicotine}
         errors={$errors.nicotine}
         {...$constraints.nicotine}
-        step="any"
         containerStyles="grow"
       />
 
@@ -256,7 +252,7 @@
         type="number"
         name="bottleCount"
         label="Number of bottles"
-        bind:value={$bottleCount}
+        bind:value={$form.bottleCount}
         errors={$errors.bottleCount}
         {...$constraints.bottleCount}
         containerStyles="grow"

@@ -20,8 +20,8 @@ dependencies:
     specifier: ^5.0.0
     version: 5.0.0
   sveltekit-superforms:
-    specifier: ^0.6.6
-    version: 0.6.6(@sveltejs/kit@1.15.0)(svelte@3.58.0)(zod@3.21.4)
+    specifier: ^0.6.8
+    version: 0.6.8(@sveltejs/kit@1.15.0)(svelte@3.58.0)(zod@3.21.4)
   tailwind-merge:
     specifier: ^1.11.0
     version: 1.11.0
@@ -2128,8 +2128,8 @@ packages:
     resolution: {integrity: sha512-brIBNNB76mXFmU/Kerm4wFnkskBbluBDCjx/8TcpYRb298Yh2dztS2kQ6bhtjMcvUhd5ynClfwpz5h2gnzdQ1A==}
     engines: {node: '>= 8'}
 
-  /sveltekit-superforms@0.6.6(@sveltejs/kit@1.15.0)(svelte@3.58.0)(zod@3.21.4):
-    resolution: {integrity: sha512-VooUgwz4bV4yoC4oZIki3YKZtVWP1XxXHNqw3lMkn0pnuf71Ncwr/Ld3EPnHShT+WYKEW7LKACvIKL6xIL+K4g==}
+  /sveltekit-superforms@0.6.8(@sveltejs/kit@1.15.0)(svelte@3.58.0)(zod@3.21.4):
+    resolution: {integrity: sha512-/ZejVGMjXw7CSoVtyh3ClB/XgylHUbddc3pa4q4cQ4c4IhCzFpoPyn6c5I2MHpmjQauXEylb8xpq4DqnjSdOlA==}
     peerDependencies:
       '@sveltejs/kit': 1.x
       svelte: 3.x

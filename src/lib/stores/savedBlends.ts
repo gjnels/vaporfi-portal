@@ -32,10 +32,8 @@ export const savedBlends = writable<SavedFlavorPickerBlend[]>(getFromStorage())
 export const storeSavedBlends = () => {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(get(savedBlends)))
-  } catch (error) {
-    if (error instanceof DOMException) {
-      return { error }
-    }
+    return { error: null }
+  } catch (e) {
     return { error: 'Failed to save blends to browser storage' }
   }
 }
