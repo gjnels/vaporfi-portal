@@ -17,7 +17,7 @@
   {disabled}
   on:click={onclick}
   class={twMerge(
-    'inline-flex items-center justify-center gap-1 rounded-lg border-2 border-transparent bg-transparent px-3 py-2 font-semibold text-white outline-none ring-white transition focus-visible:ring active:scale-95',
+    'flex items-center justify-center gap-1 rounded-lg border-2 border-transparent bg-transparent px-3 py-2 font-semibold text-white outline-none ring-white transition focus-visible:ring-2 active:scale-95',
     transparent
       ? ['hover:bg-zinc-800', color && 'hover:text-zinc-950']
       : 'hover:border-current hover:bg-transparent',
@@ -50,7 +50,7 @@
         : 'bg-zinc-500 hover:text-zinc-300'
     ],
     small && 'px-2 py-1 text-sm',
-    icon && 'h-8 w-8 p-1',
+    icon && 'p-1',
     styles
   )}
   {...$$restProps}
