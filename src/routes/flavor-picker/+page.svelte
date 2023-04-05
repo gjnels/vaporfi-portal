@@ -322,6 +322,7 @@
               onclick={() => setEditBlend(blend)}
               ><Icon
                 src={Pencil}
+                size="1.5rem"
                 solid
               /></Button
             >
@@ -331,6 +332,7 @@
               onclick={() => deleteBlend(blend.id)}
               ><Icon
                 src={Trash}
+                size="1.5rem"
                 solid
               /></Button
             >
