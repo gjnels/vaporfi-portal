@@ -3,9 +3,7 @@ import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
 import type { PageServerLoad } from './$types'
 
 export const load = (async ({ locals: { supabase } }) => {
-  const today = new Date().toLocaleDateString('en-us', {
-    timeZone: 'America/New_York'
-  })
+  const today = new Date().toUTCString()
 
   const { data: promos } = await supabase
     .from('promos')
@@ -28,5 +26,5 @@ export const load = (async ({ locals: { supabase } }) => {
     .order('title')
     .returns<Array<DatabaseRow<'promos'> & { blend: Blend | null }>>()
 
-  return { promos }
+  return { promos, today }
 }) satisfies PageServerLoad

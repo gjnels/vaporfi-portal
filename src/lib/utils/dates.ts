@@ -6,4 +6,4 @@ import advancedFormat from 'dayjs/plugin/advancedFormat'
 dayjs.extend(advancedFormat)
 
 export const formatPromoDate = (date: Date | string) =>
-  dayjs(date).format('dddd, MMMM Do, YYYY')
+  dayjs(date).format('h:mma dddd, MMMM Do, YYYY')
