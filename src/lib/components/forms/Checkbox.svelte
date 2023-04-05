@@ -7,6 +7,7 @@
   export let name: string
   export let checked: boolean
   export let errors: string | string[] | undefined = undefined
+  export let required = false
 
   export let color: Color = 'green'
   export let containerStyles = ''
@@ -30,7 +31,7 @@
       color === 'purple' && 'text-violet-500',
       checkboxStyles
     )}
-    {...$$restProps}
+    {required}
   />
 
   <span
