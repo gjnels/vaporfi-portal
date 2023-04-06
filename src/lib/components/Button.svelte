@@ -7,7 +7,7 @@
   export let onclick: () => void = () => undefined
   export let use: (node: HTMLElement) => {
     destroy: () => void
-  } = () => ({ destroy: () => {} })
+  } = () => ({ destroy: () => undefined })
   export let color: 'green' | 'purple' | 'red' | 'gray' | undefined = undefined
   export let small = false
   export let icon = false
