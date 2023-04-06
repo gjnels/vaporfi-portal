@@ -48,7 +48,7 @@
   <div class={twMerge('border-b border-zinc-700', headerWrapperStyles)}>
     <div
       class={twMerge(
-        'mx-auto flex w-full max-w-screen-2xl items-center px-4 py-8 md:px-6',
+        'mx-auto flex w-full max-w-screen-2xl items-center px-4 py-8',
         headerContainerStyles
       )}
     >
@@ -60,7 +60,7 @@
 <div class={twMerge('grow', contentWrapperStyles)}>
   <div
     class={twMerge(
-      'mx-auto w-full max-w-screen-2xl px-4 py-8 md:px-6',
+      'mx-auto w-full max-w-screen-2xl px-4 py-8',
       contentContainerStyles
     )}
   >
