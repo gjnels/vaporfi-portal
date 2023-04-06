@@ -1,15 +1,17 @@
 <script lang="ts">
+  import { Icon, InformationCircle } from 'svelte-hero-icons'
   import { writable } from 'svelte/store'
   import { superForm } from 'sveltekit-superforms/client'
-  import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte'
 
   import type { PageData } from './$types'
 
   import type { SelectedPacket } from '$lib/types/nicotinePackets.types'
-  import { getFinalNicLevel, packetColors } from '$lib/utils/nicotinePackets'
+  import { getFinalNicLevel } from '$lib/utils/nicotinePackets'
 
   import { Button, Divider, Link } from '$components'
   import { Checkbox, Form, Input, Select } from '$components/forms'
+
+  import PacketList from '../PacketList.svelte'
 
   export let data: PageData
 
@@ -50,16 +52,25 @@
   <title>VF Portal | Nicotine Calculator - Level</title>
 </svelte:head>
 
-<!-- <SuperDebug data={$form} /> -->
-
-<!-- sdnfjkdewfew -->
-<div class="flex flex-col gap-12 lg:flex-row">
+<div class="flex flex-col-reverse gap-12 lg:flex-row">
   <!-- Available packets and form -->
   <div class="flex grow flex-wrap gap-6">
     <!-- Available packets -->
     <div class="flex w-fit flex-col gap-0.5">
       <!-- Available packets header -->
-      <h2 class="text-lg font-medium">Packets to Add</h2>
+      <div class="relative flex items-center gap-1">
+        <h2 class="text-lg font-medium text-zinc-100">Packets to Add</h2>
+        <Button
+          color="green"
+          icon
+          transparent
+          styles="p-0.5"
+          ><Icon
+            src={InformationCircle}
+            size="1.25rem"
+          /></Button
+        >
+      </div>
 
       <!-- Packets list -->
       {#each data.packets as packet, idx (idx)}
@@ -138,25 +149,11 @@
     <h2 class="text-2xl font-semibold">Results</h2>
     <Divider styles="self-stretch" />
     {#if $result !== null}
-      <p class="text-2xl text-white">
+      <p class="text-xl text-zinc-100">
         {$result.bottleSize}mL starting at {$result.currentLevel}mg
       </p>
-      <div
-        class="grid grid-cols-[auto,_1fr] items-center gap-4 text-center text-lg font-semibold text-white"
-      >
-        {#each $result.packets as packet, idx (idx)}
-          {@const color = packet.color.toLowerCase()}
-          <p class="justify-self-end text-xl">{packet.count} &times;</p>
-          <div
-            class="rounded-lg border-[3px] {packetColors[
-              color
-            ]} bg-zinc-900 p-2"
-          >
-            <p class="capitalize">{color} - {packet.mg}mg</p>
-          </div>
-        {/each}
-      </div>
-      <p class="text-4xl font-semibold text-white">{$result.nicotine}mg</p>
+      <PacketList packets={$result.packets} />
+      <p class="text-4xl font-semibold text-zinc-100">{$result.nicotine}mg</p>
     {:else}
       <p class="px-4 italic text-zinc-500">
         Fill out the form to see the results
