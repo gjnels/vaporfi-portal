@@ -15,14 +15,17 @@
   {href}
   class={twMerge(
     'group flex shrink-0 flex-col gap-1 outline-none transition',
-    active ? 'text-white' : 'text-zinc-500'
+    active ? 'text-zinc-100' : 'text-zinc-500'
   )}
   ><span
     class={twMerge(
-      'rounded-md px-3 py-1 transition group-hover:bg-zinc-800 group-hover:text-white'
+      'rounded-md px-3 py-1 transition group-hover:bg-zinc-800 group-hover:text-zinc-100 group-focus-visible:bg-zinc-800 group-focus-visible:text-zinc-100'
     )}>{label}</span
   >
   <div
-    class={twMerge('mx-2 h-0.5 rounded-full transition', active && 'bg-white')}
+    class={twMerge(
+      'mx-2 h-0.5 rounded-full transition',
+      active && 'bg-zinc-100'
+    )}
   /></a
 >
