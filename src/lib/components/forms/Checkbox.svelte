@@ -27,7 +27,7 @@
     {name}
     bind:checked
     class={twMerge(
-      'peer cursor-pointer rounded-sm text-zinc-400 transition focus:ring-current focus:ring-offset-0  focus:checked:ring-white',
+      'peer cursor-pointer rounded-sm text-zinc-400 transition focus:ring-current focus:ring-offset-0  focus:checked:ring-zinc-100',
       color === 'green' && 'text-green-500',
       color === 'purple' && 'text-violet-500',
       checkboxStyles
@@ -37,11 +37,11 @@
 
   <span
     class={twMerge(
-      'select-none transition group-focus-within:text-zinc-400 group-hover:text-zinc-400 peer-checked:text-white',
+      'select-none text-zinc-400 transition group-focus-within:text-zinc-400 group-hover:text-zinc-400 peer-checked:text-zinc-100 group-focus-within:peer-checked:text-zinc-100 group-hover:peer-checked:text-zinc-400',
       color === 'green' &&
-        'group-focus-within:text-green-400 group-hover:text-green-400',
+        'group-focus-within:text-green-600 group-hover:text-green-600 group-focus-within:peer-checked:text-green-400 group-hover:peer-checked:text-green-400',
       color === 'purple' &&
-        'group-focus-within:text-violet-400 group-hover:text-violet-400',
+        'group-focus-within:text-violet-400/75 group-hover:text-violet-400/75 group-focus-within:peer-checked:text-violet-400 group-hover:peer-checked:text-violet-400',
       labelStyles
     )}>{label}</span
   >
