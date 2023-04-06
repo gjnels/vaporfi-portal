@@ -16,15 +16,15 @@ export const load = (async ({ fetch, data: { session }, depends }) => {
   })
 
   // Get the user profile if there is a valid session
-  const profile = await (async () => {
+  const currentProfile = await (async () => {
     if (!session) return null
-    const { data: profile } = await supabase
+    const { data } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', session.user.id)
       .single()
-    return profile
+    return data
   })()
 
-  return { supabase, session, profile }
+  return { supabase, session, currentProfile }
 }) satisfies LayoutLoad
