@@ -136,7 +136,7 @@
 </script>
 
 <svelte:head>
-  <title>VF Columbus | Flavor Picker</title>
+  <title>Flavor Picker | VF Columbus</title>
 </svelte:head>
 
 <PageLayout contentContainerStyles="grid lg:grid-cols-2 gap-10">

@@ -36,7 +36,7 @@
 </script>
 
 <svelte:head>
-  <title>An error has occured</title>
+  <title>An error has occured | VF Columbus</title>
 </svelte:head>
 
 <div class="mt-10 flex flex-col items-center gap-2">

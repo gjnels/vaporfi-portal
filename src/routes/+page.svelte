@@ -11,7 +11,7 @@
 </script>
 
 <svelte:head>
-  <title>VF Columbus | Active Promotions</title>
+  <title>Active Promotions | VF Columbus</title>
 </svelte:head>
 
 <PageLayout>
