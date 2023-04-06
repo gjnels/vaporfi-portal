@@ -41,7 +41,11 @@
   </footer>
 </div>
 
-<Toaster />
+<Toaster
+  toastOptions={{
+    className: '!bg-zinc-700 !text-zinc-100 font-medium'
+  }}
+/>
 
 <style>
   nav::-webkit-scrollbar {
