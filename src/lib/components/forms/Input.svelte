@@ -42,9 +42,9 @@
 
   const inputClasses = twMerge(
     'rounded-lg border-2 border-transparent bg-zinc-800 px-3 py-2 text-zinc-100 placeholder-zinc-400 outline-none transition focus:border-zinc-100 focus:bg-zinc-900 focus:ring-0',
-    color === 'green' && 'focus:border-green-500',
-    color === 'purple' && 'focus:border-violet-500',
-    !!errors && !!errors.length && 'focus:border-rose-500',
+    color === 'green' && 'focus:border-green-500 selection:bg-green-300',
+    color === 'purple' && 'focus:border-violet-500 selection:bg-violet-300',
+    errors && errors.length && 'focus:border-rose-500 selection:bg-rose-200',
     inputStyles
   )
 

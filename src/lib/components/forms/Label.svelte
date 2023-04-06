@@ -9,7 +9,8 @@
 <span
   class={twMerge(
     'ml-1 transition group-focus-within:text-zinc-100',
-    hasError && 'text-rose-400 group-focus-within:text-rose-400',
+    hasError &&
+      'text-rose-500 selection:bg-rose-200 group-focus-within:text-rose-500',
     styles
   )}>{label}</span
 >

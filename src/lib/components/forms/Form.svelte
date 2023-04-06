@@ -30,29 +30,22 @@
 
   <!-- overall form error -->
   {#if formError}
-    <span class="self-center text-lg font-semibold text-rose-400"
+    <span
+      class="self-center text-lg font-semibold text-rose-500 selection:bg-rose-200"
       >{formError}</span
     >
   {/if}
 
   <!-- form actions (i.e. buttons) -->
   {#if $$slots.actions}
-    <div
-      class={twMerge(
-        'flex flex-wrap gap-2 [&>*]:flex-1',
-        !formError && 'mt-4',
-        actionSlotStyles
-      )}
-    >
+    <div class={twMerge('flex flex-wrap gap-2 [&>*]:flex-1', actionSlotStyles)}>
       <slot name="actions" />
     </div>
   {/if}
 
   <!-- links (i.e. "forgot you password?") -->
   {#if $$slots.links}
-    <div
-      class={twMerge('mt-4 flex flex-col items-center gap-2', linkSlotStyles)}
-    >
+    <div class={twMerge('flex flex-col items-center gap-2', linkSlotStyles)}>
       <slot name="links" />
     </div>
   {/if}

@@ -5,8 +5,10 @@
   import '../tailwind.css'
 </script>
 
-<div class="flex min-h-full flex-col">
-  <header class="flex items-center px-4 pt-2">
+<div
+  class="flex min-h-full flex-col bg-black selection:bg-green-300 selection:text-zinc-950"
+>
+  <header class="z-10 flex items-center bg-black px-4 pt-2">
     <Logo />
   </header>
   <nav
