@@ -1,17 +1,43 @@
 <script lang="ts">
-  import { packetColors } from '$lib/utils/nicotinePackets'
+  import { createPopover } from 'svelte-headlessui'
+  import { Icon, InformationCircle } from 'svelte-hero-icons'
 
-  export let packets: { id: number; color: string; mg: number; count: number }[]
+  import { Button } from '$components'
+
+  import PacketPopover from './PacketPopover.svelte'
+
+  export let title: string
+  export let packetPopoverContent: string | string[]
+
+  const packetPopover = createPopover({ label: title })
 </script>
 
-<div
-  class="grid grid-cols-[auto,_1fr] items-center gap-4 text-center text-lg font-medium text-zinc-100"
->
-  {#each packets as packet (packet.id)}
-    {@const color = packet.color.toLowerCase()}
-    <p class="justify-self-end text-xl">{packet.count} &times;</p>
-    <div class="rounded-lg border-[3px] {packetColors[color]} bg-zinc-900 p-2">
-      <p class="capitalize">{color} - {packet.mg}mg</p>
+<div class="mx-auto flex flex-col gap-0.5">
+  <div
+    class="relative flex flex-col items-center gap-1 sm:flex-row sm:items-stretch"
+  >
+    <div class="flex items-center gap-1 self-start">
+      <h2 class="text-lg font-medium text-zinc-100">{title}</h2>
+      <Button
+        color="green"
+        icon
+        transparent
+        styles="p-0.5"
+        title="View explanation"
+        use={packetPopover.button}
+        ><Icon
+          src={InformationCircle}
+          size="1.25rem"
+        /></Button
+      >
     </div>
-  {/each}
+    <!-- Information popover -->
+    <PacketPopover
+      popover={packetPopover}
+      content={packetPopoverContent}
+    />
+  </div>
+
+  <!-- Packets list -->
+  <slot />
 </div>

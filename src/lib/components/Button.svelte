@@ -5,6 +5,9 @@
   export let type: HTMLButtonAttributes['type'] = 'button'
   export let disabled = false
   export let onclick: () => void = () => undefined
+  export let use: (node: HTMLElement) => {
+    destroy: () => void
+  } = () => ({ destroy: () => {} })
   export let color: 'green' | 'purple' | 'red' | 'gray' | undefined = undefined
   export let small = false
   export let icon = false
@@ -15,6 +18,7 @@
 <button
   {type}
   {disabled}
+  use:use
   on:click={onclick}
   class={twMerge(
     'flex items-center justify-center gap-1 rounded-lg border-2 border-transparent bg-transparent px-3 py-2 font-semibold text-zinc-100 outline-none ring-zinc-100 transition focus-visible:ring-2 active:scale-95',

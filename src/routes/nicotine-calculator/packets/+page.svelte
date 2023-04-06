@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import toast from 'svelte-french-toast'
-  import { Icon, InformationCircle } from 'svelte-hero-icons'
   import { writable } from 'svelte/store'
   import { superForm } from 'sveltekit-superforms/client'
 
@@ -10,10 +9,12 @@
   import { savedPackets, storeSavedPackets } from '$lib/stores/nicotinePackets'
   import { calculatePackets } from '$lib/utils/nicotinePackets'
 
-  import { Button, Divider, Link } from '$components'
+  import { Button } from '$components'
   import { Checkbox, Form, Input, Select } from '$components/forms'
 
+  import CalculatorLayout from '../CalculatorLayout.svelte'
   import PacketList from '../PacketList.svelte'
+  import PacketResultList from '../PacketResultList.svelte'
 
   export let data: PageData
 
@@ -30,37 +31,28 @@
     invalidateAll: false,
     clearOnSubmit: 'none',
     onUpdated: ({ form: { data, valid } }) => {
-      $results = valid ? calculatePackets(data, $savedPackets) : null
+      $result = valid ? calculatePackets(data, $savedPackets) : null
     }
   })
 
-  const results = writable<ReturnType<typeof calculatePackets> | null>(null)
+  const result = writable<ReturnType<typeof calculatePackets> | null>(null)
+
+  const packetPopoverContent = [
+    'This list should reflect which nicotine packets are currently in stock at your location. Only selected packets will be included in the calculation',
+    'You can turn any of them on or off temporarily. Click Save to keep the current preferences when you come back to this page.'
+  ]
 </script>
 
 <svelte:head>
   <title>VF Portal | Nicotine Calculator - Packets</title>
 </svelte:head>
 
-<div class="flex flex-col-reverse gap-12 lg:flex-row">
-  <!-- Available packets and form -->
-  <div class="flex flex-wrap gap-6 lg:grow">
-    <!-- Available packets -->
-    <div class="flex w-fit flex-col gap-0.5">
-      <!-- Available packets header -->
-      <div class="relative flex items-center gap-1">
-        <h2 class="text-lg font-medium text-zinc-100">Available Packets</h2>
-        <Button
-          color="green"
-          icon
-          transparent
-          styles="p-0.5"
-          ><Icon
-            src={InformationCircle}
-            size="1.25rem"
-          /></Button
-        >
-      </div>
-
+<CalculatorLayout>
+  <svelte:fragment slot="form">
+    <PacketList
+      title="Available Packets"
+      {packetPopoverContent}
+    >
       <!-- Available packets list -->
       {#each $savedPackets as packet (packet.id)}
         <Checkbox
@@ -81,7 +73,7 @@
             : toast.success('Nicotine packet preferences saved.')
         }}>Save</Button
       >
-    </div>
+    </PacketList>
 
     <Form
       {enhance}
@@ -136,29 +128,24 @@
         >
         <Button
           color="gray"
-          onclick={reset}>Reset Form</Button
+          onclick={() => {
+            reset({ keepMessage: false })
+            $result = null
+          }}>Reset Form</Button
         >
-      </svelte:fragment>
-
-      <svelte:fragment slot="links">
-        <Link href="level">Calculate Final Nicotine Level</Link>
       </svelte:fragment>
     </Form>
-  </div>
+  </svelte:fragment>
 
-  <div class="flex grow flex-col items-center gap-2">
-    <h2 class="text-2xl font-semibold text-zinc-100">Results</h2>
-    <Divider styles="self-stretch" />
-    {#if $results}
-      {#if $results.length > 0}
-        <ul
-          class="flex flex-wrap justify-center gap-x-20 gap-y-10 px-4 text-lg"
-        >
-          {#each $results as result}
+  <svelte:fragment slot="result">
+    {#if $result}
+      {#if $result.length > 0}
+        <ul class="flex flex-wrap justify-evenly gap-8 self-stretch px-4">
+          {#each $result as result}
             <li class="flex flex-col gap-2 text-center">
               {#if result.type !== 'exact'}
                 <p
-                  class="font-medium capitalize text-zinc-100 underline underline-offset-2"
+                  class="text-lg font-medium capitalize text-zinc-100 underline underline-offset-2"
                 >
                   {result.type} than desired
                 </p>
@@ -169,17 +156,15 @@
                   >{result.finalNicLevel} mg</span
                 >
               </p>
-              <PacketList packets={result.packets} />
+              <PacketResultList packets={result.packets} />
             </li>
           {/each}
         </ul>
       {:else}
-        <p class="px-4 italic">No valid packets found</p>
+        <p class="text-red-400">No valid packets found</p>
       {/if}
     {:else}
-      <p class="px-4 italic text-zinc-500">
-        Fill out the form to see the results
-      </p>
+      <p class="italic text-zinc-500">Fill out the form</p>
     {/if}
-  </div>
-</div>
+  </svelte:fragment>
+</CalculatorLayout>

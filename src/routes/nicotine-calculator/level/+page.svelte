@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { Icon, InformationCircle } from 'svelte-hero-icons'
   import { writable } from 'svelte/store'
   import { superForm } from 'sveltekit-superforms/client'
 
@@ -8,10 +7,12 @@
   import type { SelectedPacket } from '$lib/types/nicotinePackets.types'
   import { getFinalNicLevel } from '$lib/utils/nicotinePackets'
 
-  import { Button, Divider, Link } from '$components'
+  import { Button } from '$components'
   import { Checkbox, Form, Input, Select } from '$components/forms'
 
+  import CalculatorLayout from '../CalculatorLayout.svelte'
   import PacketList from '../PacketList.svelte'
+  import PacketResultList from '../PacketResultList.svelte'
 
   export let data: PageData
 
@@ -46,32 +47,23 @@
     currentLevel: number
     nicotine: number
   } | null>(null)
+
+  const packetPopoverContent = [
+    'Choose which packets you want to add to a bottle from this list.',
+    'For each packet you select, enter the quantity for that packet in the corresponding input field.'
+  ]
 </script>
 
 <svelte:head>
   <title>VF Portal | Nicotine Calculator - Level</title>
 </svelte:head>
 
-<div class="flex flex-col-reverse gap-12 lg:flex-row">
-  <!-- Available packets and form -->
-  <div class="flex grow flex-wrap gap-6">
-    <!-- Available packets -->
-    <div class="flex w-fit flex-col gap-0.5">
-      <!-- Available packets header -->
-      <div class="relative flex items-center gap-1">
-        <h2 class="text-lg font-medium text-zinc-100">Packets to Add</h2>
-        <Button
-          color="green"
-          icon
-          transparent
-          styles="p-0.5"
-          ><Icon
-            src={InformationCircle}
-            size="1.25rem"
-          /></Button
-        >
-      </div>
-
+<CalculatorLayout>
+  <svelte:fragment slot="form"
+    ><PacketList
+      title="Packet to Add"
+      {packetPopoverContent}
+    >
       <!-- Packets list -->
       {#each data.packets as packet, idx (idx)}
         <Checkbox
@@ -81,7 +73,7 @@
           bind:checked={$form.packets[idx].selected}
         />
       {/each}
-    </div>
+    </PacketList>
 
     <Form
       {enhance}
@@ -138,26 +130,26 @@
           }}>Reset Form</Button
         >
       </svelte:fragment>
+    </Form></svelte:fragment
+  >
 
-      <svelte:fragment slot="links">
-        <Link href="packets">Calculate Total Packets Needed</Link>
-      </svelte:fragment>
-    </Form>
-  </div>
-
-  <div class="flex grow flex-col items-center gap-2">
-    <h2 class="text-2xl font-semibold">Results</h2>
-    <Divider styles="self-stretch" />
+  <svelte:fragment slot="result">
     {#if $result !== null}
       <p class="text-xl text-zinc-100">
-        {$result.bottleSize}mL starting at {$result.currentLevel}mg
+        <span class="font-medium text-violet-300">{$result.bottleSize}mL</span>
+        starting at
+        <span class="font-medium text-violet-300">{$result.currentLevel}mg</span
+        >
       </p>
-      <PacketList packets={$result.packets} />
-      <p class="text-4xl font-semibold text-zinc-100">{$result.nicotine}mg</p>
+      <PacketResultList packets={$result.packets} />
+      <p class="flex items-end gap-2">
+        <span class="text-2xl">Total:</span>
+        <span class="text-3xl font-bold text-green-400">
+          {$result.nicotine}mg
+        </span>
+      </p>
     {:else}
-      <p class="px-4 italic text-zinc-500">
-        Fill out the form to see the results
-      </p>
+      <p class="italic text-zinc-500">Fill out the form</p>
     {/if}
-  </div>
-</div>
+  </svelte:fragment>
+</CalculatorLayout>
