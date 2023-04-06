@@ -8,10 +8,12 @@
   import type { PageData } from './$types'
 
   import { savedPackets, storeSavedPackets } from '$lib/stores/nicotinePackets'
-  import { calculatePackets, packetColors } from '$lib/utils/nicotinePackets'
+  import { calculatePackets } from '$lib/utils/nicotinePackets'
 
   import { Button, Divider, Link } from '$components'
   import { Checkbox, Form, Input, Select } from '$components/forms'
+
+  import PacketList from '../PacketList.svelte'
 
   export let data: PageData
 
@@ -39,18 +41,19 @@
   <title>VF Portal | Nicotine Calculator - Packets</title>
 </svelte:head>
 
-<div class="flex flex-col gap-12 lg:flex-row">
+<div class="flex flex-col-reverse gap-12 lg:flex-row">
   <!-- Available packets and form -->
   <div class="flex flex-wrap gap-6 lg:grow">
     <!-- Available packets -->
     <div class="flex w-fit flex-col gap-0.5">
       <!-- Available packets header -->
-      <div class="relative flex items-end gap-1">
-        <h2 class="text-lg font-medium">Available Packets</h2>
+      <div class="relative flex items-center gap-1">
+        <h2 class="text-lg font-medium text-zinc-100">Available Packets</h2>
         <Button
           color="green"
           icon
           transparent
+          styles="p-0.5"
           ><Icon
             src={InformationCircle}
             size="1.25rem"
@@ -144,35 +147,29 @@
   </div>
 
   <div class="flex grow flex-col items-center gap-2">
-    <h2 class="text-2xl font-semibold">Results</h2>
+    <h2 class="text-2xl font-semibold text-zinc-100">Results</h2>
     <Divider styles="self-stretch" />
     {#if $results}
       {#if $results.length > 0}
         <ul
-          class="flex w-full flex-wrap justify-center gap-x-20 gap-y-10 px-4 text-lg"
+          class="flex flex-wrap justify-center gap-x-20 gap-y-10 px-4 text-lg"
         >
-          {#each $results as packets}
+          {#each $results as result}
             <li class="flex flex-col gap-2 text-center">
-              {#if packets.type !== 'exact'}
-                <p class="capitalize underline underline-offset-2">
-                  {packets.type} than desired
+              {#if result.type !== 'exact'}
+                <p
+                  class="font-medium capitalize text-zinc-100 underline underline-offset-2"
+                >
+                  {result.type} than desired
                 </p>
               {/if}
               <p>
-                Nicotine level: <span class="text-xl font-semibold"
-                  >{packets.finalNicLevel} mg</span
+                Nicotine level: <span
+                  class="text-xl font-semibold text-zinc-100"
+                  >{result.finalNicLevel} mg</span
                 >
               </p>
-              {#each packets.packets as { color, count, mg }}
-                <div
-                  class="rounded-lg border-[3px] {packetColors[
-                    color.toLowerCase()
-                  ]} bg-zinc-900 p-2 text-center font-semibold text-white"
-                >
-                  <p class="capitalize">{color} - {mg}mg</p>
-                  <p>Qty &times; {count}</p>
-                </div>
-              {/each}
+              <PacketList packets={result.packets} />
             </li>
           {/each}
         </ul>
