@@ -55,7 +55,7 @@
 </script>
 
 <svelte:head>
-  <title>VF Portal | Nicotine Calculator - Level</title>
+  <title>VF Columbus | Nicotine Level Calculator</title>
 </svelte:head>
 
 <CalculatorLayout>

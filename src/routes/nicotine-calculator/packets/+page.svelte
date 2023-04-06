@@ -44,7 +44,7 @@
 </script>
 
 <svelte:head>
-  <title>VF Portal | Nicotine Calculator - Packets</title>
+  <title>VF Columbus | Nicotine Packet Calculator</title>
 </svelte:head>
 
 <CalculatorLayout>

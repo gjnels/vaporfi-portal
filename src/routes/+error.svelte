@@ -35,6 +35,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>An error has occured</title>
+</svelte:head>
+
 <div class="mt-10 flex flex-col items-center gap-2">
   <div class="mb-4 flex items-center gap-2 text-rose-400">
     <Icon
