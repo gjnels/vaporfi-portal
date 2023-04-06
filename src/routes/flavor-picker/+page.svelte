@@ -139,7 +139,7 @@
   <title>VF Columbus | Flavor Picker</title>
 </svelte:head>
 
-<PageLayout contentContainerStyles="flex [&>*]:grow gap-10 flex-wrap">
+<PageLayout contentContainerStyles="grid lg:grid-cols-2 gap-10">
   <PageTitle
     title="Flavor Picker"
     slot="header"
@@ -307,7 +307,7 @@
     {#if $savedBlends.length === 0}
       <p class="font-light italic text-zinc-400">No saved blends found</p>
     {:else}
-      <ul class="flex flex-col gap-2">
+      <ul class="flex flex-col gap-3">
         {#each $savedBlends as blend (blend.id)}
           <li
             class="flex items-center rounded-lg border border-transparent bg-zinc-900 p-2 transition duration-100 hover:border-zinc-700 hover:bg-zinc-950"
