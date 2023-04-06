@@ -85,7 +85,7 @@
 
   const resetForm = () => {
     $flavorCount = 1 // Reset flavor count
-    reset()
+    reset({ keepMessage: false })
   }
 
   const shotOptions = [
