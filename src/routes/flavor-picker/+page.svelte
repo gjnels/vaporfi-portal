@@ -310,7 +310,7 @@
       <ul class="flex flex-col gap-3">
         {#each $savedBlends as blend (blend.id)}
           <li
-            class="flex items-center rounded-lg border border-transparent bg-zinc-900 p-2 transition duration-100 hover:border-zinc-700 hover:bg-zinc-950"
+            class="flex items-center gap-2 rounded-lg border border-transparent bg-zinc-900 p-2 transition hover:border-zinc-700 hover:bg-zinc-950"
           >
             <Button
               transparent
@@ -321,6 +321,7 @@
             <Button
               icon
               color="green"
+              transparent
               styles="ml-auto"
               onclick={() => setEditBlend(blend)}
               ><Icon
@@ -332,6 +333,7 @@
             <Button
               icon
               color="red"
+              transparent
               onclick={() => deleteBlend(blend.id)}
               ><Icon
                 src={Trash}
