@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { twMerge } from 'tailwind-merge'
+
   import type { PageData } from './$types'
 
   import { formatPromoDate } from '$lib/utils/dates'
@@ -7,7 +9,7 @@
   import { Divider, PageLayout, PageTitle } from '$components'
 
   export let data: PageData
-  $: ({ promos } = data)
+  $: promos = data.promos
 </script>
 
 <svelte:head>
@@ -23,10 +25,17 @@
   {#if !promos || promos.length === 0}
     <p class="text-center text-lg text-rose-500">No current promotions found</p>
   {:else}
+    {@const isAdmin = data.currentProfile?.role === 'Admin'}
     <div class="grid gap-8 md:grid-cols-2">
       {#each promos as promo (promo.id)}
-        <div
-          class="flex flex-col gap-4 rounded-lg border border-zinc-500 bg-zinc-900 p-4"
+        <svelte:element
+          this={isAdmin ? 'a' : 'div'}
+          href={isAdmin ? 'flavor-picker' : null}
+          title={isAdmin ? `Edit ${promo.title} promotion` : null}
+          class={twMerge(
+            'flex flex-col gap-4 rounded-lg border border-zinc-600 bg-zinc-900 p-4',
+            isAdmin && 'transition hover:border-green-500 hover:bg-zinc-950'
+          )}
         >
           <!--  title -->
           <h2 class="text-3xl font-semibold text-zinc-100">
@@ -90,7 +99,7 @@
               {promo.notes}
             </span>
           {/if}
-        </div>
+        </svelte:element>
       {/each}
     </div>
   {/if}
