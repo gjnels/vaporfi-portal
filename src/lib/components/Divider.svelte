@@ -7,7 +7,7 @@
 
 <div
   class={twMerge(
-    'block rounded-full bg-white/25',
+    'block rounded-full bg-zinc-100/25',
     vertical ? 'w-px' : 'h-px',
     styles
   )}

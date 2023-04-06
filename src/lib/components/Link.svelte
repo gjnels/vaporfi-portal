@@ -11,7 +11,7 @@
 <a
   {href}
   class={twMerge(
-    'rounded-md px-1 font-medium underline-offset-2 transition focus-visible:outline focus-visible:outline-white',
+    'rounded-md px-1 font-medium underline-offset-2 transition focus-visible:outline focus-visible:outline-zinc-100',
     showBorder === 'always' && 'underline',
     showBorder === 'hover' && 'hover:underline focus-visible:underline',
     color === 'green' && [

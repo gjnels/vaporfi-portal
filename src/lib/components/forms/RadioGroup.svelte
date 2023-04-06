@@ -53,7 +53,7 @@
           bind:group
           value={option.value}
           class={twMerge(
-            'peer cursor-pointer text-zinc-400 transition focus:ring-white  focus:ring-offset-0',
+            'peer cursor-pointer text-zinc-400 transition focus:ring-zinc-100 focus:ring-offset-0',
             color === 'green' && 'text-green-500',
             color === 'purple' && 'text-violet-500',
             radioStyles
@@ -63,7 +63,7 @@
 
         <span
           class={twMerge(
-            'select-none transition group-focus-within:text-zinc-400 group-hover:text-zinc-400 peer-checked:text-white',
+            'select-none transition group-focus-within:text-zinc-400 group-hover:text-zinc-400 peer-checked:text-zinc-100',
             color === 'green' &&
               'group-focus-within:text-green-400 group-hover:text-green-400',
             color === 'purple' &&

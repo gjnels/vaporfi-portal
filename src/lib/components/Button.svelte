@@ -17,7 +17,7 @@
   {disabled}
   on:click={onclick}
   class={twMerge(
-    'flex items-center justify-center gap-1 rounded-lg border-2 border-transparent bg-transparent px-3 py-2 font-semibold text-white outline-none ring-white transition focus-visible:ring-2 active:scale-95',
+    'flex items-center justify-center gap-1 rounded-lg border-2 border-transparent bg-transparent px-3 py-2 font-semibold text-zinc-100 outline-none ring-zinc-100 transition focus-visible:ring-2 active:scale-95',
     transparent
       ? ['hover:bg-zinc-800', color && 'hover:text-zinc-950']
       : 'hover:border-current hover:bg-transparent',

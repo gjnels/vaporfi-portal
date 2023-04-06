@@ -10,7 +10,7 @@
     <Logo />
   </header>
   <nav
-    class="sticky top-0 flex gap-4 overflow-auto border-b border-zinc-700 bg-black px-4 pt-2 shadow-md md:px-6"
+    class="sticky top-0 z-10 flex gap-4 overflow-auto border-b border-zinc-700 bg-black px-4 pt-2 shadow-md md:px-6"
   >
     <Navlink
       href="/"
