@@ -180,7 +180,9 @@
         <p class="px-4 italic">No valid packets found</p>
       {/if}
     {:else}
-      <p class="px-4 italic opacity-75">Fill out the form to see the results</p>
+      <p class="px-4 italic text-zinc-500">
+        Fill out the form to see the results
+      </p>
     {/if}
   </div>
 </div>

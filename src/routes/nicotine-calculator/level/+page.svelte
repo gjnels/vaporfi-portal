@@ -134,7 +134,7 @@
     </Form>
   </div>
 
-  <div class="flex grow flex-col items-center gap-4">
+  <div class="flex grow flex-col items-center gap-2">
     <h2 class="text-2xl font-semibold">Results</h2>
     <Divider styles="self-stretch" />
     {#if $result !== null}
@@ -158,7 +158,9 @@
       </div>
       <p class="text-4xl font-semibold text-white">{$result.nicotine}mg</p>
     {:else}
-      <p class="px-4 italic opacity-75">Fill out the form to see the results</p>
+      <p class="px-4 italic text-zinc-500">
+        Fill out the form to see the results
+      </p>
     {/if}
   </div>
 </div>

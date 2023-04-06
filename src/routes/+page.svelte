@@ -29,7 +29,7 @@
           class="flex flex-col gap-4 rounded-lg border border-zinc-500 bg-zinc-900 p-4"
         >
           <!--  title -->
-          <h2 class="text-3xl font-semibold text-white">
+          <h2 class="text-3xl font-semibold text-zinc-100">
             {promo.title}
           </h2>
 
@@ -52,7 +52,7 @@
 
           <!-- details -->
           {#if promo.details}
-            <p class="whitespace-pre-line px-2 text-white">
+            <p class="whitespace-pre-line px-2 text-zinc-100">
               {promo.details}
             </p>
             <Divider />
@@ -62,14 +62,14 @@
           <div class="flex flex-wrap gap-x-8 gap-y-2 px-2">
             <p class="flex flex-col">
               <span class="text-lg font-light underline">Begins</span>
-              <span class="font-medium text-white"
+              <span class="font-medium text-zinc-100"
                 >{formatPromoDate(promo.valid_from)}</span
               >
             </p>
             <!-- date promo ends (inclusive) -->
             <p class="flex flex-col">
               <span class="text-lg font-light underline">Ends</span>
-              <span class="font-medium text-white"
+              <span class="font-medium text-zinc-100"
                 >{formatPromoDate(promo.valid_until)}</span
               >
             </p>
@@ -80,13 +80,13 @@
           <!-- sale -->
           <p class="flex flex-col px-2">
             <span class="text-lg font-light underline">Sale</span>
-            <span class="whitespace-pre-line text-white">{promo.sale}</span>
+            <span class="whitespace-pre-line text-zinc-100">{promo.sale}</span>
           </p>
 
           <!-- notes -->
           {#if promo.notes}
             <Divider />
-            <span class="whitespace-pre-line px-2 opacity-80">
+            <span class="whitespace-pre-line px-2 text-zinc-400">
               {promo.notes}
             </span>
           {/if}

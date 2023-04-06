@@ -6,11 +6,11 @@
 </script>
 
 <div class="flex min-h-full flex-col">
-  <header class="flex items-center px-4 py-1 md:px-6">
+  <header class="flex items-center px-4 pt-2 md:px-6">
     <Logo />
   </header>
   <nav
-    class="sticky top-0 flex gap-4 overflow-x-scroll border-b border-zinc-700 bg-black px-4 pt-2 shadow-md md:px-6"
+    class="sticky top-0 flex gap-4 overflow-auto border-b border-zinc-700 bg-black px-4 pt-2 shadow-md md:px-6"
   >
     <Navlink
       href="/"
@@ -40,3 +40,14 @@
 </div>
 
 <Toaster />
+
+<style>
+  nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  nav {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>
