@@ -1,7 +1,5 @@
 <script lang="ts">
   import cuid2 from '@paralleldrive/cuid2'
-  import { toast } from 'svelte-french-toast'
-  import { Icon, Pencil, Trash } from 'svelte-hero-icons'
   import { writable } from 'svelte/store'
   import { superForm } from 'sveltekit-superforms/client'
 
@@ -9,10 +7,13 @@
 
   import { savedBlends, storeSavedBlends } from '$lib/stores/savedBlends'
   import type { SavedFlavorPickerBlend } from '$lib/types/flavors.types'
-  import { categoriesFromFlavors, createBlendString } from '$lib/utils/flavors'
+  import { copyBlendToClipboard } from '$lib/utils/clipboard'
+  import { categoriesFromFlavors } from '$lib/utils/flavors'
 
   import { Button, PageLayout, PageTitle } from '$components'
   import { Form, Input, RadioGroup, Select } from '$components/forms'
+
+  import BlendList from './BlendList.svelte'
 
   export let data: PageData
 
@@ -56,31 +57,21 @@
 
   const flavorCount = writable<1 | 2 | 3>(1)
 
-  // Create blend string and copy to clipboard (if possible)
-  // Shows a toast notification as the promise resolves/rejects
-  const copyBlendToClipboard = (blend: SavedFlavorPickerBlend) => {
-    toast.promise(navigator.clipboard.writeText(createBlendString(blend)), {
-      loading: 'Copying custom blend to clipboard...',
-      error: 'Copy to clipboard failed',
-      success: 'Custom blend copied to clipboard.'
-    })
-  }
-
   // Set form values to the selected blend to edit
-  const setEditBlend = (blend: SavedFlavorPickerBlend) => {
+  const editBlend = (blend: SavedFlavorPickerBlend) => {
     $flavorCount = blend.flavor3 ? 3 : blend.flavor2 ? 2 : 1
     $form = { ...$form, ...blend }
   }
 
   // Delete a saved blend from savedBlends and store the new savedBlends to localStorage
-  const deleteBlend = (blendId: string) => {
+  const deleteBlend = (blend: SavedFlavorPickerBlend) => {
     $savedBlends = $savedBlends.filter(
-      (savedBlend) => savedBlend.id !== blendId
+      (savedBlend) => savedBlend.id !== blend.id
     )
     storeSavedBlends()
 
     // If the form is currently editing this deleted blend, reset the entire form
-    if ($form.id === blendId) resetForm()
+    if ($form.id === blend.id) resetForm()
   }
 
   const resetForm = () => {
@@ -292,58 +283,8 @@
     </svelte:fragment>
   </Form>
 
-  <div>
-    <div class="mb-4 flex items-center justify-between gap-4">
-      <h2 class="text-2xl font-semibold">Saved Blends</h2>
-      <Button
-        color="red"
-        small
-        onclick={() => {
-          $savedBlends = []
-          storeSavedBlends()
-        }}>Clear All</Button
-      >
-    </div>
-    {#if $savedBlends.length === 0}
-      <p class="font-light italic text-zinc-400">No saved blends found</p>
-    {:else}
-      <ul class="flex flex-col gap-3">
-        {#each $savedBlends as blend (blend.id)}
-          <li
-            class="flex items-center gap-2 rounded-lg border border-transparent bg-zinc-900 p-2 transition hover:border-zinc-700 hover:bg-zinc-950"
-          >
-            <Button
-              transparent
-              styles="text-left px-2 py-1"
-              onclick={() => copyBlendToClipboard(blend)}
-              >{createBlendString(blend)}</Button
-            >
-            <Button
-              icon
-              color="green"
-              transparent
-              styles="ml-auto"
-              onclick={() => setEditBlend(blend)}
-              ><Icon
-                src={Pencil}
-                size="1.5rem"
-                solid
-              /></Button
-            >
-            <Button
-              icon
-              color="red"
-              transparent
-              onclick={() => deleteBlend(blend.id)}
-              ><Icon
-                src={Trash}
-                size="1.5rem"
-                solid
-              /></Button
-            >
-          </li>
-        {/each}
-      </ul>
-    {/if}
-  </div>
+  <BlendList
+    onEdit={editBlend}
+    onDelete={deleteBlend}
+  />
 </PageLayout>
