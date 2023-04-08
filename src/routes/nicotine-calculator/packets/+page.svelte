@@ -4,8 +4,6 @@
   import { writable } from 'svelte/store'
   import { superForm } from 'sveltekit-superforms/client'
 
-  import type { PageData } from './$types'
-
   import { savedPackets, storeSavedPackets } from '$lib/stores/nicotinePackets'
   import { calculatePackets } from '$lib/utils/nicotinePackets'
 
@@ -15,7 +13,7 @@
   import PacketList from '../PacketList.svelte'
   import PacketResultList from '../PacketResultList.svelte'
 
-  export let data: PageData
+  export let data
 
   onMount(() => {
     // Validate all stored packets match packets from database

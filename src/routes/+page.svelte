@@ -1,14 +1,12 @@
 <script lang="ts">
   import { twMerge } from 'tailwind-merge'
 
-  import type { PageData } from './$types'
-
   import { formatPromoDate } from '$lib/utils/dates'
   import { createDisplayBlendString } from '$lib/utils/flavors'
 
   import { Divider, PageLayout } from '$components'
 
-  export let data: PageData
+  export let data
   $: promos = data.promos
 </script>
 

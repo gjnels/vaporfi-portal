@@ -1,9 +1,7 @@
-import type { PageServerLoad } from './$types'
-
 import type { Blend } from '$lib/types/flavors.types'
 import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
 
-export const load = (async ({ locals: { supabase } }) => {
+export const load = async ({ locals: { supabase } }) => {
   const today = new Date().toUTCString()
 
   const { data: promos } = await supabase
@@ -28,4 +26,4 @@ export const load = (async ({ locals: { supabase } }) => {
     .returns<Array<DatabaseRow<'promos'> & { blend: Blend | null }>>()
 
   return { promos }
-}) satisfies PageServerLoad
+}

@@ -1,8 +1,6 @@
 import { error } from '@sveltejs/kit'
 
-import type { LayoutServerLoad } from './$types'
-
-export const load = (async ({ locals: { supabase } }) => {
+export const load = async ({ locals: { supabase } }) => {
   const { data: packets, error: err } = await supabase
     .from('nicotine_packets')
     .select('*')
@@ -14,4 +12,4 @@ export const load = (async ({ locals: { supabase } }) => {
   }
 
   return { packets }
-}) satisfies LayoutServerLoad
+}

@@ -1,11 +1,9 @@
 import { fail } from '@sveltejs/kit'
 import { message, superValidate } from 'sveltekit-superforms/server'
 
-import type { Actions, PageServerLoad } from './$types'
-
 import { totalNicotineSchema } from '$lib/schemas/nicotineCalculator'
 
-export const load = (async ({ parent }) => {
+export const load = async ({ parent }) => {
   const { packets } = await parent()
   return {
     form: superValidate(
@@ -19,7 +17,7 @@ export const load = (async ({ parent }) => {
       totalNicotineSchema
     )
   }
-}) satisfies PageServerLoad
+}
 
 export const actions = {
   default: async (event) => {
@@ -33,4 +31,4 @@ export const actions = {
     }
     return { form }
   }
-} satisfies Actions
+}

@@ -2,8 +2,6 @@
   import { writable } from 'svelte/store'
   import { superForm } from 'sveltekit-superforms/client'
 
-  import type { PageData } from './$types'
-
   import type { SelectedPacket } from '$lib/types/nicotinePackets.types'
   import { getFinalNicLevel } from '$lib/utils/nicotinePackets'
 
@@ -13,7 +11,7 @@
   import PacketList from '../PacketList.svelte'
   import PacketResultList from '../PacketResultList.svelte'
 
-  export let data: PageData
+  export let data
 
   const { form, enhance, errors, constraints, message, reset } = superForm(
     data.form,

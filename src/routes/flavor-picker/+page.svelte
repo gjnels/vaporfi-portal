@@ -2,8 +2,6 @@
   import cuid2 from '@paralleldrive/cuid2'
   import { superForm } from 'sveltekit-superforms/client'
 
-  import type { PageData } from './$types'
-
   import { savedBlends, storeSavedBlends } from '$lib/stores/savedBlends'
   import type { SavedFlavorPickerBlend } from '$lib/types/flavors.types'
   import { copyBlendToClipboard } from '$lib/utils/clipboard'
@@ -13,7 +11,7 @@
 
   import BlendList from './BlendList.svelte'
 
-  export let data: PageData
+  export let data
 
   $: flavors = data.flavors
   $: categories = categoriesFromFlavors(flavors)

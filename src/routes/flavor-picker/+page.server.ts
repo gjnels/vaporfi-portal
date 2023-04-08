@@ -1,14 +1,12 @@
 import { error, fail } from '@sveltejs/kit'
 import { superValidate } from 'sveltekit-superforms/server'
 
-import type { Actions, PageServerLoad } from './$types'
-
 import {
   flavorPickerRefinedSchema,
   flavorPickerSchema
 } from '$lib/schemas/customBlends'
 
-export const load = (async ({ locals: { supabase } }) => {
+export const load = async ({ locals: { supabase } }) => {
   const { data: flavors, error: err } = await supabase
     .from('flavors')
     .select('*')
@@ -23,7 +21,7 @@ export const load = (async ({ locals: { supabase } }) => {
     flavors,
     form: superValidate(null, flavorPickerSchema)
   }
-}) satisfies PageServerLoad
+}
 
 export const actions = {
   default: async (event) => {
@@ -33,4 +31,4 @@ export const actions = {
     }
     return { form }
   }
-} satisfies Actions
+}
