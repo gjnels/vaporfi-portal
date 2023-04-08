@@ -1,8 +1,9 @@
 <script lang="ts">
   import { Toaster } from 'svelte-french-toast'
 
-  import { Logo, Navlink } from '../lib/components'
-  import '../tailwind.css'
+  import { Logo, Navlink } from '$lib/components'
+
+  import '../app.postcss'
 </script>
 
 <div
