@@ -71,12 +71,6 @@
     if ($form.id === blend.id) reset({ keepMessage: false })
   }
 
-  const shotOptions = [
-    { value: 1, label: 'Single Shot' },
-    { value: 2, label: 'Double Shot' },
-    { value: 3, label: 'Triple Shot' }
-  ]
-
   // Prevent already chosen flavors from showing as options for other inputs
   $: flavor1Options = flavors
     .filter(
