@@ -27,7 +27,7 @@
   {#if label}
     <span
       class={twMerge(
-        !!errors && !!errors.length && 'text-red-400',
+        !!errors && !!errors.length && 'text-danger-400',
         labelStyles
       )}>{label}</span
     >
@@ -53,9 +53,9 @@
           bind:group
           value={option.value}
           class={twMerge(
-            'peer cursor-pointer text-zinc-400 transition focus:ring-zinc-100 focus:ring-offset-0',
-            color === 'green' && 'text-green-500',
-            color === 'purple' && 'text-violet-500',
+            'peer cursor-pointer text-surface-400 transition focus:ring-surface-100 focus:ring-offset-0',
+            color === 'green' && 'text-primary-500',
+            color === 'purple' && 'text-secondary-500',
             radioStyles
           )}
           {...constraints}
@@ -63,11 +63,11 @@
 
         <span
           class={twMerge(
-            'select-none transition group-focus-within:text-zinc-400 group-hover:text-zinc-400 peer-checked:text-zinc-100',
+            'select-none transition group-focus-within:text-surface-400 group-hover:text-surface-400 peer-checked:text-surface-100',
             color === 'green' &&
-              'group-focus-within:text-green-400 group-hover:text-green-400',
+              'group-focus-within:text-primary-400 group-hover:text-primary-400',
             color === 'purple' &&
-              'group-focus-within:text-violet-400 group-hover:text-violet-400',
+              'group-focus-within:text-secondary-400 group-hover:text-secondary-400',
             labelStyles
           )}>{option.label}</span
         >

@@ -2,11 +2,16 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+@import './styles/buttons.postcss';
+@import './styles/forms.postcss';
+
 html,
 body {
   @apply h-full antialiased;
 }
 
 body {
-  @apply h-full bg-black text-base-300 antialiased;
+  @apply h-full antialiased;
+  @apply bg-surface-900 text-surface-50;
+  @apply selection:bg-primary-200 selection:text-surface-950;
 }

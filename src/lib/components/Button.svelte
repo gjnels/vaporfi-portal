@@ -21,37 +21,37 @@
   use:use
   on:click={onclick}
   class={twMerge(
-    'flex items-center justify-center gap-1 rounded-lg border-2 border-transparent bg-transparent px-3 py-2 font-semibold text-zinc-100 outline-none ring-zinc-100 transition focus-visible:ring-2 active:scale-95',
+    'flex items-center justify-center gap-1 rounded-lg border-2 border-transparent bg-transparent px-3 py-2 font-semibold text-surface-100 outline-none ring-surface-100 transition focus-visible:ring-2 active:scale-95',
     transparent
-      ? ['hover:bg-zinc-800', color && 'hover:text-zinc-950']
+      ? ['hover:bg-surface-800', color && 'hover:text-surface-950']
       : 'hover:border-current hover:bg-transparent',
     color === 'green' && [
       icon
-        ? 'text-green-500 hover:text-green-400'
+        ? 'text-primary-500 hover:text-primary-400'
         : transparent
-        ? 'text-green-500 hover:bg-green-500'
-        : 'bg-green-600 hover:text-green-500'
+        ? 'text-primary-500 hover:bg-primary-500'
+        : 'bg-primary-600 hover:text-primary-500'
     ],
     color === 'purple' && [
       icon
-        ? 'text-violet-500 hover:text-violet-400'
+        ? 'text-secondary-500 hover:text-secondary-400'
         : transparent
-        ? 'text-violet-500 hover:bg-violet-500'
-        : 'bg-violet-600 hover:text-violet-500'
+        ? 'text-secondary-500 hover:bg-secondary-500'
+        : 'bg-secondary-600 hover:text-secondary-500'
     ],
     color === 'red' && [
       icon
-        ? 'text-rose-500 hover:text-rose-500'
+        ? 'text-danger-500 hover:text-danger-500'
         : transparent
-        ? 'text-rose-500 hover:bg-rose-500'
-        : 'bg-rose-600 hover:text-rose-500'
+        ? 'text-danger-500 hover:bg-danger-500'
+        : 'bg-danger-600 hover:text-danger-500'
     ],
     color === 'gray' && [
       icon
-        ? 'text-zinc-400 hover:text-zinc-300'
+        ? 'text-surface-400 hover:text-surface-300'
         : transparent
-        ? 'text-zinc-400 hover:bg-zinc-400'
-        : 'bg-zinc-500 hover:text-zinc-300'
+        ? 'text-surface-400 hover:bg-surface-400'
+        : 'bg-surface-500 hover:text-surface-300'
     ],
     small && 'px-2 py-1 text-sm',
     icon && 'p-1',

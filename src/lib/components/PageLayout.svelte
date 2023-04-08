@@ -45,7 +45,7 @@
 </script>
 
 {#if $$slots.header}
-  <div class={twMerge('border-b border-zinc-700', headerWrapperStyles)}>
+  <div class={twMerge('border-b border-surface-700', headerWrapperStyles)}>
     <div
       class={twMerge(
         'mx-auto flex w-full max-w-screen-2xl items-center px-4 py-8',

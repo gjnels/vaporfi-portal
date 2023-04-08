@@ -3,5 +3,6 @@ export { default as Input } from './Input.svelte'
 export { default as Select } from './Select.svelte'
 export { default as RadioGroup } from './RadioGroup.svelte'
 export { default as Checkbox } from './Checkbox.svelte'
+export { default as FormControl } from './FormControl.svelte'
 
 export type Color = 'green' | 'purple' | undefined

@@ -10,7 +10,7 @@
   import { calculatePackets } from '$lib/utils/nicotinePackets'
 
   import { Button } from '$components'
-  import { Checkbox, Form, Input, Select } from '$components/forms'
+  import { Checkbox, Form, FormControl, Input, Select } from '$components/forms'
 
   import CalculatorLayout from '../CalculatorLayout.svelte'
   import PacketList from '../PacketList.svelte'
@@ -55,86 +55,97 @@
     >
       <!-- Available packets list -->
       {#each $savedPackets as packet (packet.id)}
-        <Checkbox
-          name="packet"
-          label={`${packet.color} - ${packet.mg}mg`}
-          bind:checked={packet.available}
-          labelStyles="capitalize"
-        />
+        <label class="checkbox secondary">
+          <input
+            type="checkbox"
+            bind:checked={packet.available}
+          />
+          <span class="capitalize">{packet.color} - {packet.mg}mg</span>
+        </label>
       {/each}
-      <Button
-        color="purple"
-        small
-        styles="mt-2"
-        onclick={() => {
+      <button
+        class="btn btn-secondary btn-small mt-2"
+        on:click={() => {
           const { error } = storeSavedPackets()
           error
             ? toast.error(error)
             : toast.success('Nicotine packet preferences saved.')
-        }}>Save</Button
+        }}>Save</button
       >
     </PacketList>
 
-    <Form
-      {enhance}
-      styles="grow"
+    <form
+      method="post"
+      use:enhance
+      class="form grow"
     >
-      <Select
-        name="bottleSize"
-        label="Bottle Size"
-        bind:value={$form.bottleSize}
-        options={[
-          { value: 30, label: '30 mL' },
-          { value: 50, label: '50 mL' },
-          { value: 60, label: '60 mL' },
-          { value: 100, label: '100 mL' },
-          { value: 120, label: '120 mL' }
-        ]}
+      <FormControl
+        label="Bottle size"
         errors={$errors.bottleSize}
-        constraints={$constraints.bottleSize}
-      />
-
-      <Input
-        type="number"
-        name="current"
-        label="Current Nicotine Level"
-        bind:value={$form.current}
-        errors={$errors.current}
-        constraints={$constraints.current}
-        step="any"
-      />
-
-      <Input
-        type="number"
-        name="final"
-        label="Final Nicotine Level"
-        bind:value={$form.final}
-        errors={$errors.final}
-        constraints={$constraints.final}
-        step="any"
-      />
-
-      <Checkbox
-        name="salt"
-        label="Salt nicotine"
-        bind:checked={$form.salt}
-        errors={$errors.salt}
-      />
-
-      <svelte:fragment slot="actions">
-        <Button
-          type="submit"
-          color="green">Calculate</Button
+      >
+        <select
+          name="bottleSize"
+          bind:value={$form.bottleSize}
+          {...$constraints.bottleSize}
         >
-        <Button
-          color="gray"
-          onclick={() => {
+          <option value={30}>30 mL</option>
+          <option value={50}>50 mL</option>
+          <option value={60}>60 mL</option>
+          <option value={100}>100 mL</option>
+          <option value={120}>120 mL</option>
+        </select>
+      </FormControl>
+
+      <FormControl
+        label="Current nicotine level"
+        errors={$errors.current}
+      >
+        <input
+          type="number"
+          name="current"
+          bind:value={$form.current}
+          {...$constraints.current}
+          step="any"
+        />
+      </FormControl>
+
+      <FormControl
+        label="Final nicotine level"
+        errors={$errors.final}
+      >
+        <input
+          type="number"
+          name="final"
+          bind:value={$form.final}
+          {...$constraints.final}
+          step="any"
+        />
+      </FormControl>
+
+      <label class="checkbox">
+        <input
+          type="checkbox"
+          name="salt"
+          bind:checked={$form.salt}
+        />
+        <span>Salt nicotine</span>
+      </label>
+
+      <div class="btn-group">
+        <button
+          type="submit"
+          class="btn btn-primary">Calculate</button
+        >
+        <button
+          type="button"
+          class="btn"
+          on:click={() => {
             reset({ keepMessage: false })
             $result = null
-          }}>Reset Form</Button
+          }}>Reset Form</button
         >
-      </svelte:fragment>
-    </Form>
+      </div>
+    </form>
   </svelte:fragment>
 
   <svelte:fragment slot="result">
@@ -145,14 +156,14 @@
             <li class="flex flex-col gap-2 text-center">
               {#if result.type !== 'exact'}
                 <p
-                  class="text-lg font-medium capitalize text-zinc-100 underline underline-offset-2"
+                  class="text-lg font-medium capitalize text-surface-100 underline underline-offset-2"
                 >
                   {result.type} than desired
                 </p>
               {/if}
               <p>
                 Nicotine level: <span
-                  class="text-xl font-semibold text-zinc-100"
+                  class="text-xl font-semibold text-surface-100"
                   >{result.finalNicLevel} mg</span
                 >
               </p>
@@ -161,10 +172,10 @@
           {/each}
         </ul>
       {:else}
-        <p class="text-red-400">No valid packets found</p>
+        <p class="text-danger-400">No valid packets found</p>
       {/if}
     {:else}
-      <p class="italic text-zinc-500">Fill out the form</p>
+      <p class="italic text-surface-500">Fill out the form</p>
     {/if}
   </svelte:fragment>
 </CalculatorLayout>

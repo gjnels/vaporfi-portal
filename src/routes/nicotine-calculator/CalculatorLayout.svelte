@@ -9,7 +9,7 @@
   </div>
 
   <div class="row-start-1 flex grow flex-col items-center gap-2 lg:row-auto">
-    <h2 class="text-2xl font-semibold text-zinc-100">Results</h2>
+    <h2 class="text-2xl font-semibold text-surface-100">Results</h2>
     <Divider styles="self-stretch" />
     <slot name="result" />
   </div>

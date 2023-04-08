@@ -31,7 +31,7 @@
   <!-- overall form error -->
   {#if formError}
     <span
-      class="self-center text-lg font-semibold text-rose-500 selection:bg-rose-200"
+      class="self-center text-lg font-semibold text-danger-500 selection:bg-danger-200"
       >{formError}</span
     >
   {/if}

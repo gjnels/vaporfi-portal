@@ -36,11 +36,11 @@
   <select
     {name}
     class={twMerge(
-      'cursor-pointer rounded-lg border-2 border-transparent bg-zinc-800 px-3 py-2 text-zinc-100 outline-none transition focus:border-zinc-100 focus:bg-zinc-900 focus:ring-0',
-      color === 'green' && 'focus:border-green-500',
-      color === 'purple' && 'focus:border-violet-500',
-      !!errors && !!errors.length && 'focus:border-rose-500',
-      defaultOption && value === defaultOption.value && 'text-zinc-400',
+      'cursor-pointer rounded-lg border-2 border-transparent bg-surface-800 px-3 py-2 text-surface-100 outline-none transition focus:border-surface-100 focus:bg-surface-900 focus:ring-0',
+      color === 'green' && 'focus:border-primary-500',
+      color === 'purple' && 'focus:border-secondary-500',
+      !!errors && !!errors.length && 'focus:border-danger-500',
+      defaultOption && value === defaultOption.value && 'text-surface-400',
       selectStyles
     )}
     bind:value

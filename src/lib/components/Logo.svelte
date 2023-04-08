@@ -4,7 +4,7 @@
   x="0px"
   y="0px"
   viewBox="0 0 245 80"
-  class="h-10 text-green-500"
+  class="h-10 text-primary"
 >
   <g>
     <g>

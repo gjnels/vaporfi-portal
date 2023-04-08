@@ -17,18 +17,16 @@
     class="relative flex flex-col items-center gap-1 sm:flex-row sm:items-stretch"
   >
     <div class="flex items-center gap-1 self-start">
-      <h2 class="text-lg font-medium text-zinc-100">{title}</h2>
-      <Button
-        color="green"
-        icon
-        transparent
-        styles="p-0.5"
+      <h2 class="text-lg font-medium text-surface-100">{title}</h2>
+      <button
+        type="button"
+        class="btn btn-secondary btn-icon"
         title="View explanation"
-        use={packetPopover.button}
+        use:packetPopover.button
         ><Icon
           src={InformationCircle}
           size="1.25rem"
-        /></Button
+        /></button
       >
     </div>
     <!-- Information popover -->

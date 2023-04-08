@@ -5,6 +5,6 @@
   export let styles = ''
 </script>
 
-<h1 class={twMerge('text-4xl font-semibold text-zinc-100', styles)}>
+<h1 class={twMerge('text-4xl font-semibold', styles)}>
   {title}
 </h1>

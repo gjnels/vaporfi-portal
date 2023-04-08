@@ -41,10 +41,13 @@
   export let color: Color = undefined
 
   const inputClasses = twMerge(
-    'rounded-lg border-2 border-transparent bg-zinc-800 px-3 py-2 text-zinc-100 placeholder-zinc-400 outline-none transition focus:border-zinc-100 focus:bg-zinc-900 focus:ring-0',
-    color === 'green' && 'focus:border-green-500 selection:bg-green-300',
-    color === 'purple' && 'focus:border-violet-500 selection:bg-violet-300',
-    errors && errors.length && 'focus:border-rose-500 selection:bg-rose-200',
+    'rounded-lg border-2 border-transparent bg-surface-800 px-3 py-2 text-surface-100 placeholder-surface-400 outline-none transition focus:border-surface-100 focus:bg-surface-900 focus:ring-0',
+    color === 'green' && 'focus:border-primary-500 selection:bg-primary-300',
+    color === 'purple' &&
+      'focus:border-secondary-500 selection:bg-secondary-300',
+    errors &&
+      errors.length &&
+      'focus:border-danger-500 selection:bg-danger-200',
     inputStyles
   )
 

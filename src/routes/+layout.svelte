@@ -7,14 +7,12 @@
   import '../app.postcss'
 </script>
 
-<div
-  class="flex min-h-full flex-col selection:bg-green-300 selection:text-zinc-950"
->
-  <header class="z-10 flex items-center bg-black px-4 pt-2">
+<div class="flex min-h-full flex-col">
+  <header class="z-10 flex items-center bg-surface-900/95 px-4 pt-2">
     <Logo />
   </header>
   <nav
-    class="sticky top-0 z-10 flex items-center gap-4 overflow-auto border-b border-zinc-700 bg-black px-4 pt-2 shadow-md"
+    class="sticky top-0 z-10 flex items-center gap-4 overflow-auto border-b border-surface-700 bg-surface-900/95 px-4 pt-2"
   >
     <a
       href="/"
@@ -45,14 +43,17 @@
     <slot />
   </main>
 
-  <footer class="border-t border-zinc-700 p-2 text-center text-xs font-light">
+  <footer
+    class="border-t border-surface-700 p-2 text-center text-xs font-light"
+  >
     Created by Garrett Nelson &copy;2023
   </footer>
 </div>
 
 <Toaster
   toastOptions={{
-    className: '!bg-zinc-700 !text-zinc-100 font-medium'
+    className:
+      '!bg-surface-700 !text-surface-50 !font-medium !rounded-3xl !px-4'
   }}
 />
 
@@ -67,14 +68,22 @@
   }
 
   a.navlink {
-    @apply flex shrink-0 flex-col gap-1 text-base-500 outline-none transition;
+    @apply flex shrink-0 flex-col gap-1 text-surface-400 outline-none transition;
 
     &.active {
-      @apply text-base-100;
+      @apply text-surface-50;
     }
 
     & span {
-      @apply rounded-md px-3 py-1 transition hover:bg-base-800 hover:text-base-100 focus-visible:bg-base-800 focus-visible:text-base-100;
+      @apply rounded-full border border-transparent px-3 py-1 transition;
+    }
+
+    &:hover span {
+      @apply bg-surface-800 text-surface-50;
+    }
+
+    &:focus-visible span {
+      @apply border-surface-100;
     }
 
     &::after {
@@ -82,7 +91,7 @@
       @apply mx-2 h-0.5 rounded-full transition;
 
       &.active {
-        @apply bg-base-100;
+        @apply bg-surface-50;
       }
     }
   }

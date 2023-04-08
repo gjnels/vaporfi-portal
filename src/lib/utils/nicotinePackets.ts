@@ -10,7 +10,7 @@ export const packetColors: { [key: string]: string } = {
   red: 'border-red-500',
   purple: 'border-purple-600',
   brown: 'border-amber-800',
-  black: 'border-transparent',
+  black: 'border-black',
   orange: 'border-orange-500',
   pink: 'border-pink-500',
   grey: 'border-zinc-500'

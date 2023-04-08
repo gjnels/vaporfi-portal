@@ -11,24 +11,24 @@
 <a
   {href}
   class={twMerge(
-    'rounded-md px-1 font-medium underline-offset-2 transition focus-visible:outline focus-visible:outline-zinc-100',
+    'rounded-md px-1 font-medium underline-offset-2 transition focus-visible:outline focus-visible:outline-surface-100',
     showBorder === 'always' && 'underline',
     showBorder === 'hover' && 'hover:underline focus-visible:underline',
     color === 'green' && [
-      'hover:text-green-400 focus-visible:text-green-400',
-      !colorOnHover && 'text-green-500'
+      'hover:text-primary-400 focus-visible:text-primary-400',
+      !colorOnHover && 'text-primary-500'
     ],
     color === 'purple' && [
-      'hover:text-violet-400 focus-visible:text-violet-400',
-      !colorOnHover && 'text-violet-500'
+      'hover:text-secondary-400 focus-visible:text-secondary-400',
+      !colorOnHover && 'text-secondary-500'
     ],
     color === 'red' && [
-      'hover:text-rose-400 focus-visible:text-rose-400',
-      !colorOnHover && 'text-rose-500'
+      'hover:text-danger-400 focus-visible:text-danger-400',
+      !colorOnHover && 'text-danger-500'
     ],
     color === 'gray' && [
-      'hover:text-zinc-300 focus-visible:text-zinc-300',
-      !colorOnHover && 'text-zinc-400'
+      'hover:text-surface-300 focus-visible:text-surface-300',
+      !colorOnHover && 'text-surface-400'
     ],
     styles
   )}><slot /></a

@@ -23,7 +23,9 @@
   />
 
   {#if !promos || promos.length === 0}
-    <p class="text-center text-lg text-rose-500">No current promotions found</p>
+    <p class="text-center text-lg text-danger-500">
+      No current promotions found
+    </p>
   {:else}
     {@const isAdmin = data.currentProfile?.role === 'Admin'}
     <div class="grid gap-8 md:grid-cols-2">
@@ -33,12 +35,12 @@
           href={isAdmin ? 'flavor-picker' : null}
           title={isAdmin ? `Edit ${promo.title} promotion` : null}
           class={twMerge(
-            'flex flex-col gap-4 rounded-lg border border-zinc-600 bg-zinc-900 p-4',
-            isAdmin && 'transition hover:border-green-500 hover:bg-zinc-950'
+            'flex flex-col gap-4 rounded-lg bg-surface-700/50 p-4 shadow',
+            isAdmin && 'transition hover:bg-surface-950'
           )}
         >
           <!--  title -->
-          <h2 class="text-3xl font-semibold text-zinc-100">
+          <h2 class="text-3xl font-semibold">
             {promo.title}
           </h2>
 
@@ -50,8 +52,8 @@
           <!-- custom blend -->
           {#if promo.blend}
             <p class="-mt-2 flex flex-wrap items-center gap-x-4 px-2">
-              <span class="text-xl text-green-300">{promo.blend.name}</span>
-              <span class="text-violet-200"
+              <span class="text-xl text-primary-300">{promo.blend.name}</span>
+              <span class="text-secondary-300"
                 >{createDisplayBlendString(promo.blend)}</span
               >
             </p>
@@ -61,7 +63,7 @@
 
           <!-- details -->
           {#if promo.details}
-            <p class="whitespace-pre-line px-2 text-zinc-100">
+            <p class="whitespace-pre-line px-2">
               {promo.details}
             </p>
             <Divider />
@@ -71,14 +73,14 @@
           <div class="flex flex-wrap gap-x-8 gap-y-2 px-2">
             <p class="flex flex-col">
               <span class="text-lg font-light underline">Begins</span>
-              <span class="font-medium text-zinc-100"
+              <span class="font-medium"
                 >{formatPromoDate(promo.valid_from)}</span
               >
             </p>
             <!-- date promo ends (inclusive) -->
             <p class="flex flex-col">
               <span class="text-lg font-light underline">Ends</span>
-              <span class="font-medium text-zinc-100"
+              <span class="font-medium"
                 >{formatPromoDate(promo.valid_until)}</span
               >
             </p>
@@ -89,13 +91,13 @@
           <!-- sale -->
           <p class="flex flex-col px-2">
             <span class="text-lg font-light underline">Sale</span>
-            <span class="whitespace-pre-line text-zinc-100">{promo.sale}</span>
+            <span class="whitespace-pre-line">{promo.sale}</span>
           </p>
 
           <!-- notes -->
           {#if promo.notes}
             <Divider />
-            <span class="whitespace-pre-line px-2 text-zinc-400">
+            <span class="whitespace-pre-line px-2 text-surface-300">
               {promo.notes}
             </span>
           {/if}

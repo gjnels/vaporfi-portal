@@ -1,6 +1,5 @@
 <script lang="ts">
   import cuid2 from '@paralleldrive/cuid2'
-  import { writable } from 'svelte/store'
   import { superForm } from 'sveltekit-superforms/client'
 
   import type { PageData } from './$types'
@@ -10,8 +9,8 @@
   import { copyBlendToClipboard } from '$lib/utils/clipboard'
   import { categoriesFromFlavors } from '$lib/utils/flavors'
 
-  import { Button, PageLayout, PageTitle } from '$components'
-  import { Form, Input, RadioGroup, Select } from '$components/forms'
+  import { PageLayout, PageTitle } from '$components'
+  import { FormControl } from '$components/forms'
 
   import BlendList from './BlendList.svelte'
 
@@ -26,7 +25,9 @@
   const { form, enhance, errors, constraints, reset } = superForm(data.form, {
     clearOnSubmit: 'none',
     invalidateAll: false,
+    dataType: 'json',
     onUpdated: ({ form }) => {
+      console.log(form)
       if (form.valid) {
         // Get blend data from form
         // If it does not have an id, create a new one
@@ -43,7 +44,7 @@
         if (form.data.id) {
           // This is an already existing saved blend
           // Reset form to prevent unwanted update of a saved blend
-          resetForm()
+          reset({ keepMessage: false })
         }
 
         // Save blends to storage
@@ -55,11 +56,8 @@
     }
   })
 
-  const flavorCount = writable<1 | 2 | 3>(1)
-
   // Set form values to the selected blend to edit
   const editBlend = (blend: SavedFlavorPickerBlend) => {
-    $flavorCount = blend.flavor3 ? 3 : blend.flavor2 ? 2 : 1
     $form = { ...$form, ...blend }
   }
 
@@ -71,12 +69,7 @@
     storeSavedBlends()
 
     // If the form is currently editing this deleted blend, reset the entire form
-    if ($form.id === blend.id) resetForm()
-  }
-
-  const resetForm = () => {
-    $flavorCount = 1 // Reset flavor count
-    reset({ keepMessage: false })
+    if ($form.id === blend.id) reset({ keepMessage: false })
   }
 
   const shotOptions = [
@@ -103,7 +96,7 @@
     .map((f) => ({ value: f.flavor, label: f.flavor, group: f.category }))
 
   // Flavor values and shot values depend on the number of flavors
-  $: switch ($flavorCount) {
+  $: switch ($form.flavorCount) {
     case 1:
       $form.flavor2 = $form.flavor3 = ''
       $form.shots2 = $form.shots3 = null
@@ -136,152 +129,258 @@
     slot="header"
   />
 
-  <Form {enhance}>
-    <RadioGroup
+  <form
+    method="post"
+    use:enhance
+    class="form"
+  >
+    <FormControl
       label="Flavor Count"
-      name="flavor-count"
-      bind:group={$flavorCount}
-      options={[
-        { value: 1, label: '1 Flavor' },
-        { value: 2, label: '2 Flavors' },
-        { value: 3, label: '3 Flavors' }
-      ]}
-      constraints={{ min: 1, max: 3, required: true }}
-      horizontal
-      color="purple"
-    />
+      errors={$errors.flavorCount}
+    >
+      <div class="radio-group">
+        <label>
+          <input
+            type="radio"
+            name="flavorCount"
+            value={1}
+            bind:group={$form.flavorCount}
+          />
+          <span>1 Flavor</span>
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="flavorCount"
+            value={2}
+            bind:group={$form.flavorCount}
+          />
+          <span>2 Flavors</span>
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="flavorCount"
+            value={3}
+            bind:group={$form.flavorCount}
+          />
+          <span>3 Flavors</span>
+        </label>
+      </div>
+    </FormControl>
 
     <!-- Flavor 1 and shots 1 -->
     <div class="flex flex-col gap-1">
-      <Select
-        name="flavor1"
+      <FormControl
         label="Flavor 1"
-        bind:value={$form.flavor1}
-        options={flavor1Options}
-        defaultOption={{ value: '', label: 'Select a flavor' }}
-        groups={categories}
-        constraints={$constraints.flavor1}
         errors={$errors.flavor1}
-      />
+      >
+        <select
+          class:placeholder={$form.flavor1 === ''}
+          name="flavor1"
+          bind:value={$form.flavor1}
+          {...$constraints.flavor1}
+        >
+          <option value="">Select a flavor</option>
+          {#each categories as group}
+            <optgroup label={group}>
+              {#each flavor1Options.filter((option) => option.group === group) as { value, label }}
+                <option {value}>{label}</option>
+              {/each}
+            </optgroup>
+          {/each}</select
+        >
+      </FormControl>
 
-      <RadioGroup
-        name="shots1"
-        bind:group={$form.shots1}
-        options={$flavorCount === 3 || $form.shots2 == 2
-          ? shotOptions.slice(0, 1)
-          : $flavorCount === 2
-          ? shotOptions.slice(0, 2)
-          : shotOptions}
-        constraints={$constraints.shots1}
+      <FormControl
+        label=""
         errors={$errors.shots1}
-        horizontal
-        color="purple"
-        containerStyles="ml-1"
-      />
+      >
+        <div class="radio-group">
+          <label>
+            <input
+              type="radio"
+              name="shots1"
+              value={1}
+              bind:group={$form.shots1}
+            />
+            <span>Single Shot</span>
+          </label>
+          {#if $form.flavorCount < 3 && $form.shots2 !== 2}
+            <label>
+              <input
+                type="radio"
+                name="shots1"
+                value={2}
+                bind:group={$form.shots1}
+              />
+              <span>Double Shot</span>
+            </label>
+          {/if}
+          {#if $form.flavorCount === 1}
+            <label>
+              <input
+                type="radio"
+                name="shots1"
+                value={3}
+                bind:group={$form.shots1}
+              />
+              <span>Triple Shot</span>
+            </label>
+          {/if}
+        </div>
+      </FormControl>
     </div>
 
     <!-- Flavor 2 and shots 2 -->
-    {#if $flavorCount > 1}
+    {#if $form.flavorCount > 1}
       <div class="flex flex-col gap-1">
-        <Select
-          name="flavor2"
+        <FormControl
           label="Flavor 2"
-          bind:value={$form.flavor2}
-          options={flavor2Options}
-          defaultOption={{ value: '', label: 'Select a flavor' }}
-          groups={categories}
-          constraints={$constraints.flavor2}
           errors={$errors.flavor2}
-        />
+        >
+          <select
+            class:placeholder={$form.flavor2 === ''}
+            name="flavor2"
+            bind:value={$form.flavor2}
+            {...$constraints.flavor2}
+          >
+            <option value="">Select a flavor</option>
+            {#each categories as group}
+              <optgroup label={group}>
+                {#each flavor2Options.filter((option) => option.group === group) as { value, label }}
+                  <option {value}>{label}</option>
+                {/each}
+              </optgroup>
+            {/each}</select
+          >
+        </FormControl>
 
-        <RadioGroup
-          name="shots2"
-          bind:group={$form.shots2}
-          options={$flavorCount === 3 || $form.shots1 > 1
-            ? shotOptions.slice(0, 1)
-            : shotOptions.slice(0, 2)}
-          constraints={$constraints.shots2}
+        <FormControl
+          label=""
           errors={$errors.shots2}
-          horizontal
-          color="purple"
-          containerStyles="ml-1"
-        />
+        >
+          <div class="radio-group">
+            <label>
+              <input
+                type="radio"
+                name="shots2"
+                value={1}
+                bind:group={$form.shots2}
+              />
+              <span>Single Shot</span>
+            </label>
+            {#if $form.flavorCount === 2 && $form.shots1 !== 2}
+              <label>
+                <input
+                  type="radio"
+                  name="shots2"
+                  value={2}
+                  bind:group={$form.shots2}
+                />
+                <span>Double Shot</span>
+              </label>
+            {/if}
+          </div>
+        </FormControl>
       </div>
     {/if}
 
     <!-- Flavor 3 and shots 3 -->
-    {#if $flavorCount > 2}
+    {#if $form.flavorCount > 2}
       <div class="flex flex-col gap-1">
-        <Select
-          name="flavor3"
+        <FormControl
           label="Flavor 3"
-          bind:value={$form.flavor3}
-          options={flavor3Options}
-          defaultOption={{ value: '', label: 'Select a flavor' }}
-          groups={categories}
-          constraints={$constraints.flavor3}
           errors={$errors.flavor3}
-        />
+        >
+          <select
+            class:placeholder={$form.flavor3 === ''}
+            name="flavor3"
+            bind:value={$form.flavor3}
+            {...$constraints.flavor3}
+          >
+            <option value="">Select a flavor</option>
+            {#each categories as group}
+              <optgroup label={group}>
+                {#each flavor3Options.filter((option) => option.group === group) as { value, label }}
+                  <option {value}>{label}</option>
+                {/each}
+              </optgroup>
+            {/each}</select
+          >
+        </FormControl>
 
-        <RadioGroup
-          name="shots3"
-          bind:group={$form.shots3}
-          options={shotOptions.slice(0, 1)}
-          constraints={$constraints.shots3}
+        <FormControl
+          label=""
           errors={$errors.shots3}
-          horizontal
-          color="purple"
-          containerStyles="ml-1"
-        />
+        >
+          <div class="radio-group">
+            <label>
+              <input
+                type="radio"
+                name="shots3"
+                value={1}
+                bind:group={$form.shots3}
+              />
+              <span>Single Shot</span>
+            </label>
+          </div>
+        </FormControl>
       </div>
     {/if}
 
-    <div class="flex flex-wrap gap-3">
-      <Input
-        type="number"
-        name="nicotine"
+    <div class="flex flex-wrap gap-3 [&>*]:flex-1">
+      <FormControl
         label="Nicotine level"
-        bind:value={$form.nicotine}
         errors={$errors.nicotine}
-        constraints={$constraints.nicotine}
-        containerStyles="grow"
-      />
+      >
+        <input
+          type="number"
+          name="nicotine"
+          bind:value={$form.nicotine}
+          {...$constraints.nicotine}
+        />
+      </FormControl>
 
-      <Input
-        type="number"
-        name="bottleCount"
+      <FormControl
         label="Number of bottles"
-        bind:value={$form.bottleCount}
         errors={$errors.bottleCount}
-        constraints={$constraints.bottleCount}
-        containerStyles="grow"
-      />
+      >
+        <input
+          type="number"
+          name="bottleCount"
+          bind:value={$form.bottleCount}
+          {...$constraints.bottleCount}
+        />
+      </FormControl>
     </div>
 
-    <svelte:fragment slot="actions">
+    <div class="btn-group">
       {#if $form.id}
         <!-- Editing a blend -->
-        <Button
+        <button
           type="submit"
-          color="green">Update Blend</Button
+          class="btn btn-primary">Update Blend</button
         >
-        <Button
-          color="purple"
-          onclick={resetForm}>Cancel</Button
+        <button
+          type="button"
+          class="btn btn-secondary"
+          on:click={() => reset({ keepMessage: false })}>Cancel</button
         >
       {:else}
         <!-- Creating a new blend -->
-        <Button
+        <button
           type="submit"
-          color="green">Create Blend</Button
+          class="btn btn-primary">Create Blend</button
         >
-        <Button
-          color="gray"
-          onclick={resetForm}>Reset Form</Button
+        <button
+          type="button"
+          class="btn"
+          on:click={() => reset({ keepMessage: false })}>Reset Form</button
         >
       {/if}
-    </svelte:fragment>
-  </Form>
+    </div>
+  </form>
 
   <BlendList
     onEdit={editBlend}

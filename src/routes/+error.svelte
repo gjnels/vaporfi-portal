@@ -40,11 +40,11 @@
 </svelte:head>
 
 <div class="mt-10 flex flex-col items-center gap-2">
-  <div class="mb-4 flex items-center gap-2 text-rose-400">
+  <div class="mb-4 flex items-center gap-2 text-danger-500">
     <Icon
       src={icon}
       size="4rem"
-      class="text-rose-400"
+      class="text-danger-500"
     />
     <h1 class="text-xl font-bold uppercase">{title}</h1>
   </div>

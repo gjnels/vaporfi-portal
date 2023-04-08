@@ -31,6 +31,7 @@ export const flavorPickerBlendSchema = z.object({
 
 export const flavorPickerSchema = flavorPickerBlendSchema.extend({
   id: z.string().cuid2().optional(),
+  flavorCount: z.number().int().min(1).max(3).default(1),
   bottleCount: z
     .number({ required_error: 'Enter number of bottles' })
     .int({ message: 'Must be a whole number' })

@@ -8,14 +8,22 @@ export default {
   theme: {
     extend: {
       colors: {
-        base: colors.zinc,
-        primary: colors.green,
-        secondary: colors.violet,
-        danger: colors.rose,
-        error: colors.rose,
-        info: colors.sky,
-        warning: colors.yellow,
-        success: colors.emerald
+        surface: {
+          DEFAULT: colors.zinc['500'],
+          ...colors.zinc
+        },
+        primary: {
+          DEFAULT: colors.green['400'],
+          ...colors.green
+        },
+        secondary: {
+          DEFAULT: colors.indigo['500'],
+          ...colors.indigo
+        },
+        danger: {
+          DEFAULT: colors.red['500'],
+          ...colors.red
+        }
       }
     }
   }
