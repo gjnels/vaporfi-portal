@@ -9,8 +9,7 @@
   import { savedPackets, storeSavedPackets } from '$lib/stores/nicotinePackets'
   import { calculatePackets } from '$lib/utils/nicotinePackets'
 
-  import { Button } from '$components'
-  import { Checkbox, Form, FormControl, Input, Select } from '$components/forms'
+  import { FormControl } from '$components'
 
   import CalculatorLayout from '../CalculatorLayout.svelte'
   import PacketList from '../PacketList.svelte'

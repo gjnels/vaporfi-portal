@@ -10,7 +10,7 @@
   import { categoriesFromFlavors } from '$lib/utils/flavors'
 
   import { PageLayout, PageTitle } from '$components'
-  import { FormControl } from '$components/forms'
+  import { FormControl } from '$components'
 
   import BlendList from './BlendList.svelte'
 

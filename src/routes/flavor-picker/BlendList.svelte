@@ -6,8 +6,6 @@
   import { copyBlendToClipboard } from '$lib/utils/clipboard'
   import { createBlendString } from '$lib/utils/flavors'
 
-  import { Button } from '$components'
-
   export let onEdit: (blend: SavedFlavorPickerBlend) => void
   export let onDelete: (blend: SavedFlavorPickerBlend) => void
 </script>

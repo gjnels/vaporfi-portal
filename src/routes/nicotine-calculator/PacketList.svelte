@@ -2,8 +2,6 @@
   import { createPopover } from 'svelte-headlessui'
   import { Icon, InformationCircle } from 'svelte-hero-icons'
 
-  import { Button } from '$components'
-
   import PacketPopover from './PacketPopover.svelte'
 
   export let title: string
