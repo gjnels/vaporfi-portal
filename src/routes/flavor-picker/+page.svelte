@@ -9,8 +9,7 @@
   import { copyBlendToClipboard } from '$lib/utils/clipboard'
   import { categoriesFromFlavors } from '$lib/utils/flavors'
 
-  import { PageLayout, PageTitle } from '$components'
-  import { FormControl } from '$components'
+  import { FormControl, PageLayout } from '$components'
 
   import BlendList from './BlendList.svelte'
 
@@ -124,10 +123,7 @@
 </svelte:head>
 
 <PageLayout contentContainerStyles="grid lg:grid-cols-2 gap-10">
-  <PageTitle
-    title="Flavor Picker"
-    slot="header"
-  />
+  <h1 slot="header">Flavor Picker</h1>
 
   <form
     method="post"

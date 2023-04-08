@@ -48,7 +48,7 @@
   <div class={twMerge('border-b border-surface-700', headerWrapperStyles)}>
     <div
       class={twMerge(
-        'mx-auto flex w-full max-w-screen-2xl items-center px-4 py-8',
+        'header mx-auto flex w-full max-w-screen-2xl items-center px-4 py-8',
         headerContainerStyles
       )}
     >
@@ -67,3 +67,9 @@
     <slot />
   </div>
 </div>
+
+<style lang="postcss">
+  .header :global(h1) {
+    @apply text-4xl font-semibold;
+  }
+</style>

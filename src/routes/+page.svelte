@@ -6,7 +6,7 @@
   import { formatPromoDate } from '$lib/utils/dates'
   import { createDisplayBlendString } from '$lib/utils/flavors'
 
-  import { Divider, PageLayout, PageTitle } from '$components'
+  import { Divider, PageLayout } from '$components'
 
   export let data: PageData
   $: promos = data.promos
@@ -17,10 +17,7 @@
 </svelte:head>
 
 <PageLayout>
-  <PageTitle
-    title="Active Promotions"
-    slot="header"
-  />
+  <h1 slot="header">Active Promotions</h1>
 
   {#if !promos || promos.length === 0}
     <p class="text-center text-lg text-danger-500">
