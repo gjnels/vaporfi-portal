@@ -120,43 +120,26 @@
 </PageLayout>
 
 <Modal {modalStore}>
-  <div
-    class="relative rounded-2xl bg-surface-700 p-10 shadow"
-    transition:scale
-    use:modalStore.modal
-  >
+  <p>Are you sure you want to delete this promotion?</p>
+  <p class="mt-2 text-center text-2xl font-bold">
+    {data.promos.find((p) => p.id === $form.id)?.title}
+  </p>
+  <div class="mt-8 flex w-full justify-center gap-4">
+    <form
+      method="post"
+      use:enhance
+      action="?/deletePromo"
+      class="flex-1"
+    >
+      <button
+        type="submit"
+        class="btn btn-danger btn-small w-full flex-1">Yes</button
+      >
+    </form>
     <button
       type="button"
-      class="btn btn-icon btn-secondary absolute right-1.5 top-1.5"
-      on:click={modalStore.close}
+      class="btn btn-small flex-1"
+      on:click={modalStore.close}>No</button
     >
-      <Icon
-        src={XMark}
-        size="1.25rem"
-        class="stroke-2"
-      />
-    </button>
-    <p>Are you sure you want to delete this promotion?</p>
-    <p class="mt-2 text-center text-2xl font-bold">
-      {data.promos.find((p) => p.id === $form.id)?.title}
-    </p>
-    <div class="mt-8 flex w-full justify-center gap-4">
-      <form
-        method="post"
-        use:enhance
-        action="?/deletePromo"
-        class="flex-1"
-      >
-        <button
-          type="submit"
-          class="btn btn-danger btn-small w-full flex-1">Yes</button
-        >
-      </form>
-      <button
-        type="button"
-        class="btn btn-small flex-1"
-        on:click={modalStore.close}>No</button
-      >
-    </div>
   </div>
 </Modal>
