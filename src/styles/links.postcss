@@ -1,19 +1,21 @@
-.link {
-  @apply w-fit rounded-full border border-transparent px-2 py-0.5 font-medium outline-none focus-visible:border-current;
+@layer components {
+  .link {
+    @apply w-fit rounded-full border border-transparent px-2 py-0.5 font-medium outline-none focus-visible:border-current;
 
-  &-primary {
-    @apply text-primary-400;
+    &-primary {
+      @apply text-primary-400;
 
-    &:not(:disabled) {
-      @apply hover:text-primary-300;
+      &:not(:disabled) {
+        @apply hover:text-primary-300;
+      }
     }
-  }
 
-  &-secondary {
-    @apply text-secondary-400;
+    &-secondary {
+      @apply text-secondary-400;
 
-    &:not(:disabled) {
-      @apply hover:text-secondary-300;
+      &:not(:disabled) {
+        @apply hover:text-secondary-300;
+      }
     }
   }
 }

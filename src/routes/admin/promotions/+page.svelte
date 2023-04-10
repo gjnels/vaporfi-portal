@@ -69,11 +69,11 @@
               ><div class="grid gap-2">
                 <a
                   href="promotions/{promo.id}"
-                  class="btn btn-secondary btn-small !py-1">Edit</a
+                  class="btn btn-secondary btn-small">Edit</a
                 >
                 <button
                   type="button"
-                  class="btn btn-danger btn-small !py-1"
+                  class="btn btn-danger btn-small"
                   on:click={() => {
                     $form.id = promo.id
                     modalStore.open()
@@ -154,7 +154,7 @@
       </form>
       <button
         type="button"
-        class="btn btn-small flex-1 hover:!text-surface-300"
+        class="btn btn-small flex-1"
         on:click={modalStore.close}>No</button
       >
     </div>

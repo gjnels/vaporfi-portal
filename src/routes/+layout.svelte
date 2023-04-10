@@ -54,7 +54,7 @@
     {:else}
       <a
         href="/auth/login"
-        class="btn btn-small btn-secondary ml-auto !py-1">Login</a
+        class="btn btn-small btn-secondary ml-auto">Login</a
       >
     {/if}
   </header>

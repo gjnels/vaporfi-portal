@@ -1,79 +1,81 @@
-.btn {
-  @apply flex items-center justify-center gap-1 rounded-full border-2 border-transparent bg-surface-400 px-4 py-2 font-bold text-surface-950 outline-none transition focus-visible:border-surface-100;
+@layer components {
+  .btn {
+    @apply flex items-center justify-center gap-1 rounded-full border-2 border-transparent bg-surface-400 px-4 py-2 font-bold text-surface-950 outline-none transition focus-visible:border-surface-100;
 
-  &:disabled {
-    @apply opacity-50 !important;
-  }
-
-  &:not(:disabled) {
-    @apply hover:border-current hover:bg-transparent hover:text-surface-400;
-  }
-
-  &-primary {
-    @apply bg-primary-400 text-primary-950;
-    @apply focus-visible:border-primary-100;
-    &:not(:disabled) {
-      @apply hover:text-primary-400;
+    &:disabled {
+      @apply opacity-50;
     }
-  }
-
-  &-secondary {
-    @apply bg-secondary-400 text-secondary-950;
-    @apply focus-visible:border-secondary-100;
-    &:not(:disabled) {
-      @apply hover:text-secondary-400;
-    }
-  }
-
-  &-danger {
-    @apply bg-danger-400 text-danger-950;
-    @apply focus-visible:border-danger-100;
-    &:not(:disabled) {
-      @apply hover:text-danger-400;
-    }
-  }
-
-  &-transparent {
-    @apply bg-transparent text-surface-50;
-  }
-
-  &-icon {
-    @apply bg-transparent p-1 focus-visible:border-current;
 
     &:not(:disabled) {
-      @apply hover:border-transparent hover:bg-surface-800;
-    }
-  }
-
-  &-icon&-primary {
-    @apply text-primary-400;
-  }
-
-  &-icon&-secondary {
-    @apply text-secondary-400;
-  }
-
-  &-icon&-danger {
-    @apply text-danger-400;
-  }
-
-  &-small {
-    @apply px-2.5 py-1.5 text-sm;
-  }
-
-  &-group {
-    @apply flex overflow-hidden;
-
-    & > * {
-      @apply flex-1 rounded-none;
+      @apply hover:border-current hover:bg-transparent hover:text-surface-400;
     }
 
-    & > :first-child {
-      @apply rounded-l-full;
+    &-primary {
+      @apply bg-primary-400 text-primary-950;
+      @apply focus-visible:border-primary-100;
+      &:not(:disabled) {
+        @apply hover:text-primary-400;
+      }
     }
 
-    & > :last-child {
-      @apply rounded-r-full;
+    &-secondary {
+      @apply bg-secondary-400 text-secondary-950;
+      @apply focus-visible:border-secondary-100;
+      &:not(:disabled) {
+        @apply hover:text-secondary-400;
+      }
+    }
+
+    &-danger {
+      @apply bg-danger-400 text-danger-950;
+      @apply focus-visible:border-danger-100;
+      &:not(:disabled) {
+        @apply hover:text-danger-400;
+      }
+    }
+
+    &-transparent {
+      @apply bg-transparent text-surface-50;
+    }
+
+    &-icon {
+      @apply bg-transparent p-1 focus-visible:border-current;
+
+      &:not(:disabled) {
+        @apply hover:border-transparent hover:bg-surface-800;
+      }
+    }
+
+    &-icon&-primary {
+      @apply text-primary-400;
+    }
+
+    &-icon&-secondary {
+      @apply text-secondary-400;
+    }
+
+    &-icon&-danger {
+      @apply text-danger-400;
+    }
+
+    &-small {
+      @apply px-3 py-1 text-sm;
+    }
+
+    &-group {
+      @apply flex overflow-hidden;
+
+      & > * {
+        @apply flex-1 rounded-none;
+      }
+
+      & > :first-child {
+        @apply rounded-l-full;
+      }
+
+      & > :last-child {
+        @apply rounded-r-full;
+      }
     }
   }
 }
