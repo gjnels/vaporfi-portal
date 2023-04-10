@@ -7,3 +7,6 @@ dayjs.extend(advancedFormat)
 
 export const formatPromoDate = (date: Date | string) =>
   dayjs(date).format('dddd, MMMM Do, YYYY')
+
+export const formatPromoTableDate = (date: Date | string) =>
+  dayjs(date).format('h:mma dddd\nMMMM Do, YYYY')

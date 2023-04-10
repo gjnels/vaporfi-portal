@@ -27,28 +27,30 @@
       {#each promos as promo (promo.id)}
         <svelte:element
           this={isAdmin ? 'a' : 'div'}
-          href={isAdmin ? 'flavor-picker' : null}
+          href={isAdmin ? `/admin/promotions/${promo.id}` : null}
           title={isAdmin ? `Edit ${promo.title} promotion` : null}
           class={twMerge(
-            'flex flex-col gap-4 rounded-lg bg-surface-700/50 p-4 shadow',
-            isAdmin && 'transition hover:bg-surface-950'
+            'flex flex-col gap-4 rounded-lg border border-transparent bg-surface-700/50 p-4 shadow',
+            isAdmin && 'transition hover:border-primary hover:bg-surface-950'
           )}
         >
           <!--  title -->
-          <h2 class="text-3xl font-semibold">
+          <h2 class="text-3xl font-semibold text-primary">
             {promo.title}
           </h2>
 
           <!-- subitle -->
           {#if promo.subtitle}
-            <h3 class="-mt-2 px-2 text-2xl font-medium">{promo.subtitle}</h3>
+            <h3 class="-mt-2 px-2 text-2xl font-medium text-primary-200">
+              {promo.subtitle}
+            </h3>
           {/if}
 
           <!-- custom blend -->
           {#if promo.blend}
             <p class="-mt-2 flex flex-wrap items-center gap-x-4 px-2">
-              <span class="text-xl text-primary-300">{promo.blend.name}</span>
-              <span class="text-secondary-300"
+              <span class="text-xl text-primary-200">{promo.blend.name}</span>
+              <span class="text-secondary-200"
                 >{createDisplayBlendString(promo.blend)}</span
               >
             </p>
@@ -67,14 +69,16 @@
           <!-- date promo begins (inclusive) -->
           <div class="flex flex-wrap gap-x-8 gap-y-2 px-2">
             <p class="flex flex-col">
-              <span class="text-lg font-light underline">Begins</span>
+              <span class="text-lg underline decoration-surface-400"
+                >Begins</span
+              >
               <span class="font-medium"
                 >{formatPromoDate(promo.valid_from)}</span
               >
             </p>
             <!-- date promo ends (inclusive) -->
             <p class="flex flex-col">
-              <span class="text-lg font-light underline">Ends</span>
+              <span class="text-lg underline decoration-surface-400">Ends</span>
               <span class="font-medium"
                 >{formatPromoDate(promo.valid_until)}</span
               >
@@ -85,7 +89,7 @@
 
           <!-- sale -->
           <p class="flex flex-col px-2">
-            <span class="text-lg font-light underline">Sale</span>
+            <span class="text-lg underline decoration-surface-400">Sale</span>
             <span class="whitespace-pre-line">{promo.sale}</span>
           </p>
 
