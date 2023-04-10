@@ -76,6 +76,12 @@
         ><span>Flavor Picker</span></a
       >
       <a
+        href="/custom-blends"
+        class="navlink"
+        class:active={$page.url.pathname.startsWith('/custom-blends')}
+        ><span>Custom Blends</span></a
+      >
+      <a
         href="/nicotine-calculator/packets"
         class="navlink"
         class:active={$page.url.pathname === '/nicotine-calculator/packets'}
@@ -86,12 +92,6 @@
         class="navlink"
         class:active={$page.url.pathname === '/nicotine-calculator/level'}
         ><span>Nicotine Level Calculator</span></a
-      >
-      <a
-        href="/custom-blends"
-        class="navlink"
-        class:active={$page.url.pathname.startsWith('/custom-blends')}
-        ><span>Custom Blends</span></a
       >
     </div>
     {#if role === 'Admin'}
