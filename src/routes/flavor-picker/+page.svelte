@@ -24,7 +24,6 @@
     invalidateAll: false,
     dataType: 'json',
     onUpdated: ({ form }) => {
-      console.log(form)
       if (form.valid) {
         // Get blend data from form
         // If it does not have an id, create a new one
