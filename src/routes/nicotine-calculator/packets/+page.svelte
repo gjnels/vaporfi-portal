@@ -51,15 +51,18 @@
       {packetPopoverContent}
     >
       <!-- Available packets list -->
-      {#each $savedPackets as packet (packet.id)}
-        <label class="checkbox secondary">
-          <input
-            type="checkbox"
-            bind:checked={packet.available}
-          />
-          <span class="capitalize">{packet.color} - {packet.mg}mg</span>
-        </label>
-      {/each}
+      <div class="grid gap-1 self-center">
+        {#each $savedPackets as packet (packet.id)}
+          <label class="checkbox secondary">
+            <input
+              type="checkbox"
+              bind:checked={packet.available}
+            />
+            <span class="capitalize">{packet.color} - {packet.mg}mg</span>
+          </label>
+        {/each}
+      </div>
+
       <button
         class="btn btn-secondary btn-small mt-2"
         on:click={() => {

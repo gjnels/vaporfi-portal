@@ -4,7 +4,7 @@
 
 <div class="grid gap-12 lg:grid-cols-2">
   <!-- Available packets and form -->
-  <div class="flex grow flex-col gap-6 sm:flex-row">
+  <div class="grid grow gap-6 sm:grid-cols-[auto,_1fr]">
     <slot name="form" />
   </div>
 

@@ -38,8 +38,6 @@
     }
   )
 
-  $: console.log($errors)
-
   const result = writable<{
     packets: SelectedPacket[]
     bottleSize: number
@@ -48,7 +46,7 @@
   } | null>(null)
 
   const packetPopoverContent = [
-    'Choose which packets you want to add to a bottle from this list.',
+    'Choose which packets to add to a bottle.',
     'For each packet you select, enter the quantity for that packet in the corresponding input field.'
   ]
 </script>
@@ -60,19 +58,21 @@
 <CalculatorLayout>
   <svelte:fragment slot="form">
     <PacketList
-      title="Packet to Add"
+      title="Packets to Add"
       {packetPopoverContent}
     >
       <!-- Packets list -->
-      {#each data.packets as packet, idx (idx)}
-        <label class="checkbox secondary">
-          <input
-            type="checkbox"
-            bind:checked={$form.packets[idx].selected}
-          />
-          <span class="capitalize">{packet.color} - {packet.mg}mg</span>
-        </label>
-      {/each}
+      <div class="grid gap-1 self-center">
+        {#each data.packets as packet, idx (idx)}
+          <label class="checkbox secondary">
+            <input
+              type="checkbox"
+              bind:checked={$form.packets[idx].selected}
+            />
+            <span class="capitalize">{packet.color} - {packet.mg}mg</span>
+          </label>
+        {/each}
+      </div>
     </PacketList>
 
     <form
