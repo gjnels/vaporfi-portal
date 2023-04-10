@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Icon, Pencil, Trash } from 'svelte-hero-icons'
+  import { Icon, PencilSquare, Trash } from 'svelte-hero-icons'
 
   import { savedBlends, storeSavedBlends } from '$lib/stores/savedBlends'
   import type { SavedFlavorPickerBlend } from '$lib/types/flavors.types'
@@ -39,7 +39,7 @@
             class="btn btn-secondary btn-icon ml-auto"
             on:click={() => onEdit(blend)}
             ><Icon
-              src={Pencil}
+              src={PencilSquare}
               size="1.5rem"
               solid
             /></button
