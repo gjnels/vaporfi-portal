@@ -5,10 +5,13 @@
   export let styles = ''
 </script>
 
-<div
+<svelte:element
+  this={vertical ? 'div' : 'hr'}
   class={twMerge(
-    'block rounded-full bg-surface-100/25',
-    vertical ? 'w-px' : 'h-px',
+    'rounded-full',
+    vertical
+      ? 'h-full w-px border-none bg-surface-100/25'
+      : 'w-full border-surface-100/25',
     styles
   )}
 />
