@@ -27,6 +27,10 @@
   })
 </script>
 
+<svelte:head>
+  <title>Edit Promotion | VF Columbus</title>
+</svelte:head>
+
 <PageLayout contentContainerStyles="max-w-2xl">
   <h1 slot="header">Edit Promotion | {data.promo.title}</h1>
 

@@ -12,6 +12,10 @@
   const redirectTo = $page.url.searchParams.get('redirectTo')
 </script>
 
+<svelte:head>
+  <title>Reset your password | VF Columbus</title>
+</svelte:head>
+
 <PageLayout contentContainerStyles="max-w-lg mt-8">
   <h2 class="mb-8 text-center text-3xl font-bold">Reset Your Password</h2>
   <form

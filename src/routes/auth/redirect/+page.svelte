@@ -12,7 +12,7 @@
 </script>
 
 <svelte:head>
-  <title>Confirming your account | VF Portal</title>
+  <title>Confirming your account | VF Columbus</title>
 </svelte:head>
 
 <PageLayout>

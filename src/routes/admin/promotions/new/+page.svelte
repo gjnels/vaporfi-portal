@@ -24,6 +24,10 @@
   })
 </script>
 
+<svelte:head>
+  <title>Create New Promotion | VF Columbus</title>
+</svelte:head>
+
 <PageLayout contentContainerStyles="max-w-2xl">
   <h1 slot="header">Create New Promotion</h1>
 

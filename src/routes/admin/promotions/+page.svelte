@@ -31,7 +31,7 @@
 </script>
 
 <svelte:head>
-  <title>Edit Promotions | VF Columbus</title>
+  <title>Manage Promotions | VF Columbus</title>
 </svelte:head>
 
 <PageLayout>
