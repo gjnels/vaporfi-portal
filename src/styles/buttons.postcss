@@ -7,14 +7,14 @@
     }
 
     &:not(:disabled) {
-      @apply hover:border-current hover:bg-transparent hover:text-surface-400;
+      @apply hover:bg-surface-500 hover:text-surface-50;
     }
 
     &-primary {
       @apply bg-primary-400 text-primary-950;
       @apply focus-visible:border-primary-100;
       &:not(:disabled) {
-        @apply hover:text-primary-400;
+        @apply hover:bg-primary-600;
       }
     }
 
@@ -22,7 +22,7 @@
       @apply bg-secondary-400 text-secondary-950;
       @apply focus-visible:border-secondary-100;
       &:not(:disabled) {
-        @apply hover:text-secondary-400;
+        @apply hover:bg-secondary-600;
       }
     }
 
@@ -30,7 +30,7 @@
       @apply bg-danger-400 text-danger-950;
       @apply focus-visible:border-danger-100;
       &:not(:disabled) {
-        @apply hover:text-danger-400;
+        @apply hover:bg-danger-600;
       }
     }
 
@@ -39,23 +39,32 @@
     }
 
     &-icon {
-      @apply bg-transparent p-1 focus-visible:border-current;
+      @apply bg-transparent p-1 text-surface-300 focus-visible:border-current;
 
       &:not(:disabled) {
-        @apply hover:border-transparent hover:bg-surface-800;
+        @apply hover:border-transparent hover:bg-surface-600 hover:text-surface-50;
       }
     }
 
     &-icon&-primary {
       @apply text-primary-400;
+      &:not(:disabled) {
+        @apply hover:bg-primary-600;
+      }
     }
 
     &-icon&-secondary {
       @apply text-secondary-400;
+      &:not(:disabled) {
+        @apply hover:bg-secondary-600;
+      }
     }
 
     &-icon&-danger {
       @apply text-danger-400;
+      &:not(:disabled) {
+        @apply hover:bg-danger-600;
+      }
     }
 
     &-small {
