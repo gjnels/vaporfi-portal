@@ -52,15 +52,27 @@
     >
       <!-- Available packets list -->
       <div class="grid gap-1 self-center">
-        {#each $savedPackets as packet (packet.id)}
-          <label class="checkbox secondary">
-            <input
-              type="checkbox"
-              bind:checked={packet.available}
-            />
-            <span class="capitalize">{packet.color} - {packet.mg}mg</span>
-          </label>
-        {/each}
+        {#if $savedPackets.length === 0}
+          {#each Array(10).fill(null) as placeholder}
+            <div class="my-1 flex w-full items-center gap-1">
+              <span
+                class="h-4 w-4 animate-pulse rounded-md bg-surface-700"
+              /><span
+                class="h-4 w-32 animate-pulse rounded-lg bg-surface-700"
+              />
+            </div>
+          {/each}
+        {:else}
+          {#each $savedPackets as packet (packet.id)}
+            <label class="checkbox secondary">
+              <input
+                type="checkbox"
+                bind:checked={packet.available}
+              />
+              <span class="capitalize">{packet.color} - {packet.mg}mg</span>
+            </label>
+          {/each}
+        {/if}
       </div>
 
       <button
