@@ -23,6 +23,10 @@ export default {
         danger: {
           DEFAULT: colors.red['500'],
           ...colors.red
+        },
+        warning: {
+          DEFAULT: colors.yellow['500'],
+          ...colors.yellow
         }
       }
     }
