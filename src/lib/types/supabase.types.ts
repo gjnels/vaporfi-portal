@@ -75,7 +75,9 @@ export interface Database {
           incorrect_item_name: string
           notes: string | null
           sku: string
-          submitted_from_id: number
+          submitted_by_name: string | null
+          submitted_by_profile_id: string | null
+          submitted_from_location_id: number | null
         }
         Insert: {
           correct_item_name: string
@@ -84,7 +86,9 @@ export interface Database {
           incorrect_item_name: string
           notes?: string | null
           sku: string
-          submitted_from_id: number
+          submitted_by_name?: string | null
+          submitted_by_profile_id?: string | null
+          submitted_from_location_id?: number | null
         }
         Update: {
           correct_item_name?: string
@@ -93,13 +97,17 @@ export interface Database {
           incorrect_item_name?: string
           notes?: string | null
           sku?: string
-          submitted_from_id?: number
+          submitted_by_name?: string | null
+          submitted_by_profile_id?: string | null
+          submitted_from_location_id?: number | null
         }
       }
       location_tasks: {
         Row: {
           complete: boolean
           completed_at: string | null
+          completed_by_name: string | null
+          completed_by_profile_id: string | null
           id: number
           location_id: number
           task_id: number
@@ -107,6 +115,8 @@ export interface Database {
         Insert: {
           complete?: boolean
           completed_at?: string | null
+          completed_by_name?: string | null
+          completed_by_profile_id?: string | null
           id?: number
           location_id: number
           task_id: number
@@ -114,6 +124,8 @@ export interface Database {
         Update: {
           complete?: boolean
           completed_at?: string | null
+          completed_by_name?: string | null
+          completed_by_profile_id?: string | null
           id?: number
           location_id?: number
           task_id?: number
@@ -146,7 +158,9 @@ export interface Database {
           item_name: string
           notes: string | null
           sku: string
-          submitted_from_id: number
+          submitted_by_name: string | null
+          submitted_by_profile_id: string | null
+          submitted_from_location_id: number | null
         }
         Insert: {
           fixed?: boolean
@@ -154,7 +168,9 @@ export interface Database {
           item_name: string
           notes?: string | null
           sku: string
-          submitted_from_id: number
+          submitted_by_name?: string | null
+          submitted_by_profile_id?: string | null
+          submitted_from_location_id?: number | null
         }
         Update: {
           fixed?: boolean
@@ -162,7 +178,9 @@ export interface Database {
           item_name?: string
           notes?: string | null
           sku?: string
-          submitted_from_id?: number
+          submitted_by_name?: string | null
+          submitted_by_profile_id?: string | null
+          submitted_from_location_id?: number | null
         }
       }
       nicotine_packets: {
