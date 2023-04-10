@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { page } from '$app/stores'
   import toast from 'svelte-french-toast'
   import { superForm } from 'sveltekit-superforms/client'
+
+  import { page } from '$app/stores'
 
   import { FormControl, PageLayout } from '$components'
 

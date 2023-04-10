@@ -1,9 +1,10 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
+  import { Toaster } from 'svelte-french-toast'
+
   import { enhance } from '$app/forms'
   import { invalidate } from '$app/navigation'
   import { page } from '$app/stores'
-  import { onMount } from 'svelte'
-  import { Toaster } from 'svelte-french-toast'
 
   import { Divider, Logo } from '$components'
 

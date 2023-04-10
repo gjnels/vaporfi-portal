@@ -12,7 +12,13 @@
   "printWidth": 80,
   "pluginSearchDirs": ["."],
   "overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }],
-  "importOrder": ["\\$types", "\\$lib(.*)$", "\\$components(.*)$", "^[./]"],
+  "importOrder": [
+    "\\$types",
+    "\\$app(.*)$",
+    "\\$lib(.*)$",
+    "\\$components(.*)$",
+    "^[./]"
+  ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true
 }
