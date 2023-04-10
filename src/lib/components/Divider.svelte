@@ -8,10 +8,8 @@
 <svelte:element
   this={vertical ? 'div' : 'hr'}
   class={twMerge(
-    'rounded-full',
-    vertical
-      ? 'h-full w-px border-none bg-surface-100/25'
-      : 'w-full border-surface-100/25',
+    'rounded-full border-surface-100/25',
+    vertical ? 'h-full border ' : 'w-full',
     styles
   )}
 />
