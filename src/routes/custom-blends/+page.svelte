@@ -1,4 +1,5 @@
 <script lang="ts">
+  import toast from 'svelte-french-toast'
   import { createDialog } from 'svelte-headlessui'
   import {
     DocumentDuplicate,
@@ -43,10 +44,18 @@
   const {
     form: deleteForm,
     enhance: deleteEnhance,
-    message: deleteMessage,
-    constraints: deleteConstraints,
-    errors: deleteErrors
-  } = superForm(data.deleteForm)
+    message: deleteMessage
+  } = superForm(data.deleteForm, {
+    dataType: 'json',
+    onResult: ({ result: { type } }) => {
+      if (type === 'success') {
+        deleteModal.close()
+        toast.success('Custom blend has been deleted.')
+      } else if ($deleteMessage) {
+        toast.error($deleteMessage)
+      }
+    }
+  })
 
   const copyModal = createDialog({ label: 'custom_blend:copy' })
   const deleteModal = createDialog({ label: 'custom_blend:delete' })
@@ -58,10 +67,6 @@
   $: if (!$copyModal.expanded) $currentCopyBlend = null
   $: if (!$deleteModal.expanded) $currentDeleteBlend = null
 </script>
-
-<svelte:head>
-  <title>Custom Blends | VF Columbus</title>
-</svelte:head>
 
 <PageLayout headerContainerStyles="justify-between">
   <svelte:fragment slot="header">
@@ -120,6 +125,7 @@
                 title="Delete this custom blend"
                 on:click={() => {
                   $currentDeleteBlend = blend
+                  $deleteForm = blend
                   deleteModal.open()
                 }}
                 ><Icon
@@ -206,20 +212,22 @@
       </span>
     </p>
   {/if}
-  <form
-    method="post"
-    use:deleteEnhance
-    action="?/deletePromo"
-    class="flex w-full justify-center gap-4"
-  >
-    <button
-      type="submit"
-      class="btn btn-danger flex-1">Yes</button
+  <div class="flex w-full justify-center gap-4">
+    <form
+      method="post"
+      use:deleteEnhance
+      action="?/deleteBlend"
+      class="contents"
     >
+      <button
+        type="submit"
+        class="btn btn-danger flex-1">Yes</button
+      >
+    </form>
     <button
       type="button"
       class="btn flex-1"
       on:click={deleteModal.close}>No</button
     >
-  </form>
+  </div>
 </Modal>

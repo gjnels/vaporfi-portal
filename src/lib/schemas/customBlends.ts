@@ -211,4 +211,6 @@ export const copyCustomBlendSchema = z.object({
   nicotine: z.number().min(0).step(0.1).default(0)
 })
 
-export const deleteCustomBlendSchema = customBlendSchema.pick({ id: true })
+export const deleteCustomBlendSchema = updateCustomBlendSchema.pick({
+  id: true
+})

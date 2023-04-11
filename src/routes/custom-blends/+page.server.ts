@@ -1,5 +1,5 @@
 import { error, fail } from '@sveltejs/kit'
-import { superValidate } from 'sveltekit-superforms/server'
+import { message, superValidate } from 'sveltekit-superforms/server'
 
 import {
   copyCustomBlendSchema,
@@ -50,7 +50,6 @@ export const load = async ({ locals: { supabase, getSession } }) => {
 export const actions = {
   copyBlend: async (event) => {
     const form = await superValidate(event, copyCustomBlendSchema)
-    console.log(form)
     if (!form.valid) {
       return fail(400, { form })
     }
@@ -62,6 +61,16 @@ export const actions = {
     if (!form.valid) {
       return fail(400, { form })
     }
+
+    const { error } = await event.locals.supabase
+      .from('custom_blends')
+      .delete()
+      .eq('id', form.data.id)
+
+    if (error) {
+      return message(form, 'Could not delete custom blend. Try again later.')
+    }
+
     return { form }
   }
 }
