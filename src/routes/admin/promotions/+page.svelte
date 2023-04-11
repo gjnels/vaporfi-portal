@@ -2,8 +2,6 @@
   import dayjs from 'dayjs'
   import toast from 'svelte-french-toast'
   import { createDialog } from 'svelte-headlessui'
-  import { Icon, XMark } from 'svelte-hero-icons'
-  import { scale } from 'svelte/transition'
   import { superForm } from 'sveltekit-superforms/client'
 
   import { formatPromoTableDate } from '$lib/utils/dates.js'

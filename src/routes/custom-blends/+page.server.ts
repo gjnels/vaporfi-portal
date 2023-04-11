@@ -1,5 +1,10 @@
-import { error } from '@sveltejs/kit'
+import { error, fail } from '@sveltejs/kit'
+import { superValidate } from 'sveltekit-superforms/server'
 
+import {
+  copyCustomBlendSchema,
+  deleteCustomBlendSchema
+} from '$lib/schemas/customBlends.js'
 import type { DatabaseRow } from '$lib/types/supabaseHelpers.types.js'
 
 export const load = async ({ locals: { supabase, getSession } }) => {
@@ -23,6 +28,7 @@ export const load = async ({ locals: { supabase, getSession } }) => {
     .returns<
       (DatabaseRow<'custom_blends'> & {
         shots1: number
+        flavor1_id: number
         flavor1: DatabaseRow<'flavors'>
         flavor2: DatabaseRow<'flavors'> | null
         flavor3: DatabaseRow<'flavors'> | null
@@ -35,6 +41,27 @@ export const load = async ({ locals: { supabase, getSession } }) => {
 
   return {
     blends,
-    admin: role === 'Admin'
+    admin: role === 'Admin',
+    copyForm: superValidate(null, copyCustomBlendSchema, { id: 'copy' }),
+    deleteForm: superValidate(null, deleteCustomBlendSchema, { id: 'delete' })
+  }
+}
+
+export const actions = {
+  copyBlend: async (event) => {
+    const form = await superValidate(event, copyCustomBlendSchema)
+    console.log(form)
+    if (!form.valid) {
+      return fail(400, { form })
+    }
+    return { form }
+  },
+
+  deleteBlend: async (event) => {
+    const form = await superValidate(event, deleteCustomBlendSchema)
+    if (!form.valid) {
+      return fail(400, { form })
+    }
+    return { form }
   }
 }

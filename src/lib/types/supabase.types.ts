@@ -14,12 +14,12 @@ export interface Database {
           approved: boolean
           approved_by_profile_id: string | null
           created_by_profile_id: string | null
-          flavor1_id: number | null
+          flavor1_id: number
           flavor2_id: number | null
           flavor3_id: number | null
           id: number
           name: string
-          shots1: number | null
+          shots1: number
           shots2: number | null
           shots3: number | null
         }
@@ -27,12 +27,12 @@ export interface Database {
           approved?: boolean
           approved_by_profile_id?: string | null
           created_by_profile_id?: string | null
-          flavor1_id?: number | null
+          flavor1_id: number
           flavor2_id?: number | null
           flavor3_id?: number | null
           id?: number
           name: string
-          shots1?: number | null
+          shots1: number
           shots2?: number | null
           shots3?: number | null
         }
@@ -40,12 +40,12 @@ export interface Database {
           approved?: boolean
           approved_by_profile_id?: string | null
           created_by_profile_id?: string | null
-          flavor1_id?: number | null
+          flavor1_id?: number
           flavor2_id?: number | null
           flavor3_id?: number | null
           id?: number
           name?: string
-          shots1?: number | null
+          shots1?: number
           shots2?: number | null
           shots3?: number | null
         }

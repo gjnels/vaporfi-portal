@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { type Refinement, z } from 'zod'
 
 export const flavorPickerBlendSchema = z.object({
   flavor1: z
@@ -104,3 +104,111 @@ export const flavorPickerRefinedSchema = flavorPickerSchema.superRefine(
 export const savedFlavorPickerBlendSchema = flavorPickerSchema.extend({
   id: z.string().cuid2()
 })
+
+export const customBlendSchema = z.object({
+  id: z.number().int().min(1).optional(),
+  name: z.string().trim().min(1),
+  flavorCount: z.number().int().min(1).max(3).default(1),
+  flavor1_id: z.number().int().min(1, 'Choose a flavor'),
+  flavor2_id: z.number().int().min(1).nullable().default(null),
+  flavor3_id: z.number().int().min(1).nullable().default(null),
+  shots1: z
+    .number()
+    .min(1, 'Cannot be less than 1')
+    .max(3, 'Cannot be more than 3')
+    .default(1),
+  shots2: z
+    .number()
+    .min(1, 'Cannot be less than 1')
+    .max(2, 'Cannot be more than 2')
+    .nullable()
+    .default(null),
+  shots3: z
+    .number()
+    .min(1, 'Cannot be less than 1')
+    .max(1, 'Cannot be more than 1')
+    .nullable()
+    .default(null),
+  approved: z.boolean().optional().default(false)
+})
+
+export const insertCustomBlendSchema = customBlendSchema.extend({
+  id: z.undefined()
+})
+
+export const updateCustomBlendSchema = customBlendSchema.extend({
+  id: z.number().int().min(1)
+})
+
+const customBlendRefinement: Refinement<z.infer<typeof customBlendSchema>> = (
+  data,
+  ctx
+) => {
+  if (data.shots2 && !data.flavor2_id) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Choose a flavor',
+      path: ['flavor2_id']
+    })
+  }
+  if (data.shots3 && !data.flavor3_id) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Choose a flavor',
+      path: ['flavor3_id']
+    })
+  }
+  if (data.flavor2_id && data.flavor1_id === data.flavor2_id) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Cannot choose the same flavor twice',
+      path: ['flavor2_id']
+    })
+  }
+  if (
+    data.flavor3_id &&
+    (data.flavor1_id === data.flavor3_id || data.flavor2_id === data.flavor3_id)
+  ) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Cannot choose the same flavor twice',
+      path: ['flavor3_id']
+    })
+  }
+  if (data.shots1 + (data?.shots2 || 0) + (data?.shots3 || 0) > 3) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Total number of shots cannot be more than 3',
+      path: ['shots1']
+    })
+    data.shots2 &&
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Total number of shots cannot be more than 3',
+        path: ['shots2']
+      })
+    data.shots3 &&
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Total number of shots cannot be more than 3',
+        path: ['shots3']
+      })
+  }
+}
+
+export const customBlendRefinedSchema = customBlendSchema.superRefine(
+  customBlendRefinement
+)
+
+export const insertCustomBlendRefinedSchema =
+  insertCustomBlendSchema.superRefine(customBlendRefinement)
+
+export const updateCustomBlendRefinedSchema =
+  updateCustomBlendSchema.superRefine(customBlendRefinement)
+
+export const copyCustomBlendSchema = z.object({
+  bottleCount: z.number().int().min(1).default(1),
+  nicotine: z.number().min(0).step(0.1).default(0)
+})
+
+export const deleteCustomBlendSchema = customBlendSchema.pick({ id: true })

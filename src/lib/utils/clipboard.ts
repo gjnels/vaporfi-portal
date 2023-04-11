@@ -1,6 +1,6 @@
 import toast from 'svelte-french-toast'
 
-import type { SavedFlavorPickerBlend } from '$lib/types/flavors.types'
+import type { Blend } from '$lib/types/flavors.types'
 
 import { createBlendString } from './flavors'
 
@@ -17,7 +17,7 @@ export const copyToClipboard = (
   })
 
 export const copyBlendToClipboard = (
-  blend: Omit<SavedFlavorPickerBlend, 'id'>,
+  blend: Blend & { bottleCount: number; nicotine: number },
   msgs: Messages = {
     loading: 'Copying blend to clipboard...',
     error: 'Failed to copy blend to clipboard',

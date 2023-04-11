@@ -38,4 +38,8 @@
   label:has(.radio-group) {
     @apply w-fit;
   }
+
+  label:has(:disabled) {
+    @apply opacity-50;
+  }
 </style>

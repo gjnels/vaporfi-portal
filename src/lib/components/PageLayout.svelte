@@ -48,7 +48,7 @@
   <div class={twMerge('border-b border-surface-700', headerWrapperStyles)}>
     <div
       class={twMerge(
-        'header mx-auto flex w-full max-w-screen-2xl items-center px-4 py-8',
+        'header mx-auto flex w-full max-w-screen-2xl flex-wrap items-center gap-x-8 gap-y-4 px-4 py-8',
         headerContainerStyles
       )}
     >
