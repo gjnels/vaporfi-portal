@@ -42,7 +42,6 @@ export const actions = {
     })
 
     if (error) {
-      console.log(error)
       return message(form, error.message, { status: 400 })
     }
 
