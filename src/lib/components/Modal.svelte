@@ -10,12 +10,12 @@
 
 {#if $modalStore.expanded}
   <div
-    class="fixed inset-0 z-50 flex items-center justify-center bg-surface-900/80 p-4"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-surface-950/90 p-4"
     transition:fade
   >
     <div
       class={twMerge(
-        'relative overflow-y-scroll rounded-2xl bg-surface-700 p-10 shadow',
+        'relative overflow-y-scroll rounded-2xl border border-surface-600 bg-surface-800 p-10 shadow',
         modalWindowStyles
       )}
       transition:scale
