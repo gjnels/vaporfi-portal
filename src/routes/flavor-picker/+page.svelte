@@ -342,7 +342,7 @@
       </FormControl>
     </div>
 
-    <div class="btn-group">
+    <div class="flex flex-wrap gap-4 [&>*]:flex-1">
       {#if $form.id}
         <!-- Editing a blend -->
         <button

@@ -143,7 +143,7 @@
         <span>Salt nicotine</span>
       </label>
 
-      <div class="btn-group">
+      <div class="flex flex-wrap gap-4 [&>*]:flex-1">
         <button
           type="submit"
           class="btn btn-primary">Calculate</button

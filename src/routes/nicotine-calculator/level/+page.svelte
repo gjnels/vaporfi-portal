@@ -130,7 +130,7 @@
         <span class="form-error">{$message}</span>
       {/if}
 
-      <div class="btn-group">
+      <div class="flex flex-wrap gap-4 [&>*]:flex-1">
         <button
           type="submit"
           class="btn btn-primary"
