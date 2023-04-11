@@ -26,6 +26,7 @@
     constraints: copyConstraints,
     errors: copyErrors
   } = superForm(data.copyForm, {
+    taintedMessage: null, // don't confirm before leaving page
     onResult: ({ result: { type } }) => {
       if (type === 'success' && $currentCopyBlend) {
         copyBlendToClipboard({
@@ -47,6 +48,7 @@
     message: deleteMessage
   } = superForm(data.deleteForm, {
     dataType: 'json',
+    taintedMessage: null, // don't confirm before leaving page
     onResult: ({ result: { type } }) => {
       if (type === 'success') {
         deleteModal.close()
