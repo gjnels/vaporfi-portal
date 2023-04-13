@@ -53,8 +53,8 @@
       if (type === 'success') {
         deleteModal.close()
         toast.success('Custom blend has been deleted.')
-      } else if ($deleteMessage) {
-        toast.error($deleteMessage)
+      } else if ($deleteMessage && $deleteMessage.type == 'error') {
+        toast.error($deleteMessage.message)
       }
     }
   })
@@ -113,7 +113,7 @@
             <!-- Edit and Delete actions are only available to admins -->
             {#if data.admin}
               <a
-                href="{$page.url.pathname}/{blend.id}"
+                href="{$page.url.pathname}/edit?blend_id={blend.id}"
                 class="btn btn-icon btn-secondary"
                 title="Edit this custom blend"
                 ><Icon
@@ -176,6 +176,7 @@
         step="any"
       />
     </FormControl>
+
     <FormControl
       label="Number of bottles"
       errors={$copyErrors.bottleCount}

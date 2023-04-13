@@ -11,12 +11,12 @@
 
   export let data
 
-  const modalStore = createDialog()
+  const deleteModal = createDialog()
   const { form, enhance, reset } = superForm(data.form, {
     dataType: 'json',
     onResult: ({ result: { type } }) => {
       if (type === 'success') {
-        modalStore.close()
+        deleteModal.close()
       } else if (type === 'failure') {
         toast.error(
           'There was a problem deleting this promotion. Try again later.'
@@ -25,7 +25,7 @@
     }
   })
 
-  $: if (!$modalStore.expanded) reset()
+  $: if (!$deleteModal.expanded) reset()
 </script>
 
 <svelte:head>
@@ -66,7 +66,7 @@
             <td
               ><div class="grid gap-2">
                 <a
-                  href="promotions/{promo.id}"
+                  href="promotions/edit?promo_id={promo.id}"
                   class="btn btn-secondary btn-small">Edit</a
                 >
                 <button
@@ -74,7 +74,7 @@
                   class="btn btn-danger btn-small"
                   on:click={() => {
                     $form.id = promo.id
-                    modalStore.open()
+                    deleteModal.open()
                   }}>Delete</button
                 >
               </div></td
@@ -117,7 +117,7 @@
   </div>
 </PageLayout>
 
-<Modal {modalStore}>
+<Modal modalStore={deleteModal}>
   <p>Are you sure you want to delete this promotion?</p>
   <p class="mt-2 text-center text-2xl font-bold">
     {data.promos.find((p) => p.id === $form.id)?.title}
@@ -137,7 +137,7 @@
     <button
       type="button"
       class="btn btn-small flex-1"
-      on:click={modalStore.close}>No</button
+      on:click={deleteModal.close}>No</button
     >
   </div>
 </Modal>

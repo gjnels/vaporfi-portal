@@ -1,14 +1,25 @@
 import { error, fail } from '@sveltejs/kit'
 import { message, superValidate } from 'sveltekit-superforms/server'
+import { coerce, z } from 'zod'
 
 import { promoSchema } from '$lib/schemas/promos.js'
 import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
 
-export const load = async ({ params, locals: { supabase } }) => {
+export const load = async ({ url: { searchParams }, locals: { supabase } }) => {
+  const validatedSearchParam = z
+    .number({ coerce: true })
+    .int()
+    .min(1)
+    .safeParse(searchParams.get('promo_id'))
+  if (!validatedSearchParam.success) {
+    throw error(400, 'Invalid promotion id')
+  }
+  const promoId = validatedSearchParam.data
+
   const { data: promo, error: promosError } = await supabase
     .from('promos')
     .select('*')
-    .eq('id', params.promoId)
+    .eq('id', promoId)
     .single()
 
   if (!promo || promosError) {

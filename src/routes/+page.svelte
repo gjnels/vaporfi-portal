@@ -27,7 +27,7 @@
       {#each promos as promo (promo.id)}
         <svelte:element
           this={isAdmin ? 'a' : 'div'}
-          href={isAdmin ? `/admin/promotions/${promo.id}` : null}
+          href={isAdmin ? `/admin/promotions/edit?promo_id=${promo.id}` : null}
           title={isAdmin ? `Edit ${promo.title} promotion` : null}
           class={twMerge(
             'flex flex-col gap-4 rounded-lg border border-transparent bg-surface-700/50 p-4 shadow',

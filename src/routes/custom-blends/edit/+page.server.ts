@@ -1,12 +1,28 @@
 import { error, fail, redirect } from '@sveltejs/kit'
 import { message, setError, superValidate } from 'sveltekit-superforms/server'
+import { z } from 'zod'
 
 import {
   updateCustomBlendRefinedSchema,
   updateCustomBlendSchema
 } from '$lib/schemas/customBlends.js'
 
-export const load = async ({ locals: { supabase, getSession }, params }) => {
+export const load = async ({
+  locals: { supabase, getSession },
+  url: { searchParams }
+}) => {
+  const validatedSearchParam = z
+    .number({ coerce: true })
+    .int()
+    .min(1)
+    .safeParse(searchParams.get('blend_id'))
+
+  if (!validatedSearchParam.success) {
+    throw error(400, 'Invalid custom blend id')
+  }
+
+  const blendId = validatedSearchParam.data
+
   const session = await getSession()
   if (!session) {
     throw error(401) // Unauthenticated
@@ -29,7 +45,7 @@ export const load = async ({ locals: { supabase, getSession }, params }) => {
   const { data: blend, error: blendError } = await supabase
     .from('custom_blends')
     .select('*')
-    .eq('id', params.blendId)
+    .eq('id', blendId)
     .single()
 
   if (blendError || !blend) {
