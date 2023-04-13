@@ -283,6 +283,6 @@
   <button
     type="submit"
     class="btn btn-primary"
-    >{$form.id ? 'Update' : 'Create'} Custom Blend</button
+    >{'id' in $form ? 'Update' : 'Create'} Custom Blend</button
   >
 </form>

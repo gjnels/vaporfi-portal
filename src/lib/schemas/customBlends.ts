@@ -106,7 +106,7 @@ export const savedFlavorPickerBlendSchema = flavorPickerSchema.extend({
 })
 
 export const customBlendSchema = z.object({
-  id: z.number().int().min(1).optional(),
+  id: z.number().int().min(1),
   name: z.string().trim().min(1),
   flavorCount: z.number().int().min(1).max(3).default(1),
   flavor1_id: z.number().int().min(1, 'Choose a flavor'),
@@ -132,18 +132,15 @@ export const customBlendSchema = z.object({
   approved: z.boolean().optional().default(false)
 })
 
-export const insertCustomBlendSchema = customBlendSchema.extend({
-  id: z.undefined()
+export const insertCustomBlendSchema = customBlendSchema.omit({
+  id: true
 })
 
-export const updateCustomBlendSchema = customBlendSchema.extend({
-  id: z.number().int().min(1)
-})
+export const updateCustomBlendSchema = customBlendSchema
 
-const customBlendRefinement: Refinement<z.infer<typeof customBlendSchema>> = (
-  data,
-  ctx
-) => {
+const customBlendRefinement: Refinement<
+  Omit<z.infer<typeof customBlendSchema>, 'id'>
+> = (data, ctx) => {
   if (data.shots2 && !data.flavor2_id) {
     ctx.addIssue({
       code: 'custom',

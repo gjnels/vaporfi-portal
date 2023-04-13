@@ -73,7 +73,7 @@ export const actions = {
       return fail(400, { form })
     }
 
-    const { flavorCount, id, ...data } = form.data
+    const { id, ...data } = form.data
 
     // approved_by_profile_id handled by database
 

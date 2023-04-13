@@ -46,13 +46,11 @@ export const actions = {
       return fail(400, { form })
     }
 
-    const { flavorCount, id, ...data } = form.data
-
     // created_by_profile_id and approved_by_profile_id handled by database
 
     const { error } = await event.locals.supabase
       .from('custom_blends')
-      .insert(data)
+      .insert(form.data)
 
     if (error) {
       // unique constraint violation
