@@ -1,5 +1,6 @@
 <script lang="ts">
   import toast from 'svelte-french-toast'
+  import { ArrowUturnLeft, Icon } from 'svelte-hero-icons'
   import { dateProxy, superForm } from 'sveltekit-superforms/client'
 
   import FormControl from '$components/FormControl.svelte'
@@ -32,7 +33,19 @@
 </svelte:head>
 
 <PageLayout contentContainerStyles="max-w-2xl">
-  <h1 slot="header">Edit Promotion | {data.promo.title}</h1>
+  <svelte:fragment slot="header">
+    <h1>Edit Promotion | {data.promo.title}</h1>
+    <a
+      href="/custom-blends"
+      class="link link-primary"
+    >
+      <Icon
+        src={ArrowUturnLeft}
+        size="1em"
+      />
+      All Promotions
+    </a>
+  </svelte:fragment>
 
   <form
     method="post"

@@ -1,6 +1,6 @@
 import { error, fail } from '@sveltejs/kit'
 import { message, superValidate } from 'sveltekit-superforms/server'
-import { coerce, z } from 'zod'
+import { z } from 'zod'
 
 import { promoSchema } from '$lib/schemas/promos.js'
 import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
