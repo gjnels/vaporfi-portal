@@ -1,9 +1,10 @@
 <script lang="ts">
+  import toast from 'svelte-french-toast'
   import { superForm } from 'sveltekit-superforms/client'
 
   import { page } from '$app/stores'
 
-  import { FormControl } from '$components'
+  import { FormControl, FormMessage } from '$components'
   import PageLayout from '$components/PageLayout.svelte'
 
   export let data
@@ -21,7 +22,6 @@
   <h2 class="mb-8 text-center text-3xl font-bold">Reset Your Password</h2>
   <form
     method="post"
-    action="/auth?/reset_password"
     use:enhance
     class="form"
   >
@@ -37,9 +37,7 @@
       />
     </FormControl>
 
-    {#if $message}
-      <span class="form-error">{$message}</span>
-    {/if}
+    <FormMessage message={$message} />
 
     <button
       type="submit"

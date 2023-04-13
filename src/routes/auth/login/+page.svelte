@@ -4,7 +4,7 @@
 
   import { page } from '$app/stores'
 
-  import { FormControl, PageLayout } from '$components'
+  import { FormControl, FormMessage, PageLayout } from '$components'
 
   export let data
 
@@ -29,9 +29,7 @@
 
   <form
     method="post"
-    action="/auth?/signin&redirectTo={$page.url.searchParams.get(
-      'redirectTo'
-    ) ?? '/'}"
+    action="?/redirectTo={$page.url.searchParams.get('redirectTo') ?? '/'}"
     class="form"
     use:enhance
   >
@@ -57,9 +55,7 @@
       />
     </FormControl>
 
-    {#if $message}
-      <span class="form-error">{$message}</span>
-    {/if}
+    <FormMessage message={$message} />
 
     <button
       type="submit"

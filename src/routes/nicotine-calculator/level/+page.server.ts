@@ -21,13 +21,19 @@ export const load = async ({ parent }) => {
 
 export const actions = {
   default: async (event) => {
-    const form = await superValidate(event, totalNicotineSchema)
+    const form = await superValidate<typeof totalNicotineSchema, Message>(
+      event,
+      totalNicotineSchema
+    )
     if (!form.valid) {
       return fail(400, { form })
     }
     // No packets selected
     if (form.data.packets.filter((packet) => packet.selected).length === 0) {
-      return message(form, 'You must select at least one packet to add')
+      return message(form, {
+        type: 'error',
+        message: 'You must select at least one packet to add'
+      })
     }
     return { form }
   }

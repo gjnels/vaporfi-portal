@@ -1,7 +1,9 @@
 <script lang="ts">
   import { superForm } from 'sveltekit-superforms/client'
 
-  import { PageLayout } from '$components'
+  import { page } from '$app/stores'
+
+  import { FormMessage, PageLayout } from '$components'
   import FormControl from '$components/FormControl.svelte'
 
   export let data
@@ -15,7 +17,6 @@
   <h1 class="mb-8 text-center text-4xl font-semibold">Change Your Password</h1>
   <form
     method="post"
-    action="/auth?/change_password"
     use:enhance
     class="form"
   >
@@ -43,11 +44,7 @@
       />
     </FormControl>
 
-    {#if $message}
-      <span class="text-center text-lg font-medium text-primary-400"
-        >{$message}</span
-      >
-    {/if}
+    <FormMessage message={$message} />
 
     <button
       type="submit"

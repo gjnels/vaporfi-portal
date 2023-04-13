@@ -42,14 +42,25 @@ export const load = async ({ locals: { supabase, getSession } }) => {
   return {
     blends,
     admin: role === 'Admin',
-    copyForm: superValidate(null, copyCustomBlendSchema, { id: 'copy' }),
-    deleteForm: superValidate(null, deleteCustomBlendSchema, { id: 'delete' })
+    copyForm: superValidate<typeof copyCustomBlendSchema, Message>(
+      null,
+      copyCustomBlendSchema,
+      { id: 'copy' }
+    ),
+    deleteForm: superValidate<typeof deleteCustomBlendSchema, Message>(
+      null,
+      deleteCustomBlendSchema,
+      { id: 'delete' }
+    )
   }
 }
 
 export const actions = {
   copyBlend: async (event) => {
-    const form = await superValidate(event, copyCustomBlendSchema)
+    const form = await superValidate<typeof copyCustomBlendSchema, Message>(
+      event,
+      copyCustomBlendSchema
+    )
     if (!form.valid) {
       return fail(400, { form })
     }
@@ -57,7 +68,10 @@ export const actions = {
   },
 
   deleteBlend: async (event) => {
-    const form = await superValidate(event, deleteCustomBlendSchema)
+    const form = await superValidate<typeof deleteCustomBlendSchema, Message>(
+      event,
+      deleteCustomBlendSchema
+    )
     if (!form.valid) {
       return fail(400, { form })
     }
@@ -68,7 +82,10 @@ export const actions = {
       .eq('id', form.data.id)
 
     if (error) {
-      return message(form, 'Could not delete custom blend. Try again later.')
+      return message(form, {
+        type: 'error',
+        message: 'Could not delete custom blend. Try again later.'
+      })
     }
 
     return { form }

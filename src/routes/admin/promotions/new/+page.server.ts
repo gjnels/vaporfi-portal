@@ -45,6 +45,6 @@ export const actions = {
       return message(form, error.message, { status: 400 })
     }
 
-    throw redirect(302, '/admin/promotions')
+    throw redirect(303, '/admin/promotions')
   }
 }

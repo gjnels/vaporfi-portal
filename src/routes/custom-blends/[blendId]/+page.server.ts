@@ -39,13 +39,19 @@ export const load = async ({ locals: { supabase, getSession }, params }) => {
   const flavorCount = blend.flavor3_id ? 3 : blend.flavor2_id ? 2 : 1
 
   return {
-    form: superValidate({ ...blend, flavorCount }, updateCustomBlendSchema)
+    form: superValidate<typeof updateCustomBlendSchema, Message>(
+      { ...blend, flavorCount },
+      updateCustomBlendSchema
+    )
   }
 }
 
 export const actions = {
   default: async (event) => {
-    const form = await superValidate(event, updateCustomBlendRefinedSchema)
+    const form = await superValidate<
+      typeof updateCustomBlendRefinedSchema,
+      Message
+    >(event, updateCustomBlendRefinedSchema)
 
     if (!form.valid) {
       return fail(400, { form })
@@ -66,10 +72,10 @@ export const actions = {
       if (error.code === '23505') {
         // there is already a blend with the same flavors and shots
         if (error.message.includes('unique_blend')) {
-          return message(
-            form,
-            'A custom blend with these flavors already exists.'
-          )
+          return message(form, {
+            type: 'error',
+            message: 'A custom blend with these flavors already exists.'
+          })
         }
         // there is already a blend with this name
         if (error.message.includes('name')) {
@@ -77,19 +83,25 @@ export const actions = {
         }
         // user tried to set the same flavor more than once
         if (error.message.includes('different_flavors')) {
-          return message(
-            form,
-            'You cannot choose the same flavor more than once'
-          )
+          return message(form, {
+            type: 'error',
+            message: 'You cannot choose the same flavor more than once'
+          })
         }
         // user set the total shots outside the limits
         if (error.message.includes('shots_between_1_and_3')) {
-          return message(form, 'Total number of shots must be between 1 and 3')
+          return message(form, {
+            type: 'error',
+            message: 'Total number of shots must be between 1 and 3'
+          })
         }
       }
-      return message(form, 'Could not update custom blend. Try again later.')
+      return message(form, {
+        type: 'error',
+        message: 'Could not update custom blend. Try again later.'
+      })
     }
 
-    throw redirect(302, '/custom_blends')
+    throw redirect(303, '/custom_blends')
   }
 }

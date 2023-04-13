@@ -5,7 +5,7 @@
   import type { SelectedPacket } from '$lib/types/nicotinePackets.types'
   import { getFinalNicLevel } from '$lib/utils/nicotinePackets'
 
-  import { FormControl } from '$components'
+  import { FormControl, FormMessage } from '$components'
 
   import CalculatorLayout from '../CalculatorLayout.svelte'
   import PacketList from '../PacketList.svelte'
@@ -126,9 +126,7 @@
         {/if}
       {/each}
 
-      {#if $message}
-        <span class="form-error">{$message}</span>
-      {/if}
+      <FormMessage message={$message} />
 
       <div class="flex flex-wrap gap-4 [&>*]:flex-1">
         <button

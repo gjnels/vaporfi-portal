@@ -8,7 +8,7 @@
   import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
   import { categoriesFromFlavors } from '$lib/utils/flavors'
 
-  import { FormControl } from '$components'
+  import { FormControl, FormMessage } from '$components'
 
   type Schema = $$Generic<
     typeof insertCustomBlendSchema | typeof updateCustomBlendSchema
@@ -278,9 +278,7 @@
     <span>Approved</span>
   </label>
 
-  {#if $message}
-    <span class="form-error">{$message}</span>
-  {/if}
+  <FormMessage message={$message} />
 
   <button
     type="submit"
