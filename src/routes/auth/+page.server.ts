@@ -59,9 +59,9 @@ export const actions = {
       return fail(400, { form })
     }
 
-    // Sign out user to make them sign in with new password
-    await supabase.auth.signOut()
-    throw redirect(303, '/login')
+    return message(form, 'Your password has been updated.', {
+      status: 200
+    })
   },
 
   reset_password: async (event) => {

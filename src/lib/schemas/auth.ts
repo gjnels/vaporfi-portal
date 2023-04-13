@@ -21,6 +21,8 @@ export const changePasswordSchema = z.object({
   passwordConfirm: z
     .string({ required_error: 'Confirm your new password' })
     .trim()
+    .min(8, { message: 'Password must be 8 or more characters' })
+    .max(64, { message: 'Password cannot be more than 64 characters' })
 })
 
 export const changePasswordRefinedSchema = changePasswordSchema.superRefine(
