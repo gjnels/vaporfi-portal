@@ -1,8 +1,6 @@
 <script lang="ts">
   import { superForm } from 'sveltekit-superforms/client'
 
-  import { page } from '$app/stores'
-
   import { FormMessage, PageLayout } from '$components'
   import FormControl from '$components/FormControl.svelte'
 

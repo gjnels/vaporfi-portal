@@ -1,5 +1,4 @@
 <script lang="ts">
-  import toast from 'svelte-french-toast'
   import { superForm } from 'sveltekit-superforms/client'
 
   import { page } from '$app/stores'
