@@ -11,14 +11,14 @@
   import '../app.postcss'
 
   export let data
-  $: ({ session, currentProfile } = data)
+  $: ({ session, supabase, currentProfile } = data)
   $: role = currentProfile?.role
 
   onMount(() => {
     const {
       data: { subscription: authListener }
-    } = data.supabase.auth.onAuthStateChange((event, session) => {
-      if (data.session?.expires_at !== session?.expires_at) {
+    } = supabase.auth.onAuthStateChange((event, _session) => {
+      if (_session?.expires_at !== session?.expires_at) {
         invalidate('supabase:auth')
       }
     })

@@ -3,15 +3,19 @@ import { createSupabaseLoadClient } from '@supabase/auth-helpers-sveltekit'
 
 import type { Database } from '$lib/types/supabase.types'
 
-export const load = async ({ fetch, data: { session }, depends }) => {
+export const load = async ({ fetch, data, depends }) => {
   depends('supabase:auth')
 
   const supabase = createSupabaseLoadClient<Database>({
     supabaseUrl: PUBLIC_SUPABASE_URL,
     supabaseKey: PUBLIC_SUPABASE_KEY,
     event: { fetch },
-    serverSession: session
+    serverSession: data.session
   })
+
+  const {
+    data: { session }
+  } = await supabase.auth.getSession()
 
   // Get the user profile if there is a valid session
   const currentProfile = await (async () => {
