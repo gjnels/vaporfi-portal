@@ -8,7 +8,7 @@ type Redirects = {
 export const redirects: Redirects = {
   'password-reset': {
     action: 'password-reset',
-    redirectTo: '/account/security'
+    redirectTo: '/auth/password/change'
   },
   'email-change': {
     action: 'email-change',
