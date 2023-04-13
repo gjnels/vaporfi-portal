@@ -46,7 +46,7 @@
       class="btn btn-primary">Send Reset Link</button
     >
 
-    <div class="text-center">
+    <div class="flex flex-col items-center">
       <p>Remember your password?</p>
       <a
         href="/auth/login{redirectTo ? `?redirectTo=${redirectTo}` : ''}"

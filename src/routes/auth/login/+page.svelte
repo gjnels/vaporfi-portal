@@ -67,8 +67,8 @@
     >
 
     <a
-      href="/auth/reset-password{redirectTo ? `?redirectTo=${redirectTo}` : ''}"
-      class="link link-secondary self-center">Forgot your password?</a
+      href="password/reset{redirectTo ? `?redirectTo=${redirectTo}` : ''}"
+      class="link link-secondary self-center text-lg">Forgot your password?</a
     >
   </form>
 </PageLayout>
