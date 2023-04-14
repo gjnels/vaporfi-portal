@@ -132,6 +132,7 @@
             {/if}
             <div class="ml-auto flex items-center gap-2">
               <button
+                type="button"
                 class="btn btn-icon btn-primary"
                 title="Copy this custom blend"
                 on:click={() => {
@@ -158,6 +159,7 @@
                   /></a
                 >
                 <button
+                  type="button"
                   class="btn btn-icon btn-danger"
                   title="Delete this custom blend"
                   on:click={() => {

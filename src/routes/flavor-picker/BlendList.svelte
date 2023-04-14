@@ -31,11 +31,13 @@
           class="flex origin-top items-center gap-2 rounded-lg border border-transparent bg-surface-800 px-3 py-2 transition focus-within:border-surface-600 focus-within:bg-surface-950 hover:border-surface-600 hover:bg-surface-950"
         >
           <button
-            class="rounded-full px-2 py-1 font-semibold text-surface-50 outline-none hover:bg-surface-800 focus-visible:ring focus-visible:ring-surface-300"
+            type="button"
+            class="rounded-2xl px-3 py-1 text-left font-semibold text-surface-50 outline-none hover:bg-surface-800 focus-visible:ring focus-visible:ring-surface-300"
             on:click={() => copyBlendToClipboard(blend)}
             >{createBlendString(blend)}</button
           >
           <button
+            type="button"
             class="btn btn-secondary btn-icon ml-auto"
             on:click={() => onEdit(blend)}
             ><Icon
@@ -45,6 +47,7 @@
             /></button
           >
           <button
+            type="button"
             class="btn btn-danger btn-icon"
             on:click={() => onDelete(blend)}
             ><Icon

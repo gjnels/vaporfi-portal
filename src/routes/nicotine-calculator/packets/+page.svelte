@@ -76,6 +76,7 @@
       </div>
 
       <button
+        type="button"
         class="btn btn-secondary btn-small mt-2"
         on:click={() => {
           const { error } = storeSavedPackets()
