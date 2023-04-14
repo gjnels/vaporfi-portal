@@ -54,7 +54,7 @@
 
   // Set form values to the selected blend to edit
   const editBlend = (blend: SavedFlavorPickerBlend) => {
-    $form = { ...$form, ...blend }
+    $form = { ...blend }
   }
 
   // Delete a saved blend from savedBlends and store the new savedBlends to localStorage
