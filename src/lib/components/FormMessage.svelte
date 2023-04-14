@@ -5,6 +5,6 @@
 {#if message}
   <span
     class:success={message.type === 'success'}
-    class:error={message.type === 'error'}>{message}</span
+    class:error={message.type === 'error'}>{message.message}</span
   >
 {/if}
