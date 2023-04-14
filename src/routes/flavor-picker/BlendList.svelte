@@ -1,5 +1,12 @@
 <script lang="ts">
-  import { Icon, PencilSquare, Trash } from 'svelte-hero-icons'
+  import { createPopover } from 'svelte-headlessui'
+  import {
+    Icon,
+    InformationCircle,
+    PencilSquare,
+    Trash
+  } from 'svelte-hero-icons'
+  import { scale } from 'svelte/transition'
 
   import { savedBlends, storeSavedBlends } from '$lib/stores/savedBlends'
   import type { SavedFlavorPickerBlend } from '$lib/types/flavors.types'
@@ -8,11 +15,37 @@
 
   export let onEdit: (blend: SavedFlavorPickerBlend) => void
   export let onDelete: (blend: SavedFlavorPickerBlend) => void
+
+  const popover = createPopover({ label: 'saved blends popover' })
 </script>
 
 <div>
   <div class="mb-4 flex items-center justify-between gap-4">
-    <h2 class="text-2xl font-semibold">Saved Blends</h2>
+    <div class="relative flex flex-wrap items-center gap-1">
+      <h2 class="text-2xl font-semibold">Saved Blends</h2>
+      <button
+        type="button"
+        class="btn btn-icon btn-secondary"
+        title="View explanation"
+        use:popover.button
+        ><Icon
+          src={InformationCircle}
+          size="1.25rem"
+        /></button
+      >
+      {#if $popover.expanded}
+        <div
+          class="absolute bottom-full z-20 mb-2 flex w-max origin-bottom rounded-md border border-surface-400 bg-surface-950 px-4 py-3 ring-4 ring-surface-500/25 transition"
+          transition:scale={{
+            start: 0.75,
+            duration: 200
+          }}
+          use:popover.panel
+        >
+          Click a custom blend to copy it to your clipboard.
+        </div>
+      {/if}
+    </div>
     <button
       type="button"
       class="btn btn-danger btn-small"
