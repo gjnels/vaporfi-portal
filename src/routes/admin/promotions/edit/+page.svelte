@@ -36,7 +36,7 @@
   <svelte:fragment slot="header">
     <h1>Edit Promotion | {data.promo.title}</h1>
     <a
-      href="/custom-blends"
+      href="/admin/promotions"
       class="link link-primary"
     >
       <Icon
