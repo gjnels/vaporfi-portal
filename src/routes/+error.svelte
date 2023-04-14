@@ -50,5 +50,8 @@
     <h1 class="text-xl font-bold uppercase">{title}</h1>
   </div>
   <p>{message}</p>
-  <a href="/">Return to Home Page</a>
+  <a
+    href="/"
+    class="link link-secondary">Return to Home Page</a
+  >
 </div>
