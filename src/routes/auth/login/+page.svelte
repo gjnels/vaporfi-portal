@@ -29,7 +29,7 @@
 
   <form
     method="post"
-    action="?/redirectTo={$page.url.searchParams.get('redirectTo') ?? '/'}"
+    action="?redirectTo={$page.url.searchParams.get('redirectTo') ?? '/'}"
     class="form"
     use:enhance
   >
