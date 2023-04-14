@@ -2,6 +2,7 @@
   import dayjs from 'dayjs'
   import toast from 'svelte-french-toast'
   import { createDialog } from 'svelte-headlessui'
+  import { Icon, PencilSquare, Trash } from 'svelte-hero-icons'
   import { superForm } from 'sveltekit-superforms/client'
 
   import { formatPromoTableDate } from '$lib/utils/dates.js'
@@ -34,10 +35,10 @@
 
 <PageLayout>
   <svelte:fragment slot="header">
-    <h1>Edit Promotions</h1>
+    <h1>Manage Promotions</h1>
     <a
       href="promotions/new"
-      class="btn btn-primary btn-small ml-auto">Create New Promotion</a
+      class="btn btn-primary btn-small">Create New Promotion</a
     >
   </svelte:fragment>
 
@@ -54,28 +55,42 @@
           <th>Ends</th>
         </tr>
       </thead>
-      <tbody class="bg-surface-800">
+      <tbody>
         {#each data.promos as promo (promo.id)}
           {@const now = dayjs()}
           {@const active =
             now.isAfter(promo.valid_from) && now.isBefore(promo.valid_until)}
           <tr
-            class="whitespace-pre border-b border-surface-500 text-surface-50 last:border-none [&>*]:px-4 [&>*]:py-2"
+            class="whitespace-pre border-b border-surface-500 bg-surface-800 text-surface-50 transition last:border-none hover:bg-surface-950 [&>*]:px-4 [&>*]:py-2"
             class:opacity-50={!active}
           >
             <td
-              ><div class="grid gap-2">
+              ><div class="flex items-center justify-center gap-2">
                 <a
                   href="promotions/edit?promo_id={promo.id}"
-                  class="btn btn-secondary btn-small">Edit</a
+                  title="Edit this promotion"
+                  class="btn btn-secondary btn-icon"
                 >
+                  <Icon
+                    src={PencilSquare}
+                    size="1.5rem"
+                    solid
+                  />
+                </a>
                 <button
                   type="button"
-                  class="btn btn-danger btn-small"
+                  title="Delete this promotion"
+                  class="btn btn-danger btn-icon"
                   on:click={() => {
                     $form.id = promo.id
                     deleteModal.open()
-                  }}>Delete</button
+                  }}
+                >
+                  <Icon
+                    src={Trash}
+                    size="1.5rem"
+                    solid
+                  /></button
                 >
               </div></td
             >

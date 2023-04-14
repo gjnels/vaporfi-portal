@@ -1,5 +1,5 @@
 import { error, fail, redirect } from '@sveltejs/kit'
-import { message, superValidate } from 'sveltekit-superforms/server'
+import { message, setError, superValidate } from 'sveltekit-superforms/server'
 
 import { promoInsertSchema } from '$lib/schemas/promos'
 import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
@@ -23,14 +23,20 @@ export const load = async ({ locals: { supabase } }) => {
   }
 
   return {
-    form: superValidate(null, promoInsertSchema),
+    form: superValidate<typeof promoInsertSchema, Message>(
+      null,
+      promoInsertSchema
+    ),
     customBlends
   }
 }
 
 export const actions = {
   default: async (event) => {
-    const form = await superValidate(event, promoInsertSchema)
+    const form = await superValidate<typeof promoInsertSchema, Message>(
+      event,
+      promoInsertSchema
+    )
     if (!form.valid) {
       return fail(400, { form })
     }
@@ -42,7 +48,18 @@ export const actions = {
     })
 
     if (error) {
-      return message(form, error.message, { status: 400 })
+      // unique constraint error
+      if (error.code === '23505') {
+        return setError(
+          form,
+          'title',
+          'A promotion with this title already exists'
+        )
+      }
+      return message(form, {
+        type: 'error',
+        message: 'Unable to create promotion. Try again later.'
+      })
     }
 
     throw redirect(303, '/admin/promotions')

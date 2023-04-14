@@ -1,5 +1,5 @@
-import { error, fail } from '@sveltejs/kit'
-import { message, superValidate } from 'sveltekit-superforms/server'
+import { error, fail, redirect } from '@sveltejs/kit'
+import { message, setError, superValidate } from 'sveltekit-superforms/server'
 import { z } from 'zod'
 
 import { promoSchema } from '$lib/schemas/promos.js'
@@ -50,7 +50,7 @@ export const load = async ({ url: { searchParams }, locals: { supabase } }) => {
   }
 
   return {
-    form: superValidate(foundPromo, promoSchema),
+    form: superValidate<typeof promoSchema, Message>(foundPromo, promoSchema),
     promo: foundPromo,
     customBlends
   }
@@ -58,7 +58,10 @@ export const load = async ({ url: { searchParams }, locals: { supabase } }) => {
 
 export const actions = {
   default: async (event) => {
-    const form = await superValidate(event, promoSchema)
+    const form = await superValidate<typeof promoSchema, Message>(
+      event,
+      promoSchema
+    )
     if (!form.valid) {
       return fail(400, { form })
     }
@@ -73,9 +76,20 @@ export const actions = {
       .eq('id', form.data.id)
 
     if (error) {
-      return message(form, error.message, { status: 400 })
+      // unique constraint error
+      if (error.code === '23505') {
+        return setError(
+          form,
+          'title',
+          'A promotion with this title already exists'
+        )
+      }
+      return message(form, {
+        type: 'error',
+        message: 'Unable to update promotion. Try again later.'
+      })
     }
 
-    return { form }
+    throw redirect(303, '/admin/promotions')
   }
 }
