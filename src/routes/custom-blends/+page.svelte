@@ -19,6 +19,7 @@
   import FormControl from '$components/FormControl.svelte'
 
   export let data
+  $: ({ isAdmin } = data)
 
   const {
     form: copyForm,
@@ -31,8 +32,6 @@
       if (type === 'success' && $currentCopyBlend) {
         copyBlendToClipboard({
           ...$currentCopyBlend,
-          flavor1: $currentCopyBlend.flavor1,
-          shots1: $currentCopyBlend.shots1,
           nicotine: $copyForm.nicotine,
           bottleCount: $copyForm.bottleCount
         })
@@ -68,79 +67,116 @@
   // Reset blend stores when modals close
   $: if (!$copyModal.expanded) $currentCopyBlend = null
   $: if (!$deleteModal.expanded) $currentDeleteBlend = null
+
+  let blendSearchTerms = ''
+  $: filteredBlends = data.blends.filter((blend) =>
+    blendSearchTerms.trim().length > 0
+      ? blendSearchTerms
+          .trim()
+          .toLowerCase()
+          .split(' ')
+          .every(
+            (term) =>
+              blend.name.toLowerCase().includes(term) ||
+              blend.flavor1.flavor.toLowerCase().includes(term) ||
+              blend.flavor2?.flavor.toLowerCase().includes(term) ||
+              blend.flavor3?.flavor.toLowerCase().includes(term)
+          )
+      : true
+  )
 </script>
 
-<PageLayout headerContainerStyles="justify-between">
-  <svelte:fragment slot="header">
-    <h1>Custom Blends</h1>
-    {#if data.admin}
-      <a
-        href="{$page.url.pathname}/new"
-        class="btn btn-small btn-primary">Make a new blend</a
-      >
-    {/if}
-  </svelte:fragment>
+<PageLayout headerContainerStyles="flex-col items-stretch">
+  <h1 slot="header">Custom Blends</h1>
 
   {#if data.blends.length === 0}
     <p class="text-center italic text-danger-500">No custom blends found</p>
   {:else}
-    <ul class="space-y-2">
-      {#each data.blends as blend (blend.id)}
-        <li
-          class="flex flex-wrap items-center gap-4 rounded-xl border border-transparent bg-surface-800 px-4 py-3 transition focus-within:border-surface-600 focus-within:bg-surface-950 hover:border-surface-600 hover:bg-surface-950"
+    <div class="mb-8 flex w-full flex-wrap items-center justify-center gap-4">
+      <input
+        type="search"
+        bind:value={blendSearchTerms}
+        class="grow"
+        placeholder="Search for custom blends"
+      />
+      {#if isAdmin}
+        <a
+          href="{$page.url.pathname}/new"
+          class="btn btn-small btn-primary">Make a new blend</a
         >
-          <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
-            <span class="text-lg font-medium text-primary-300"
-              >{blend.name}</span
-            >
-            <span>{createDisplayBlendString(blend)}</span>
-          </div>
-          <div class="ml-auto flex items-center gap-2">
-            <button
-              class="btn btn-icon btn-primary"
-              title="Copy this custom blend"
-              on:click={() => {
-                $currentCopyBlend = blend
-                $copyForm = { ...$copyForm, ...blend }
-                copyModal.open()
-              }}
-              ><Icon
-                src={DocumentDuplicate}
-                size="1.5rem"
-                solid
-              /></button
-            >
-            <!-- Edit and Delete actions are only available to admins -->
-            {#if data.admin}
-              <a
-                href="{$page.url.pathname}/edit?blend_id={blend.id}"
-                class="btn btn-icon btn-secondary"
-                title="Edit this custom blend"
-                ><Icon
-                  src={PencilSquare}
-                  size="1.5rem"
-                  solid
-                /></a
+      {/if}
+    </div>
+
+    {#if filteredBlends.length === 0}
+      <p class="text-center italic text-danger-400">
+        No custom blends match your search terms
+      </p>
+    {:else}
+      <ul class="space-y-2">
+        {#each filteredBlends as blend (blend.id)}
+          <li
+            class="flex flex-wrap items-center gap-4 rounded-xl border bg-surface-800 px-4 py-3 transition focus-within:bg-surface-950 hover:bg-surface-950 {blend.approved
+              ? 'border-transparent focus-within:border-surface-600 hover:border-surface-600'
+              : 'border-red-500'}"
+          >
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+              <span
+                class="text-lg font-medium {blend.approved
+                  ? 'text-primary-300'
+                  : 'text-danger-300'}">{blend.name}</span
               >
+              <span>{createDisplayBlendString(blend)}</span>
+            </div>
+            {#if !blend.approved}
+              <p class="text-red-500">Not approved</p>
+            {/if}
+            <div class="ml-auto flex items-center gap-2">
               <button
-                class="btn btn-icon btn-danger"
-                title="Delete this custom blend"
+                class="btn btn-icon btn-primary"
+                title="Copy this custom blend"
                 on:click={() => {
-                  $currentDeleteBlend = blend
-                  $deleteForm = blend
-                  deleteModal.open()
+                  $currentCopyBlend = blend
+                  $copyForm = { ...$copyForm, ...blend }
+                  copyModal.open()
                 }}
                 ><Icon
-                  src={Trash}
+                  src={DocumentDuplicate}
                   size="1.5rem"
                   solid
                 /></button
               >
-            {/if}
-          </div>
-        </li>
-      {/each}
-    </ul>
+              <!-- Edit and Delete actions are only available to admins -->
+              {#if isAdmin}
+                <a
+                  href="{$page.url.pathname}/edit?blend_id={blend.id}"
+                  class="btn btn-icon btn-secondary"
+                  title="Edit this custom blend"
+                  ><Icon
+                    src={PencilSquare}
+                    size="1.5rem"
+                    solid
+                  /></a
+                >
+                <button
+                  class="btn btn-icon btn-danger"
+                  title="Delete this custom blend"
+                  on:click={() => {
+                    $currentDeleteBlend = blend
+                    $deleteForm = blend
+                    deleteModal.open()
+                  }}
+                  ><Icon
+                    src={Trash}
+                    size="1.5rem"
+                    solid
+                  /></button
+                >
+              {/if}
+            </div>
+          </li>
+        {/each}
+      </ul>
+    {/if}
   {/if}
 </PageLayout>
 

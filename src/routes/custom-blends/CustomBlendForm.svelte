@@ -14,12 +14,12 @@
     typeof insertCustomBlendSchema | typeof updateCustomBlendSchema
   >
 
-  export let superForm: ReturnType<typeof superFormType<Schema>>
+  export let superform: ReturnType<typeof superFormType<Schema>>
   export let flavors: DatabaseRow<'flavors'>[]
   const categories = categoriesFromFlavors(flavors)
-  export let admin = false
+  export let isAdmin = false
 
-  const { form, enhance, message, constraints, errors } = superForm
+  const { form, enhance, message, constraints, errors } = superform
   // Prevent already chosen flavors from showing as options for other inputs
   $: flavor1Options = flavors
     .filter(({ id }) => id !== $form.flavor2_id && id !== $form.flavor3_id)
@@ -273,7 +273,7 @@
       type="checkbox"
       name="approved"
       bind:checked={$form.approved}
-      disabled={!admin}
+      disabled={!isAdmin}
     />
     <span>Approved</span>
   </label>

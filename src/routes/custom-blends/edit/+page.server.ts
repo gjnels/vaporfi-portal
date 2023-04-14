@@ -115,7 +115,7 @@ export const actions = {
       }
       return message(form, {
         type: 'error',
-        message: 'Could not update custom blend. Try again later.'
+        message: 'Unable to update custom blend. Try again later.'
       })
     }
 

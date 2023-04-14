@@ -18,16 +18,16 @@ export const load = async ({ locals: { supabase, getSession } }) => {
     .eq('id', session.user.id)
     .single()
 
-  if (profileError || !profile) {
-    throw error(404, 'Error fetching your profile')
-  }
-
-  if (profile.role !== 'Admin' && profile.role !== 'Manager') {
+  if (
+    profileError ||
+    !profile ||
+    (profile.role !== 'Admin' && profile.role !== 'Manager')
+  ) {
     throw error(403) // Unauthorized
   }
 
   return {
-    admin: profile.role === 'Admin',
+    isAdmin: profile.role === 'Admin',
     form: superValidate<typeof insertCustomBlendSchema, Message>(
       null,
       insertCustomBlendSchema
@@ -87,7 +87,7 @@ export const actions = {
       }
       return message(form, {
         type: 'error',
-        message: 'Could not create custom blend. Try again later.'
+        message: 'Unable to create custom blend. Try again later.'
       })
     }
 

@@ -7,8 +7,9 @@
   import CustomBlendForm from '../CustomBlendForm.svelte'
 
   export let data
+  $: ({ form, flavors, isAdmin } = data)
 
-  const form = superForm(data.form)
+  const superform = superForm(form)
 </script>
 
 <PageLayout contentContainerStyles="max-w-2xl">
@@ -27,8 +28,8 @@
   </svelte:fragment>
 
   <CustomBlendForm
-    flavors={data.flavors}
-    superForm={form}
-    admin={data.admin}
+    {flavors}
+    {superform}
+    {isAdmin}
   />
 </PageLayout>
