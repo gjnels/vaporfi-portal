@@ -180,7 +180,7 @@
       </FormControl>
 
       <FormControl
-        label=""
+        label="Shots"
         errors={$errors.shots1}
       >
         <div class="radio-group">
@@ -191,7 +191,7 @@
               value={1}
               bind:group={$form.shots1}
             />
-            <span>Single Shot</span>
+            <span>Single</span>
           </label>
           {#if $form.flavorCount < 3 && $form.shots2 !== 2}
             <label>
@@ -201,7 +201,7 @@
                 value={2}
                 bind:group={$form.shots1}
               />
-              <span>Double Shot</span>
+              <span>Double</span>
             </label>
           {/if}
           {#if $form.flavorCount === 1}
@@ -212,7 +212,7 @@
                 value={3}
                 bind:group={$form.shots1}
               />
-              <span>Triple Shot</span>
+              <span>Triple</span>
             </label>
           {/if}
         </div>
@@ -244,7 +244,7 @@
         </FormControl>
 
         <FormControl
-          label=""
+          label="Shots"
           errors={$errors.shots2}
         >
           <div class="radio-group">
@@ -255,7 +255,7 @@
                 value={1}
                 bind:group={$form.shots2}
               />
-              <span>Single Shot</span>
+              <span>Single</span>
             </label>
             {#if $form.flavorCount === 2 && $form.shots1 !== 2}
               <label>
@@ -265,7 +265,7 @@
                   value={2}
                   bind:group={$form.shots2}
                 />
-                <span>Double Shot</span>
+                <span>Double</span>
               </label>
             {/if}
           </div>
@@ -298,7 +298,7 @@
         </FormControl>
 
         <FormControl
-          label=""
+          label="Shots"
           errors={$errors.shots3}
         >
           <div class="radio-group">
@@ -309,7 +309,7 @@
                 value={1}
                 bind:group={$form.shots3}
               />
-              <span>Single Shot</span>
+              <span>Single</span>
             </label>
           </div>
         </FormControl>
