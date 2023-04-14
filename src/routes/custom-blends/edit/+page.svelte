@@ -14,6 +14,10 @@
   })
 </script>
 
+<svelte:head>
+  <title>Edit Custom Blend | VF Columbus</title>
+</svelte:head>
+
 <PageLayout contentContainerStyles="max-w-2xl">
   <svelte:fragment slot="header">
     <h1>Edit Custom Blend</h1>

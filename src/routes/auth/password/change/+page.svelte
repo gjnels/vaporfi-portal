@@ -11,6 +11,10 @@
   })
 </script>
 
+<svelte:head>
+  <title>Change Password | VF Columbus</title>
+</svelte:head>
+
 <PageLayout contentContainerStyles="max-w-xl">
   <h1 class="mb-8 text-center text-4xl font-semibold">Change Your Password</h1>
   <form

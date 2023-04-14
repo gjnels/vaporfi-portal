@@ -14,7 +14,7 @@
 </script>
 
 <svelte:head>
-  <title>Reset your password | VF Columbus</title>
+  <title>Reset Password | VF Columbus</title>
 </svelte:head>
 
 <PageLayout contentContainerStyles="max-w-lg mt-8">

@@ -86,6 +86,10 @@
   )
 </script>
 
+<svelte:head>
+  <title>Custom Blends | VF Columbus</title>
+</svelte:head>
+
 <PageLayout headerContainerStyles="flex-col items-stretch">
   <h1 slot="header">Custom Blends</h1>
 

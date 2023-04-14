@@ -6,6 +6,10 @@
   import { PageLayout } from '$components'
 </script>
 
+<svelte:head>
+  <title>An error has occured | VF Columbus</title>
+</svelte:head>
+
 <PageLayout contentContainerStyles="w-fit flex items-center flex-col gap-2">
   <div class="flex items-center gap-2">
     <Icon

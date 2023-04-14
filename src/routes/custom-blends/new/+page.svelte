@@ -12,6 +12,10 @@
   const superform = superForm(form)
 </script>
 
+<svelte:head>
+  <title>Create New Custom Blend | VF Columbus</title>
+</svelte:head>
+
 <PageLayout contentContainerStyles="max-w-2xl">
   <svelte:fragment slot="header">
     <h1>Create New Custom Blend</h1>
