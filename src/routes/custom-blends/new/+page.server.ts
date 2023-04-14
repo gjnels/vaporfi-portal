@@ -46,11 +46,14 @@ export const actions = {
       return fail(400, { form })
     }
 
+    // eslint-disable-next-line
+    const { flavorCount, ...data } = form.data
+
     // created_by_profile_id and approved_by_profile_id handled by database
 
     const { error } = await event.locals.supabase
       .from('custom_blends')
-      .insert(form.data)
+      .insert(data)
 
     if (error) {
       // unique constraint violation

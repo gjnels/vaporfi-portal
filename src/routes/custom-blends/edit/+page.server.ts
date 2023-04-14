@@ -73,7 +73,8 @@ export const actions = {
       return fail(400, { form })
     }
 
-    const { id, ...data } = form.data
+    // eslint-disable-next-line
+    const { flavorCount, id, ...data } = form.data
 
     // approved_by_profile_id handled by database
 
@@ -118,6 +119,6 @@ export const actions = {
       })
     }
 
-    throw redirect(303, '/custom_blends')
+    throw redirect(303, '/custom-blends')
   }
 }
