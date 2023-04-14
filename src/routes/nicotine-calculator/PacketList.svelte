@@ -16,7 +16,7 @@
 
 <div class="mx-auto flex flex-col gap-0.5">
   <div class="relative flex items-center gap-1">
-    <h2 class="text-lg font-medium text-surface-100">{title}</h2>
+    <h2 class="text-lg font-medium">{title}</h2>
     <button
       type="button"
       class="btn btn-secondary btn-icon"
@@ -30,7 +30,7 @@
     <!-- Information popover -->
     {#if $packetPopover.expanded}
       <div
-        class="absolute left-1/2 top-full z-20 mt-1 flex w-80 max-w-[calc(100vw-8px)] origin-top -translate-x-1/2 flex-col gap-2 rounded-md border border-surface-400 bg-surface-700 px-4 py-3 shadow transition sm:left-full sm:top-0 sm:ml-1 sm:mt-0 sm:origin-top-left sm:translate-x-0"
+        class="absolute left-1/2 top-full z-20 mt-2 flex w-96 max-w-[95vw] origin-top -translate-x-1/2 flex-col gap-3 rounded-md border border-surface-400 bg-surface-950 px-4 py-3 ring-4 ring-surface-500/25 transition sm:left-auto sm:translate-x-0"
         transition:scale={{
           start: 0.75,
           duration: 200
