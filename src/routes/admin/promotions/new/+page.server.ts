@@ -2,24 +2,15 @@ import { error, fail, redirect } from '@sveltejs/kit'
 import { message, setError, superValidate } from 'sveltekit-superforms/server'
 
 import { promoInsertSchema } from '$lib/schemas/promos'
-import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
 
 export const load = async ({ locals: { supabase } }) => {
   const { data: customBlends, error: customBlendsError } = await supabase
     .from('custom_blends')
-    .select(
-      '*, flavor1:flavor1_id(flavor), flavor2:flavor2_id(flavor), flavor3:flavor3_id(flavor)'
-    )
-    .returns<
-      (DatabaseRow<'custom_blends'> & {
-        flavor1: string
-        flavor2: string | null
-        flavor3: string | null
-      })[]
-    >()
+    .select('id, name')
+    .is('approved', true)
 
-  if (!customBlends || customBlendsError) {
-    throw error(404, 'Error fetching custom blends')
+  if (customBlendsError) {
+    throw error(404, 'Custom blends not found')
   }
 
   return {

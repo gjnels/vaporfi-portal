@@ -25,8 +25,8 @@ export const load = async ({ locals: { supabase } }) => {
     .order('title')
     .returns<Array<DatabaseRow<'promos'> & { blend: Blend | null }>>()
 
-  if (!promos || err) {
-    throw error(404, 'Error fetching promotions')
+  if (err) {
+    throw error(404, 'Promotions not found')
   }
 
   return {

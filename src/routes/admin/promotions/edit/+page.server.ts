@@ -3,18 +3,9 @@ import { message, setError, superValidate } from 'sveltekit-superforms/server'
 import { z } from 'zod'
 
 import { promoSchema } from '$lib/schemas/promos.js'
-import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
 
 export const load = async ({ url: { searchParams }, locals: { supabase } }) => {
-  const validatedSearchParam = z
-    .number({ coerce: true })
-    .int()
-    .min(1)
-    .safeParse(searchParams.get('promo_id'))
-  if (!validatedSearchParam.success) {
-    throw error(400, 'Invalid promotion id')
-  }
-  const promoId = validatedSearchParam.data
+  const promoId = searchParams.get('promo_id')
 
   const { data: promo, error: promosError } = await supabase
     .from('promos')
@@ -22,25 +13,17 @@ export const load = async ({ url: { searchParams }, locals: { supabase } }) => {
     .eq('id', promoId)
     .single()
 
-  if (!promo || promosError) {
-    throw error(404, 'Promo not found')
+  if (promosError) {
+    throw error(404, 'Promotion not found')
   }
 
   const { data: customBlends, error: customBlendsError } = await supabase
     .from('custom_blends')
-    .select(
-      '*, flavor1:flavor1_id(flavor), flavor2:flavor2_id(flavor), flavor3:flavor3_id(flavor)'
-    )
-    .returns<
-      (DatabaseRow<'custom_blends'> & {
-        flavor1: string
-        flavor2: string | null
-        flavor3: string | null
-      })[]
-    >()
+    .select('id, name')
+    .is('approved', true)
 
-  if (!customBlends || customBlendsError) {
-    throw error(404, 'Error fetching custom blends')
+  if (customBlendsError) {
+    throw error(500, 'Unable to fetch custom blends. Try again later.')
   }
 
   const foundPromo = {

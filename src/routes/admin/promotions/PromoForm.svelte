@@ -11,11 +11,7 @@
 
   type Schema = $$Generic<typeof promoInsertSchema | typeof promoSchema>
 
-  export let customBlends: (DatabaseRow<'custom_blends'> & {
-    flavor1: string
-    flavor2: string | null
-    flavor3: string | null
-  })[]
+  export let customBlends: Pick<DatabaseRow<'custom_blends'>, 'id' | 'name'>[]
   export let superform: ReturnType<typeof superFormType<Schema, Message>>
 
   const { form, enhance, message, errors, constraints } = superform
