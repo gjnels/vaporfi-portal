@@ -26,7 +26,7 @@ export const handle = (async ({ event, resolve }) => {
 
     if (!session) {
       throw redirect(
-        302,
+        307,
         `/auth/login?redirectTo=${event.url.pathname + event.url.search}`
       )
     }
