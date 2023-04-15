@@ -10,7 +10,7 @@ export const load = async ({ locals: { supabase } }) => {
     .is('approved', true)
 
   if (customBlendsError) {
-    throw error(404, 'Custom blends not found')
+    throw error(500, 'Unable to fetch custom blends. Try again later.')
   }
 
   return {
