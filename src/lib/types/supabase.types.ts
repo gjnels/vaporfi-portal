@@ -102,35 +102,6 @@ export interface Database {
           submitted_from_location_id?: number | null
         }
       }
-      location_tasks: {
-        Row: {
-          complete: boolean
-          completed_at: string | null
-          completed_by_name: string | null
-          completed_by_profile_id: string | null
-          id: number
-          location_id: number
-          task_id: number
-        }
-        Insert: {
-          complete?: boolean
-          completed_at?: string | null
-          completed_by_name?: string | null
-          completed_by_profile_id?: string | null
-          id?: number
-          location_id: number
-          task_id: number
-        }
-        Update: {
-          complete?: boolean
-          completed_at?: string | null
-          completed_by_name?: string | null
-          completed_by_profile_id?: string | null
-          id?: number
-          location_id?: number
-          task_id?: number
-        }
-      }
       locations: {
         Row: {
           address: string
@@ -149,6 +120,32 @@ export interface Database {
           id?: number
           name?: string
           phone?: string
+        }
+      }
+      locations_tasks: {
+        Row: {
+          complete: boolean
+          completed_at: string | null
+          completed_by_name: string | null
+          completed_by_profile_id: string | null
+          location_id: number
+          task_id: number
+        }
+        Insert: {
+          complete?: boolean
+          completed_at?: string | null
+          completed_by_name?: string | null
+          completed_by_profile_id?: string | null
+          location_id: number
+          task_id: number
+        }
+        Update: {
+          complete?: boolean
+          completed_at?: string | null
+          completed_by_name?: string | null
+          completed_by_profile_id?: string | null
+          location_id?: number
+          task_id?: number
         }
       }
       missing_skus: {
@@ -205,19 +202,56 @@ export interface Database {
       }
       profiles: {
         Row: {
+          email: string
           id: string
           name: string | null
           role: Database['public']['Enums']['role'] | null
         }
         Insert: {
+          email: string
           id: string
           name?: string | null
           role?: Database['public']['Enums']['role'] | null
         }
         Update: {
+          email?: string
           id?: string
           name?: string | null
           role?: Database['public']['Enums']['role'] | null
+        }
+      }
+      profiles_locations: {
+        Row: {
+          location_id: number
+          profile_id: string
+        }
+        Insert: {
+          location_id: number
+          profile_id: string
+        }
+        Update: {
+          location_id?: number
+          profile_id?: string
+        }
+      }
+      profiles_tasks: {
+        Row: {
+          complete: boolean
+          completed_at: string | null
+          profile_id: string
+          task_id: number
+        }
+        Insert: {
+          complete?: boolean
+          completed_at?: string | null
+          profile_id: string
+          task_id: number
+        }
+        Update: {
+          complete?: boolean
+          completed_at?: string | null
+          profile_id?: string
+          task_id?: number
         }
       }
       promos: {
@@ -257,62 +291,22 @@ export interface Database {
       }
       tasks: {
         Row: {
-          due_date: string
+          due_date: string | null
           id: number
           notes: string | null
           task: string
         }
         Insert: {
-          due_date: string
+          due_date?: string | null
           id?: number
           notes?: string | null
           task: string
         }
         Update: {
-          due_date?: string
+          due_date?: string | null
           id?: number
           notes?: string | null
           task?: string
-        }
-      }
-      user_locations: {
-        Row: {
-          id: number
-          location_id: number
-          user_id: string
-        }
-        Insert: {
-          id?: number
-          location_id: number
-          user_id: string
-        }
-        Update: {
-          id?: number
-          location_id?: number
-          user_id?: string
-        }
-      }
-      user_tasks: {
-        Row: {
-          complete: boolean
-          completed_at: string | null
-          id: number
-          task_id: number
-          user_id: string
-        }
-        Insert: {
-          complete?: boolean
-          completed_at?: string | null
-          id?: number
-          task_id: number
-          user_id: string
-        }
-        Update: {
-          complete?: boolean
-          completed_at?: string | null
-          id?: number
-          task_id?: number
-          user_id?: string
         }
       }
     }
