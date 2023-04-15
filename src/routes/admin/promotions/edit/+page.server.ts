@@ -1,6 +1,5 @@
 import { error, fail, redirect } from '@sveltejs/kit'
 import { message, setError, superValidate } from 'sveltekit-superforms/server'
-import { z } from 'zod'
 
 import { promoSchema } from '$lib/schemas/promos.js'
 
