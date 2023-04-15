@@ -7,8 +7,8 @@ export const load = async ({ locals: { supabase } }) => {
     .order('category')
     .order('flavor')
 
-  if (err || !flavors || flavors.length === 0) {
-    throw error(404, 'Error getting custom blend flavors')
+  if (err) {
+    throw error(500, 'Unable to fetch custom blend flavors. Try again later.')
   }
 
   return { flavors }

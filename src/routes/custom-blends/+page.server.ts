@@ -39,7 +39,7 @@ export const load = async ({ locals: { supabase, getSession } }) => {
       })[]
     >()
 
-  if (err || !blends) {
+  if (err) {
     throw error(404, 'Unable to fetch custom blends. Try again later.')
   }
 

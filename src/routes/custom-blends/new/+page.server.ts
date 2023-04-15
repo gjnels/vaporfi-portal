@@ -20,7 +20,6 @@ export const load = async ({ locals: { supabase, getSession } }) => {
 
   if (
     profileError ||
-    !profile ||
     (profile.role !== 'Admin' && profile.role !== 'Manager')
   ) {
     throw error(403) // Unauthorized

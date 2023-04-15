@@ -7,8 +7,8 @@ export const load = async ({ locals: { supabase } }) => {
     .order('salt')
     .order('mg')
 
-  if (err || !packets || packets.length === 0) {
-    throw error(404, 'Nicotine packets not found')
+  if (err) {
+    throw error(500, 'Unable to fetch nicotine packets. Try again later.')
   }
 
   return { packets }

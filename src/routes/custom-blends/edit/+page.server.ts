@@ -34,7 +34,7 @@ export const load = async ({
     .eq('id', session.user.id)
     .single()
 
-  if (profileError || !profile) {
+  if (profileError) {
     throw error(404, 'Error fetching your profile')
   }
 
@@ -48,7 +48,7 @@ export const load = async ({
     .eq('id', blendId)
     .single()
 
-  if (blendError || !blend) {
+  if (blendError) {
     throw error(404, 'Custom blend not found')
   }
 
