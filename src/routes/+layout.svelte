@@ -105,7 +105,7 @@
           href="/admin/promotions"
           class="navlink"
           class:active={$page.url.pathname.startsWith('/admin/promotions')}
-          ><span>Edit Promotions</span></a
+          ><span>Manage Promotions</span></a
         >
       </div>
     {/if}
