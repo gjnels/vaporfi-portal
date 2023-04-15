@@ -10,11 +10,11 @@ export const load = async ({ locals: { supabase } }) => {
     .from('promos')
     .select(
       `*,
-      blend:custom_blend_id(
+      blend:custom_blends(
         name,
-        flavor1:flavor1_id(flavor),
-        flavor2:flavor2_id(flavor),
-        flavor3:flavor3_id(flavor),
+        flavor1(flavor),
+        flavor2(flavor),
+        flavor3(flavor),
         shots1,
         shots2,
         shots3
