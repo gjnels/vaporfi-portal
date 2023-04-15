@@ -11,17 +11,10 @@ export const load = async ({
   locals: { supabase, getSession },
   url: { searchParams }
 }) => {
-  const validatedSearchParam = z
-    .number({ coerce: true })
-    .int()
-    .min(1)
-    .safeParse(searchParams.get('blend_id'))
-
-  if (!validatedSearchParam.success) {
-    throw error(400, 'Invalid custom blend id')
+  const blendId = searchParams.get('blend_id')
+  if (!blendId) {
+    throw redirect(303, '/custom-blends')
   }
-
-  const blendId = validatedSearchParam.data
 
   const session = await getSession()
   if (!session) {

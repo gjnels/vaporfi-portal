@@ -13,9 +13,8 @@
     <Icon
       src={ExclamationTriangle}
       size="4rem"
-      class="text-danger-500"
     />
-    <h1 class="text-xl font-bold uppercase">{$page.error?.message}</h1>
+    <h1 class="text-xl font-semibold">{$page.error?.message}</h1>
   </div>
   {#if !$page.url.pathname.endsWith('promotions')}
     <a

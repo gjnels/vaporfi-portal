@@ -5,6 +5,9 @@ import { promoSchema } from '$lib/schemas/promos.js'
 
 export const load = async ({ url: { searchParams }, locals: { supabase } }) => {
   const promoId = searchParams.get('promo_id')
+  if (!promoId) {
+    throw redirect(303, '/admin/promotions')
+  }
 
   const { data: promo, error: promosError } = await supabase
     .from('promos')
