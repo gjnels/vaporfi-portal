@@ -7,7 +7,7 @@
     }
 
     &:not(:disabled) {
-      @apply hover:bg-surface-700 hover:text-surface-50;
+      @apply hover:bg-surface-700 hover:text-surface-50 active:scale-95;
     }
 
     &-primary {
@@ -19,7 +19,7 @@
     }
 
     &-secondary {
-      @apply bg-secondary-400;
+      @apply bg-secondary-500;
       @apply focus-visible:border-secondary-100;
       &:not(:disabled) {
         @apply hover:bg-secondary-600;
@@ -39,7 +39,7 @@
     }
 
     &-icon {
-      @apply rounded-full bg-transparent p-1 text-surface-300 focus-visible:border-current;
+      @apply w-fit rounded-full bg-transparent p-1 text-surface-300 focus-visible:border-current;
 
       &:not(:disabled) {
         @apply hover:border-transparent hover:bg-surface-600 hover:text-surface-50;
