@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { type Refinement, z } from 'zod'
 
 export const promoSchema = z.object({
   id: z.number().int().min(1),
@@ -13,3 +13,21 @@ export const promoSchema = z.object({
 })
 
 export const promoInsertSchema = promoSchema.omit({ id: true })
+
+const promoRefinement: Refinement<Omit<z.infer<typeof promoSchema>, 'id'>> = (
+  data,
+  ctx
+) => {
+  if (data.valid_from >= data.valid_until) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Ending date must come after starting date',
+      path: ['valid_until']
+    })
+  }
+}
+
+export const refinedPromoSchema = promoSchema.superRefine(promoRefinement)
+
+export const refinedInsertPromoSchema =
+  promoInsertSchema.superRefine(promoRefinement)

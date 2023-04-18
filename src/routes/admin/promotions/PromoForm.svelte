@@ -13,6 +13,7 @@
 
   export let customBlends: Pick<DatabaseRow<'custom_blends'>, 'id' | 'name'>[]
   export let superform: ReturnType<typeof superFormType<Schema, Message>>
+  export let action: string | null = null
 
   const { form, enhance, message, errors, constraints } = superform
 
@@ -28,6 +29,7 @@
 
 <form
   method="post"
+  {action}
   use:enhance
   class="form"
 >
@@ -146,7 +148,7 @@
 
   <button
     type="submit"
-    class="btn btn-primary"
+    class="btn btn-primary self-start"
     >{'id' in $form ? 'Update' : 'Create'} Promotion</button
   >
 </form>

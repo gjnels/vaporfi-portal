@@ -30,13 +30,7 @@ export const load = async ({ locals: { supabase } }) => {
   }
 
   return {
-    promos,
-    form: superValidate(
-      null,
-      z.object({
-        id: z.number().min(1).nullable().default(null)
-      })
-    )
+    promos
   }
 }
 

@@ -1,16 +1,20 @@
 <script lang="ts">
   import toast from 'svelte-french-toast'
-  import { ArrowUturnLeft, Icon } from 'svelte-hero-icons'
+  import { createDialog } from 'svelte-headlessui'
+  import { ArrowUturnLeft, ExclamationTriangle, Icon } from 'svelte-hero-icons'
   import { superForm } from 'sveltekit-superforms/client'
 
-  import { PageLayout } from '$components'
+  import { enhance } from '$app/forms'
+  import { page } from '$app/stores'
+
+  import { Modal, PageLayout } from '$components'
 
   import PromoForm from '../PromoForm.svelte'
 
   export let data
-  $: ({ form, customBlends } = data)
+  export let form
 
-  const superform = superForm(form, {
+  const superform = superForm(data.updateForm, {
     dataType: 'json',
     onResult: ({ result: { type } }) => {
       if (type === 'success' || type === 'redirect') {
@@ -18,6 +22,8 @@
       }
     }
   })
+
+  const deleteModal = createDialog({ label: 'delete_promotion' })
 </script>
 
 <svelte:head>
@@ -39,8 +45,66 @@
     </a>
   </svelte:fragment>
 
+  <div class="mb-10 flex flex-wrap items-center gap-x-4 gap-y-2">
+    <button
+      type="button"
+      class="btn btn-danger"
+      on:click={deleteModal.open}>Delete Promotion</button
+    >
+    <span class="flex items-center gap-2 text-warning-400">
+      <Icon
+        src={ExclamationTriangle}
+        size="2em"
+      />Warning: this cannot be undone
+    </span>
+  </div>
+
   <PromoForm
+    action="?/updatePromo"
     {superform}
-    {customBlends}
+    customBlends={data.customBlends}
   />
 </PageLayout>
+
+<Modal
+  modalStore={deleteModal}
+  modalWindowStyles="flex flex-col gap-4 items-center"
+>
+  <span>Are you sure you want to delete this promotion?</span>
+  <span class="text-2xl font-semibold">{data.promo.title}</span>
+  <span class="flex items-center gap-2 text-warning-400">
+    <Icon
+      src={ExclamationTriangle}
+      size="2em"
+    />Warning: this cannot be undone
+  </span>
+  <div class="flex flex-wrap justify-center gap-4">
+    <form
+      method="post"
+      action="?/deletePromo&promo_id={data.promo.id}"
+      class="contents"
+      use:enhance={async () => {
+        return async ({ result, update }) => {
+          if (result.type === 'success' || result.type === 'redirect') {
+            toast.success('Promotion has been deleted.')
+            deleteModal.close()
+            update()
+          }
+        }
+      }}
+    >
+      <button
+        type="submit"
+        class="btn btn-danger">Delete Promotion</button
+      >
+    </form>
+    <button
+      type="button"
+      class="btn btn-secondary"
+      on:click={deleteModal.close}>Cancel</button
+    >
+  </div>
+  {#if form?.deleteError}
+    <span class="text-lg font-medium text-danger-500">{form.deleteError}</span>
+  {/if}
+</Modal>

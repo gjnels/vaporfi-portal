@@ -1,32 +1,13 @@
 <script lang="ts">
   import dayjs from 'dayjs'
-  import toast from 'svelte-french-toast'
-  import { createDialog } from 'svelte-headlessui'
-  import { Icon, PencilSquare, Trash } from 'svelte-hero-icons'
-  import { superForm } from 'sveltekit-superforms/client'
+  import { Icon, PencilSquare } from 'svelte-hero-icons'
 
   import { formatPromoTableDate } from '$lib/utils/dates.js'
   import { createDisplayBlendString } from '$lib/utils/flavors.js'
 
-  import { Modal, PageLayout } from '$components'
+  import { PageLayout } from '$components'
 
   export let data
-
-  const deleteModal = createDialog()
-  const { form, enhance, reset } = superForm(data.form, {
-    dataType: 'json',
-    onResult: ({ result: { type } }) => {
-      if (type === 'success') {
-        deleteModal.close()
-      } else if (type === 'failure') {
-        toast.error(
-          'There was a problem deleting this promotion. Try again later.'
-        )
-      }
-    }
-  })
-
-  $: if (!$deleteModal.expanded) reset({ keepMessage: false })
 </script>
 
 <svelte:head>
@@ -64,35 +45,18 @@
             class="whitespace-pre border-b border-surface-700 bg-surface-800 transition last:border-none hover:bg-surface-950 [&>*]:p-4"
             class:opacity-50={!active}
           >
-            <td
-              ><div class="flex items-center justify-center gap-2">
-                <a
-                  href="promotions/edit?promo_id={promo.id}"
-                  title="Edit this promotion"
-                  class="btn btn-secondary btn-icon"
-                >
-                  <Icon
-                    src={PencilSquare}
-                    size="1.5rem"
-                    solid
-                  />
-                </a>
-                <button
-                  type="button"
-                  title="Delete this promotion"
-                  class="btn btn-danger btn-icon"
-                  on:click={() => {
-                    $form.id = promo.id
-                    deleteModal.open()
-                  }}
-                >
-                  <Icon
-                    src={Trash}
-                    size="1.5rem"
-                    solid
-                  /></button
-                >
-              </div></td
+            <td>
+              <a
+                href="promotions/edit?promo_id={promo.id}"
+                title="Edit this promotion"
+                class="btn btn-secondary btn-icon"
+              >
+                <Icon
+                  src={PencilSquare}
+                  size="1.5rem"
+                  solid
+                />
+              </a></td
             >
             <td class="text-xl font-semibold">{promo.title}</td>
             <td class:text-surface-500={!promo.subtitle}
@@ -124,28 +88,3 @@
     </table>
   </div>
 </PageLayout>
-
-<Modal modalStore={deleteModal}>
-  <p>Are you sure you want to delete this promotion?</p>
-  <p class="mt-2 text-center text-2xl font-bold">
-    {data.promos.find((p) => p.id === $form.id)?.title}
-  </p>
-  <div class="mt-8 flex w-full justify-center gap-4">
-    <form
-      method="post"
-      use:enhance
-      action="?/deletePromo"
-      class="flex-1"
-    >
-      <button
-        type="submit"
-        class="btn btn-danger btn-small w-full flex-1">Yes</button
-      >
-    </form>
-    <button
-      type="button"
-      class="btn btn-small flex-1"
-      on:click={deleteModal.close}>No</button
-    >
-  </div>
-</Modal>

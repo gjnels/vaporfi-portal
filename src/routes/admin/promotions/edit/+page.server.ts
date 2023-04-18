@@ -1,7 +1,7 @@
 import { error, fail, redirect } from '@sveltejs/kit'
 import { message, setError, superValidate } from 'sveltekit-superforms/server'
 
-import { promoSchema } from '$lib/schemas/promos.js'
+import { promoSchema, refinedPromoSchema } from '$lib/schemas/promos.js'
 
 export const load = async ({ url: { searchParams }, locals: { supabase } }) => {
   const promoId = searchParams.get('promo_id')
@@ -35,17 +35,22 @@ export const load = async ({ url: { searchParams }, locals: { supabase } }) => {
   }
 
   return {
-    form: superValidate<typeof promoSchema, Message>(foundPromo, promoSchema),
+    updateForm: superValidate<typeof promoSchema, Message>(
+      foundPromo,
+      promoSchema,
+      { id: 'update_promo' }
+    ),
     promo: foundPromo,
     customBlends
   }
 }
 
 export const actions = {
-  default: async (event) => {
-    const form = await superValidate<typeof promoSchema, Message>(
+  updatePromo: async (event) => {
+    const form = await superValidate<typeof refinedPromoSchema, Message>(
       event,
-      promoSchema
+      refinedPromoSchema,
+      { id: 'update_promo' }
     )
     if (!form.valid) {
       return fail(400, { form })
@@ -72,6 +77,35 @@ export const actions = {
       return message(form, {
         type: 'error',
         message: 'Unable to update promotion. Try again later.'
+      })
+    }
+
+    throw redirect(303, '/admin/promotions')
+  },
+
+  deletePromo: async ({ locals: { supabase }, url }) => {
+    console.log(url)
+    const promoId = url.searchParams.get('promo_id')
+    if (!promoId) {
+      return fail(400, {
+        deleteError: 'Promotion id is missing.'
+      })
+    }
+
+    const { data, error } = await supabase
+      .from('promos')
+      .delete()
+      .eq('id', promoId)
+      .select()
+      .single()
+
+    if (!data) {
+      return fail(404, { deleteError: 'Promotion not found' })
+    }
+
+    if (error) {
+      return fail(500, {
+        deleteError: 'Unable to delete promotion. Try again later.'
       })
     }
 

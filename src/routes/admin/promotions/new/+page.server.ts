@@ -1,7 +1,10 @@
 import { error, fail, redirect } from '@sveltejs/kit'
 import { message, setError, superValidate } from 'sveltekit-superforms/server'
 
-import { promoInsertSchema } from '$lib/schemas/promos'
+import {
+  promoInsertSchema,
+  refinedInsertPromoSchema
+} from '$lib/schemas/promos'
 
 export const load = async ({ locals: { supabase } }) => {
   const { data: customBlends, error: customBlendsError } = await supabase
@@ -24,9 +27,9 @@ export const load = async ({ locals: { supabase } }) => {
 
 export const actions = {
   default: async (event) => {
-    const form = await superValidate<typeof promoInsertSchema, Message>(
+    const form = await superValidate<typeof refinedInsertPromoSchema, Message>(
       event,
-      promoInsertSchema
+      refinedInsertPromoSchema
     )
     if (!form.valid) {
       return fail(400, { form })

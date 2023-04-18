@@ -14,8 +14,8 @@
   const superform = superForm(form, {
     dataType: 'json',
     onResult: ({ result: { type } }) => {
-      if (type === 'success') {
-        toast.success('Promotion updated successfully.')
+      if (type === 'redirect') {
+        toast.success('Promotion has been created.')
       }
     }
   })
