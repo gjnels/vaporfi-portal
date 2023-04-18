@@ -26,7 +26,7 @@
     }
   })
 
-  $: if (!$deleteModal.expanded) reset()
+  $: if (!$deleteModal.expanded) reset({ keepMessage: false })
 </script>
 
 <svelte:head>
