@@ -7,15 +7,15 @@
     <div class="flex flex-col gap-2">
       {#each message.message as msg}
         <span
-          class:success={message.type === 'success'}
-          class:error={message.type === 'error'}>{msg}</span
+          class:form-success={message.type === 'success'}
+          class:form-error={message.type === 'error'}>{msg}</span
         >
       {/each}
     </div>
   {:else}
     <span
-      class:success={message.type === 'success'}
-      class:error={message.type === 'error'}>{message.message}</span
+      class:form-success={message.type === 'success'}
+      class:form-error={message.type === 'error'}>{message.message}</span
     >
   {/if}
 {/if}
