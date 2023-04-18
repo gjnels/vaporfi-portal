@@ -1,3 +1,3 @@
 type Message =
-  | { type: 'success'; message: string }
-  | { type: 'error'; message: string }
+  | { type: 'success'; message: string | string[] }
+  | { type: 'error'; message: string | string[] }

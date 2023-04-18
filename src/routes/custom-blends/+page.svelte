@@ -53,7 +53,11 @@
         deleteModal.close()
         toast.success('Custom blend has been deleted.')
       } else if ($deleteMessage && $deleteMessage.type == 'error') {
-        toast.error($deleteMessage.message)
+        toast.error(
+          Array.isArray($deleteMessage.message)
+            ? $deleteMessage.message.join('\n')
+            : $deleteMessage.message
+        )
       }
     }
   })

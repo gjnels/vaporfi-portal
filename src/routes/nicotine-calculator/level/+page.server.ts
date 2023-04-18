@@ -30,10 +30,14 @@ export const actions = {
     }
     // No packets selected
     if (form.data.packets.filter((packet) => packet.selected).length === 0) {
-      return message(form, {
-        type: 'error',
-        message: 'You must select at least one packet to add'
-      })
+      return message(
+        form,
+        {
+          type: 'error',
+          message: 'You must select at least one packet to add'
+        },
+        { status: 400 }
+      )
     }
     return { form }
   }

@@ -107,6 +107,12 @@
           class:active={$page.url.pathname.startsWith('/admin/promotions')}
           ><span>Manage Promotions</span></a
         >
+        <a
+          href="/admin/users"
+          class="navlink"
+          class:active={$page.url.pathname.startsWith('/admin/users')}
+          ><span>Manage Users</span></a
+        >
       </div>
     {/if}
   </nav>

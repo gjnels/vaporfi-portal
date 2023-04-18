@@ -74,18 +74,21 @@ export const actions = {
           'A promotion with this title already exists'
         )
       }
-      return message(form, {
-        type: 'error',
-        message: 'Unable to update promotion. Try again later.'
-      })
+      return message(
+        form,
+        {
+          type: 'error',
+          message: ['Unable to update promotion.', error.message]
+        },
+        { status: 500 }
+      )
     }
 
     throw redirect(303, '/admin/promotions')
   },
 
-  deletePromo: async ({ locals: { supabase }, url }) => {
-    console.log(url)
-    const promoId = url.searchParams.get('promo_id')
+  deletePromo: async ({ locals: { supabase }, url: { searchParams } }) => {
+    const promoId = searchParams.get('promo_id')
     if (!promoId) {
       return fail(400, {
         deleteError: 'Promotion id is missing.'

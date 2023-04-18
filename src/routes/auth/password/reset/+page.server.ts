@@ -33,15 +33,14 @@ export const actions = {
 
     if (error) {
       if (error instanceof AuthApiError && error.status === 400) {
-        form.errors.email = ['Email address not found']
         return setError(form, 'email', 'Email address not found')
       }
 
       return message(
         form,
-        { type: 'error', message: 'Internal server error. Try again later.' },
+        { type: 'error', message: error.message },
         {
-          status: 500
+          status: error.status ?? 500
         }
       )
     }

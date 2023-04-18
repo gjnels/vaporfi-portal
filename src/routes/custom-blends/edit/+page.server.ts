@@ -81,10 +81,14 @@ export const actions = {
       if (error.code === '23505') {
         // there is already a blend with the same flavors and shots
         if (error.message.includes('unique_blend')) {
-          return message(form, {
-            type: 'error',
-            message: 'A custom blend with these flavors already exists.'
-          })
+          return message(
+            form,
+            {
+              type: 'error',
+              message: 'A custom blend with these flavors already exists.'
+            },
+            { status: 400 }
+          )
         }
         // there is already a blend with this name
         if (error.message.includes('name')) {
@@ -92,23 +96,35 @@ export const actions = {
         }
         // user tried to set the same flavor more than once
         if (error.message.includes('different_flavors')) {
-          return message(form, {
-            type: 'error',
-            message: 'You cannot choose the same flavor more than once'
-          })
+          return message(
+            form,
+            {
+              type: 'error',
+              message: 'You cannot choose the same flavor more than once'
+            },
+            { status: 400 }
+          )
         }
         // user set the total shots outside the limits
         if (error.message.includes('shots_between_1_and_3')) {
-          return message(form, {
-            type: 'error',
-            message: 'Total number of shots must be between 1 and 3'
-          })
+          return message(
+            form,
+            {
+              type: 'error',
+              message: 'Total number of shots must be between 1 and 3'
+            },
+            { status: 400 }
+          )
         }
       }
-      return message(form, {
-        type: 'error',
-        message: 'Unable to update custom blend. Try again later.'
-      })
+      return message(
+        form,
+        {
+          type: 'error',
+          message: ['Unable to update custom blend.', error.message]
+        },
+        { status: 500 }
+      )
     }
 
     throw redirect(303, '/custom-blends')

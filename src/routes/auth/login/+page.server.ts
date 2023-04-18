@@ -40,13 +40,20 @@ export const actions = {
 
     if (error) {
       if (error instanceof AuthApiError && error.status === 400) {
-        return message(form, { type: 'error', message: 'Invalid credentials' })
+        return message(
+          form,
+          { type: 'error', message: error.message },
+          { status: 400 }
+        )
       }
       return message(
         form,
-        { type: 'error', message: 'Internal server error. Try again later.' },
         {
-          status: 500
+          type: 'error',
+          message: ['Unable to login at this time.', error.message]
+        },
+        {
+          status: error.status ?? 500
         }
       )
     }

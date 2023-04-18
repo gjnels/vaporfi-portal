@@ -50,10 +50,14 @@ export const actions = {
           'A promotion with this title already exists'
         )
       }
-      return message(form, {
-        type: 'error',
-        message: 'Unable to create promotion. Try again later.'
-      })
+      return message(
+        form,
+        {
+          type: 'error',
+          message: ['Unable to create promotion.', error.message]
+        },
+        { status: 422 }
+      )
     }
 
     throw redirect(303, '/admin/promotions')

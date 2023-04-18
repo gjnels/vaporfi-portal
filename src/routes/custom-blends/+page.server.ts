@@ -83,10 +83,14 @@ export const actions = {
       .eq('id', form.data.id)
 
     if (error) {
-      return message(form, {
-        type: 'error',
-        message: 'Unable to delete custom blend. Try again later.'
-      })
+      return message(
+        form,
+        {
+          type: 'error',
+          message: ['Unable to delete custom blend.', error.message]
+        },
+        { status: 500 }
+      )
     }
 
     return { form }

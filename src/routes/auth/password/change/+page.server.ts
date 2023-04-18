@@ -38,8 +38,11 @@ export const actions = {
     if (error) {
       return message(
         form,
-        { type: 'error', message: 'Failed to update password' },
-        { status: 500 }
+        {
+          type: 'error',
+          message: ['Failed to update password.', error.message]
+        },
+        { status: error.status ?? 500 }
       )
     }
 

@@ -5,7 +5,6 @@
   import { superForm } from 'sveltekit-superforms/client'
 
   import { enhance } from '$app/forms'
-  import { page } from '$app/stores'
 
   import { Modal, PageLayout } from '$components'
 
