@@ -51,7 +51,7 @@
       {packetPopoverContent}
     >
       <!-- Available packets list -->
-      <div class="grid gap-1 self-center">
+      <div class="grid gap-1">
         {#if $savedPackets.length === 0}
           {#each Array(10).fill(null) as placeholder}
             <div class="my-1 flex w-full items-center gap-1">
@@ -144,7 +144,7 @@
         <span>Salt nicotine</span>
       </label>
 
-      <div class="flex flex-wrap gap-4 [&>*]:flex-1">
+      <div class="flex flex-wrap gap-4">
         <button
           type="submit"
           class="btn btn-primary">Calculate</button
@@ -155,7 +155,7 @@
           on:click={() => {
             reset({ keepMessage: false })
             $result = null
-          }}>Reset Form</button
+          }}>Reset</button
         >
       </div>
     </form>

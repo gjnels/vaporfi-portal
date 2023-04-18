@@ -128,7 +128,7 @@
 
       <FormMessage message={$message} />
 
-      <div class="flex flex-wrap gap-4 [&>*]:flex-1">
+      <div class="flex flex-wrap gap-4">
         <button
           type="submit"
           class="btn btn-primary"
@@ -141,7 +141,7 @@
           on:click={() => {
             reset({ keepMessage: false })
             $result = null
-          }}>Reset Form</button
+          }}>Reset</button
         >
       </div>
     </form>

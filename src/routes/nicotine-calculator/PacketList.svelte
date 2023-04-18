@@ -14,7 +14,7 @@
       : packetPopoverContent
 </script>
 
-<div class="mx-auto flex flex-col gap-0.5">
+<div class="mx-auto flex flex-col items-center gap-0.5">
   <div class="relative flex items-center gap-1">
     <h2 class="text-lg font-medium">{title}</h2>
     <button
