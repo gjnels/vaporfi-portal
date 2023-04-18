@@ -13,7 +13,7 @@ export default {
           ...colors.zinc
         },
         primary: {
-          DEFAULT: colors.green['400'],
+          DEFAULT: colors.green['500'],
           ...colors.green
         },
         secondary: {
