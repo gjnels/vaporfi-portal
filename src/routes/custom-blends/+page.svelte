@@ -19,7 +19,7 @@
   import FormControl from '$components/FormControl.svelte'
 
   export let data
-  $: ({ isAdmin } = data)
+  $: ({ isAdmin, isManager } = data)
 
   const {
     form: copyForm,
@@ -97,13 +97,15 @@
     <p class="text-center italic text-danger-500">No custom blends found</p>
   {:else}
     <div class="mb-8 flex w-full flex-wrap items-center justify-center gap-4">
+      <!-- svelte-ignore a11y-autofocus -->
       <input
         type="search"
         bind:value={blendSearchTerms}
         class="grow"
         placeholder="Search for custom blends"
+        autofocus
       />
-      {#if isAdmin}
+      {#if isAdmin || isManager}
         <a
           href="{$page.url.pathname}/new"
           class="btn btn-small btn-primary">Make a new blend</a

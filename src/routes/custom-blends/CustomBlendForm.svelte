@@ -268,15 +268,16 @@
     </div>
   {/if}
 
-  <label class="checkbox">
-    <input
-      type="checkbox"
-      name="approved"
-      bind:checked={$form.approved}
-      disabled={!isAdmin}
-    />
-    <span>Approved</span>
-  </label>
+  {#if isAdmin}
+    <label class="checkbox">
+      <input
+        type="checkbox"
+        name="approved"
+        bind:checked={$form.approved}
+      />
+      <span>Approved</span>
+    </label>
+  {/if}
 
   <FormMessage message={$message} />
 

@@ -21,9 +21,7 @@ export const load = async ({ locals: { supabase, getSession } }) => {
 
   const { data: blends, error: err } = await supabase
     .from('custom_blends')
-    .select(
-      '*, flavor1:flavor1_id(*), flavor2:flavor2_id(*), flavor3:flavor3_id(*)'
-    )
+    .select('*, flavor1(*), flavor2(*), flavor3(*)')
     // if user is not an Admin, they can only view approved custom blends
     .filter('approved', 'in', role === 'Admin' ? '(true,false)' : '(true)')
     // show unapproved blends first, then sort by name
@@ -31,8 +29,6 @@ export const load = async ({ locals: { supabase, getSession } }) => {
     .order('name')
     .returns<
       (DatabaseRow<'custom_blends'> & {
-        shots1: number
-        flavor1_id: number
         flavor1: DatabaseRow<'flavors'>
         flavor2: DatabaseRow<'flavors'> | null
         flavor3: DatabaseRow<'flavors'> | null
@@ -46,6 +42,7 @@ export const load = async ({ locals: { supabase, getSession } }) => {
   return {
     blends,
     isAdmin: role === 'Admin',
+    isManager: role === 'Manager',
     copyForm: superValidate<typeof copyCustomBlendSchema, Message>(
       null,
       copyCustomBlendSchema,
