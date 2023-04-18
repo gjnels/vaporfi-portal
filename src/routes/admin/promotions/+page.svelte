@@ -42,10 +42,10 @@
     >
   </svelte:fragment>
 
-  <div class="overflow-x-scroll rounded-xl">
-    <table class="w-full rounded-lg">
-      <thead class="bg-surface-600 text-left">
-        <tr class="[&>*]:px-4 [&>*]:py-2">
+  <div class="overflow-auto rounded-lg">
+    <table class="w-full">
+      <thead class="bg-surface-700 text-left">
+        <tr class="[&>*]:p-4">
           <th />
           <th>Title</th>
           <th>Subtitle</th>
@@ -61,7 +61,7 @@
           {@const active =
             now.isAfter(promo.valid_from) && now.isBefore(promo.valid_until)}
           <tr
-            class="whitespace-pre border-b border-surface-500 bg-surface-800 text-surface-50 transition last:border-none hover:bg-surface-950 [&>*]:px-4 [&>*]:py-2"
+            class="whitespace-pre border-b border-surface-700 bg-surface-800 transition last:border-none hover:bg-surface-950 [&>*]:p-4"
             class:opacity-50={!active}
           >
             <td
@@ -95,14 +95,18 @@
               </div></td
             >
             <td class="text-xl font-semibold">{promo.title}</td>
-            <td class="text-lg font-medium">{promo.subtitle ?? ''}</td>
+            <td class:text-surface-500={!promo.subtitle}
+              >{promo.subtitle ?? 'none'}</td
+            >
             <td>{promo.sale}</td>
-            <td>
+            <td class:text-surface-500={!promo.blend}>
               {#if promo.blend}
                 <div class="grid">
                   <span class="text-lg font-medium">{promo.blend.name}</span>
                   <span>{createDisplayBlendString(promo.blend)}</span>
                 </div>
+              {:else}
+                none
               {/if}
             </td>
             <td class:text-warning-300={now.isBefore(promo.valid_from)}
@@ -117,17 +121,6 @@
           </tr>
         {/each}
       </tbody>
-      <tfoot class="bg-surface-600 text-left">
-        <tr class="[&>*]:px-4 [&>*]:py-2">
-          <th />
-          <th>Title</th>
-          <th>Subtitle</th>
-          <th>Sale</th>
-          <th>Custom Blend</th>
-          <th>Starts</th>
-          <th>Ends</th>
-        </tr>
-      </tfoot>
     </table>
   </div>
 </PageLayout>
