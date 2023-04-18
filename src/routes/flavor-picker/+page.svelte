@@ -316,7 +316,7 @@
       </div>
     {/if}
 
-    <div class="flex flex-wrap gap-3 [&>*]:flex-1">
+    <div class="flex flex-col gap-4 sm:flex-row sm:[&>*]:flex-1">
       <FormControl
         label="Nicotine level"
         errors={$errors.nicotine}
@@ -342,7 +342,7 @@
       </FormControl>
     </div>
 
-    <div class="flex flex-wrap gap-4 [&>*]:flex-1">
+    <div class="flex flex-wrap gap-4">
       {#if $form.id}
         <!-- Editing a blend -->
         <button
@@ -363,7 +363,7 @@
         <button
           type="button"
           class="btn"
-          on:click={() => reset({ keepMessage: false })}>Reset Form</button
+          on:click={() => reset({ keepMessage: false })}>Reset</button
         >
       {/if}
     </div>

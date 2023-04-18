@@ -20,8 +20,8 @@
 </script>
 
 <div>
-  <div class="mb-4 flex items-center justify-between gap-4">
-    <div class="relative flex flex-wrap items-center gap-1">
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-4">
+    <div class="relative flex items-center gap-1">
       <h2 class="text-2xl font-semibold">Saved Blends</h2>
       <button
         type="button"
@@ -35,7 +35,7 @@
       >
       {#if $popover.expanded}
         <div
-          class="absolute bottom-full z-20 mb-2 flex w-max origin-bottom rounded-md border border-surface-400 bg-surface-950 px-4 py-3 ring-4 ring-surface-500/25 transition"
+          class="absolute bottom-full z-20 mb-2 flex w-max max-w-[95vw] origin-bottom rounded-md border border-surface-400 bg-surface-950 px-4 py-3 ring-4 ring-surface-500/25 transition"
           transition:scale={{
             start: 0.75,
             duration: 200
@@ -61,11 +61,11 @@
     <ul class="space-y-3">
       {#each $savedBlends as blend (blend.id)}
         <li
-          class="flex origin-top items-center gap-2 rounded-lg border border-transparent bg-surface-800 px-3 py-2 transition focus-within:border-surface-600 focus-within:bg-surface-950 hover:border-surface-600 hover:bg-surface-950"
+          class="flex items-center gap-2 rounded-lg border border-transparent bg-surface-800 px-3 py-2 transition focus-within:border-surface-600 focus-within:bg-surface-950 hover:border-surface-600 hover:bg-surface-950"
         >
           <button
             type="button"
-            class="rounded-2xl px-3 py-1 text-left font-semibold text-surface-50 outline-none hover:bg-surface-800 focus-visible:ring focus-visible:ring-surface-300"
+            class="btn btn-small btn-transparent"
             on:click={() => copyBlendToClipboard(blend)}
             >{createBlendString(blend)}</button
           >
