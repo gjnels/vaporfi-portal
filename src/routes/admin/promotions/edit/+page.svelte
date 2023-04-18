@@ -59,7 +59,7 @@
   </div>
 
   <PromoForm
-    action="?/updatePromo"
+    action="?/updatePromo&promo_id={data.promo.id}"
     {superform}
     customBlends={data.customBlends}
   />
