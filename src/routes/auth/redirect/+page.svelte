@@ -7,7 +7,7 @@
   export let data
 
   $: if (browser && data.session) {
-    goto(data.redirectAction.redirectTo, { replaceState: true })
+    goto(data.redirectTo, { replaceState: true })
   }
 </script>
 

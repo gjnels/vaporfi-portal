@@ -1,20 +1,16 @@
-export const redirectActions = ['password-reset', 'email-change'] as const
-export type RedirectAction = (typeof redirectActions)[number]
-
-type Redirects = {
-  [Key in RedirectAction]: { redirectTo: string; action: Key }
-}
-
-export const redirects: Redirects = {
+export const redirects = {
   'password-reset': {
-    action: 'password-reset',
     redirectTo: '/auth/password/change'
   },
   'email-change': {
-    action: 'email-change',
     redirectTo: '/account/security'
+  },
+  'accept-invite': {
+    redirectTo: '/auth/password/change'
   }
-}
+} as const
+
+export type RedirectAction = keyof typeof redirects
 
 export const isRedirectAction = (value: unknown): value is RedirectAction =>
-  redirectActions.includes(value as RedirectAction)
+  (value as RedirectAction) in redirects

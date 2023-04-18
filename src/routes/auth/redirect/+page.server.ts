@@ -9,5 +9,5 @@ export const load = async ({ url: { searchParams } }) => {
     throw redirect(303, '/')
   }
 
-  return { redirectAction: redirects[action] }
+  return { redirectTo: redirects[action].redirectTo }
 }

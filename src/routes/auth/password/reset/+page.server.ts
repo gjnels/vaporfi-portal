@@ -4,8 +4,6 @@ import { message, setError, superValidate } from 'sveltekit-superforms/server'
 
 import { emailSchema } from '$lib/schemas/auth'
 
-import { redirects } from '../../redirectActions'
-
 export const load = async ({ locals: { getSession } }) => {
   if (await getSession()) {
     throw redirect(303, '/auth/password/change')
@@ -26,7 +24,7 @@ export const actions = {
 
     const { supabase } = event.locals
 
-    const redirectTo = `${event.url.origin}/auth/redirect?action=${redirects['password-reset'].action}`
+    const redirectTo = `${event.url.origin}/auth/redirect?action=password-reset`
 
     const { error } = await supabase.auth.resetPasswordForEmail(
       form.data.email,
