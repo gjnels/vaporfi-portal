@@ -55,7 +55,7 @@
                 </a>
               </td>
               <td class:text-surface-400={profile.name === null}
-                >{profile.name ?? ''}</td
+                >{profile.name ?? 'none'}</td
               >
               <td>{profile.email}</td>
               <td class:text-surface-400={profile.role === null}
