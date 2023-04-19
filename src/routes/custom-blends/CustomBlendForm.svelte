@@ -18,6 +18,7 @@
   export let flavors: DatabaseRow<'flavors'>[]
   const categories = categoriesFromFlavors(flavors)
   export let isAdmin = false
+  export let action: string | null = null
 
   const { form, enhance, message, constraints, errors } = superform
   // Prevent already chosen flavors from showing as options for other inputs
@@ -55,6 +56,7 @@
 
 <form
   method="post"
+  {action}
   use:enhance
   class="form"
 >

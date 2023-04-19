@@ -1,5 +1,5 @@
 import { error, fail } from '@sveltejs/kit'
-import { message, superValidate } from 'sveltekit-superforms/server'
+import { superValidate } from 'sveltekit-superforms/server'
 
 import {
   copyCustomBlendSchema,
@@ -19,7 +19,11 @@ export const load = async ({ locals: { supabase, getSession } }) => {
       ).data?.role ?? null
     : null
 
-  const { data: blends, error: err } = await supabase
+  const {
+    data: blends,
+    error: err,
+    status
+  } = await supabase
     .from('custom_blends')
     .select('*, flavor1(*), flavor2(*), flavor3(*)')
     // if user is not an Admin, they can only view approved custom blends
@@ -36,7 +40,7 @@ export const load = async ({ locals: { supabase, getSession } }) => {
     >()
 
   if (err) {
-    throw error(404, 'Unable to fetch custom blends. Try again later.')
+    throw error(status, 'Unable to fetch custom blends. ' + err.message)
   }
 
   return {
@@ -65,34 +69,6 @@ export const actions = {
     if (!form.valid) {
       return fail(400, { form })
     }
-    return { form }
-  },
-
-  deleteBlend: async (event) => {
-    const form = await superValidate<typeof deleteCustomBlendSchema, Message>(
-      event,
-      deleteCustomBlendSchema
-    )
-    if (!form.valid) {
-      return fail(400, { form })
-    }
-
-    const { error } = await event.locals.supabase
-      .from('custom_blends')
-      .delete()
-      .eq('id', form.data.id)
-
-    if (error) {
-      return message(
-        form,
-        {
-          type: 'error',
-          message: ['Unable to delete custom blend.', error.message]
-        },
-        { status: 500 }
-      )
-    }
-
     return { form }
   }
 }

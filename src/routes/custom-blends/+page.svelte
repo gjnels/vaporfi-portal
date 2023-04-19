@@ -1,12 +1,6 @@
 <script lang="ts">
-  import toast from 'svelte-french-toast'
   import { createDialog } from 'svelte-headlessui'
-  import {
-    DocumentDuplicate,
-    Icon,
-    PencilSquare,
-    Trash
-  } from 'svelte-hero-icons'
+  import { DocumentDuplicate, Icon, PencilSquare } from 'svelte-hero-icons'
   import { writable } from 'svelte/store'
   import { superForm } from 'sveltekit-superforms/client'
 
@@ -41,36 +35,12 @@
     }
   })
 
-  const {
-    form: deleteForm,
-    enhance: deleteEnhance,
-    message: deleteMessage
-  } = superForm(data.deleteForm, {
-    dataType: 'json',
-    taintedMessage: null, // don't confirm before leaving page
-    onResult: ({ result: { type } }) => {
-      if (type === 'success') {
-        deleteModal.close()
-        toast.success('Custom blend has been deleted.')
-      } else if ($deleteMessage && $deleteMessage.type == 'error') {
-        toast.error(
-          Array.isArray($deleteMessage.message)
-            ? $deleteMessage.message.join('\n')
-            : $deleteMessage.message
-        )
-      }
-    }
-  })
-
   const copyModal = createDialog({ label: 'custom_blend:copy' })
-  const deleteModal = createDialog({ label: 'custom_blend:delete' })
 
   const currentCopyBlend = writable<(typeof data.blends)[number] | null>(null)
-  const currentDeleteBlend = writable<(typeof data.blends)[number] | null>(null)
 
   // Reset blend stores when modals close
   $: if (!$copyModal.expanded) $currentCopyBlend = null
-  $: if (!$deleteModal.expanded) $currentDeleteBlend = null
 
   let blendSearchTerms = ''
   $: filteredBlends = data.blends.filter((blend) =>
@@ -168,21 +138,6 @@
                     solid
                   /></a
                 >
-                <button
-                  type="button"
-                  class="btn btn-icon btn-danger"
-                  title="Delete this custom blend"
-                  on:click={() => {
-                    $currentDeleteBlend = blend
-                    $deleteForm = blend
-                    deleteModal.open()
-                  }}
-                  ><Icon
-                    src={Trash}
-                    size="1.5rem"
-                    solid
-                  /></button
-                >
               {/if}
             </div>
           </li>
@@ -249,36 +204,4 @@
       >
     </div>
   </form>
-</Modal>
-
-<!-- Delete blend modal -->
-<Modal modalStore={deleteModal}>
-  <p class="mb-4 text-center">Are you sure you want to delete this blend?</p>
-  {#if $currentDeleteBlend !== null}
-    <p class="mb-6 text-center">
-      <span class="block text-xl font-semibold">{$currentDeleteBlend.name}</span
-      >
-      <span>
-        {createDisplayBlendString($currentDeleteBlend)}
-      </span>
-    </p>
-  {/if}
-  <div class="flex w-full justify-center gap-4">
-    <form
-      method="post"
-      use:deleteEnhance
-      action="?/deleteBlend"
-      class="contents"
-    >
-      <button
-        type="submit"
-        class="btn btn-danger flex-1">Yes</button
-      >
-    </form>
-    <button
-      type="button"
-      class="btn flex-1"
-      on:click={deleteModal.close}>No</button
-    >
-  </div>
 </Modal>

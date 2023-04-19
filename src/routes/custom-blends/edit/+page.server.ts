@@ -2,6 +2,7 @@ import { error, fail, redirect } from '@sveltejs/kit'
 import { message, setError, superValidate } from 'sveltekit-superforms/server'
 
 import {
+  deleteCustomBlendSchema,
   updateCustomBlendRefinedSchema,
   updateCustomBlendSchema
 } from '$lib/schemas/customBlends.js'
@@ -20,46 +21,67 @@ export const load = async ({
     throw error(401) // Unauthenticated
   }
 
-  const { data: profile, error: profileError } = await supabase
+  const {
+    data: profile,
+    error: profileError,
+    status: profileStatus
+  } = await supabase
     .from('profiles')
     .select('role')
     .eq('id', session.user.id)
     .single()
 
   if (profileError) {
-    throw error(404, 'Error fetching your profile')
+    throw error(
+      profileStatus,
+      'Error fetching your profile: ' + profileError.message
+    )
   }
 
   if (profile.role !== 'Admin') {
     throw error(403) // Unauthorized
   }
 
-  const { data: blend, error: blendError } = await supabase
+  const {
+    data: blend,
+    error: blendError,
+    status: blendStatus
+  } = await supabase
     .from('custom_blends')
     .select('*')
     .eq('id', blendId)
     .single()
 
   if (blendError) {
-    throw error(404, 'Custom blend not found')
+    throw error(
+      blendStatus,
+      'Error fetching custom blend: ' + blendError.message
+    )
   }
 
   const flavorCount = blend.flavor3_id ? 3 : blend.flavor2_id ? 2 : 1
 
   return {
-    form: superValidate<typeof updateCustomBlendSchema, Message>(
+    updateForm: superValidate<typeof updateCustomBlendSchema, Message>(
       { ...blend, flavorCount },
-      updateCustomBlendSchema
-    )
+      updateCustomBlendSchema,
+      { id: 'update_blend' }
+    ),
+    deleteForm: superValidate<typeof deleteCustomBlendSchema, Message>(
+      { id: blend.id },
+      deleteCustomBlendSchema,
+      { id: 'delete_blend' }
+    ),
+    blend
   }
 }
 
 export const actions = {
-  default: async (event) => {
+  updateBlend: async (event) => {
     const form = await superValidate<
       typeof updateCustomBlendRefinedSchema,
       Message
-    >(event, updateCustomBlendRefinedSchema)
+    >(event, updateCustomBlendRefinedSchema, { id: 'update_blend' })
 
     if (!form.valid) {
       return fail(400, { form })
@@ -69,8 +91,7 @@ export const actions = {
     const { flavorCount, id, ...data } = form.data
 
     // approved_by_profile_id handled by database
-
-    const { error } = await event.locals.supabase
+    const { error, status } = await event.locals.supabase
       .from('custom_blends')
       .update(data)
       .eq('id', id)
@@ -87,7 +108,7 @@ export const actions = {
               type: 'error',
               message: 'A custom blend with these flavors already exists.'
             },
-            { status: 400 }
+            { status }
           )
         }
         // there is already a blend with this name
@@ -102,7 +123,7 @@ export const actions = {
               type: 'error',
               message: 'You cannot choose the same flavor more than once'
             },
-            { status: 400 }
+            { status }
           )
         }
         // user set the total shots outside the limits
@@ -113,7 +134,7 @@ export const actions = {
               type: 'error',
               message: 'Total number of shots must be between 1 and 3'
             },
-            { status: 400 }
+            { status }
           )
         }
       }
@@ -123,7 +144,47 @@ export const actions = {
           type: 'error',
           message: ['Unable to update custom blend.', error.message]
         },
-        { status: 500 }
+        { status }
+      )
+    }
+
+    throw redirect(303, '/custom-blends')
+  },
+
+  deleteBlend: async ({ locals: { supabase }, request }) => {
+    const form = await superValidate<typeof deleteCustomBlendSchema, Message>(
+      request,
+      deleteCustomBlendSchema,
+      { id: 'delete_blend' }
+    )
+    if (!form.valid) {
+      return message(
+        form,
+        { type: 'error', message: 'Custom blend id is invalid' },
+        { status: 400 }
+      )
+    }
+
+    const { error, status } = await supabase
+      .from('custom_blends')
+      .delete()
+      .eq('id', form.data.id)
+      .select('id')
+      .single()
+
+    if (error) {
+      return message(
+        form,
+        {
+          type: 'error',
+          message: [
+            'Unable to delete custom blend.',
+            error.code === 'PGRST116'
+              ? 'Custom blend could not be found.'
+              : error.message
+          ]
+        },
+        { status }
       )
     }
 
