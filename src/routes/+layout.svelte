@@ -2,7 +2,12 @@
   import { onMount } from 'svelte'
   import { Toaster } from 'svelte-french-toast'
   import { createMenu } from 'svelte-headlessui'
-  import { ArrowLeftOnRectangle, ChevronDown, Icon } from 'svelte-hero-icons'
+  import {
+    ArrowLeftOnRectangle,
+    ChevronDown,
+    Icon,
+    UserCircle
+  } from 'svelte-hero-icons'
   import { quadOut } from 'svelte/easing'
   import { slide } from 'svelte/transition'
 
@@ -61,6 +66,21 @@
           in:slide={{ axis: 'y', duration: 300, easing: quadOut }}
           out:slide={{ axis: 'y', duration: 150, easing: quadOut }}
         >
+          <a
+            href="/profile"
+            use:userMenu.item
+            class="flex items-center gap-2 px-3 py-1 text-left outline-none transition {$userMenu.active ===
+            'My Profile'
+              ? 'bg-secondary-600'
+              : ''}"
+            ><Icon
+              src={UserCircle}
+              size="1.5em"
+              class="transition {$userMenu.active === 'My Profile'
+                ? 'text-surface-50'
+                : 'text-secondary-500'}"
+            />My Profile</a
+          >
           <form
             class="contents"
             method="post"
