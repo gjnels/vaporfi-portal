@@ -1,6 +1,16 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { Toaster } from 'svelte-french-toast'
+  import { createMenu } from 'svelte-headlessui'
+  import {
+    ArrowLeftOnRectangle,
+    ChevronDown,
+    Icon,
+    User,
+    UserCircle
+  } from 'svelte-hero-icons'
+  import { cubicOut, quadOut } from 'svelte/easing'
+  import { slide } from 'svelte/transition'
 
   import { enhance } from '$app/forms'
   import { invalidate } from '$app/navigation'
@@ -27,10 +37,12 @@
       authListener.unsubscribe()
     }
   })
+
+  const userMenu = createMenu({ label: 'user menu' })
 </script>
 
 <div class="flex min-h-full flex-col">
-  <header class="z-40 flex items-center bg-surface-900/95 px-4 pt-2">
+  <header class="relative z-50 flex items-center bg-surface-900/95 px-4 pt-2">
     <a
       href="/"
       class="z-40 rounded-lg border border-transparent px-1 outline-none focus-visible:border-surface-600"
@@ -39,19 +51,48 @@
     </a>
 
     {#if session}
-      <form
-        class="ml-auto"
-        method="post"
-        action="/auth?/signout"
-        use:enhance={async () => {
-          await data.supabase.auth.signOut()
-        }}
+      <button
+        type="button"
+        class="btn btn-transparent btn-small ml-auto"
+        use:userMenu.button
+        >{session.user.email}<Icon
+          src={ChevronDown}
+          size="1.5em"
+        /></button
       >
-        <button
-          type="submit"
-          class="btn btn-small btn-primary">Logout</button
+      {#if $userMenu.expanded}
+        <div
+          class="user-menu absolute right-4 top-full mt-2 flex min-w-[10rem] flex-col gap-1 rounded-lg border border-surface-500 bg-surface-700 py-2 shadow outline-none transition"
+          use:userMenu.items
+          in:slide={{ axis: 'y', duration: 300, easing: quadOut }}
+          out:slide={{ axis: 'y', duration: 150, easing: quadOut }}
         >
-      </form>
+          <form
+            class="contents"
+            method="post"
+            action="/auth?/signout"
+            use:enhance={async () => {
+              await data.supabase.auth.signOut()
+            }}
+          >
+            <button
+              type="submit"
+              use:userMenu.item
+              class="flex items-center gap-2 px-3 py-1 text-left outline-none transition {$userMenu.active ===
+              'Logout'
+                ? 'bg-secondary-600'
+                : ''}"
+              ><Icon
+                src={ArrowLeftOnRectangle}
+                size="1.5em"
+                class="transition {$userMenu.active === 'Logout'
+                  ? 'text-surface-50'
+                  : 'text-secondary-500'}"
+              />Logout</button
+            >
+          </form>
+        </div>
+      {/if}
     {:else}
       <a
         href="/auth/login{$page.url.pathname !== '/'
@@ -62,7 +103,7 @@
     {/if}
   </header>
   <nav
-    class="sticky top-0 z-40 flex gap-2 overflow-auto border-b border-surface-700 bg-surface-900/95 px-4 pt-2"
+    class="sticky top-0 z-30 flex gap-2 overflow-auto border-b border-surface-700 bg-surface-900/95 px-4 pt-2"
   >
     <div class="navlink-section">
       <a
