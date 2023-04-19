@@ -2,14 +2,8 @@
   import { onMount } from 'svelte'
   import { Toaster } from 'svelte-french-toast'
   import { createMenu } from 'svelte-headlessui'
-  import {
-    ArrowLeftOnRectangle,
-    ChevronDown,
-    Icon,
-    User,
-    UserCircle
-  } from 'svelte-hero-icons'
-  import { cubicOut, quadOut } from 'svelte/easing'
+  import { ArrowLeftOnRectangle, ChevronDown, Icon } from 'svelte-hero-icons'
+  import { quadOut } from 'svelte/easing'
   import { slide } from 'svelte/transition'
 
   import { enhance } from '$app/forms'

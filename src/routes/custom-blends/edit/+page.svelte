@@ -16,19 +16,18 @@
     dataType: 'json'
   })
 
-  const {
-    form: deleteForm,
-    enhance: deleteEnhance,
-    message: deleteMessage
-  } = superForm(data.deleteForm, {
-    dataType: 'json',
-    onResult: ({ result: { type } }) => {
-      if (type === 'success' || type === 'redirect') {
-        deleteModal.close()
-        toast.success('Custom blend has been deleted.')
+  const { enhance: deleteEnhance, message: deleteMessage } = superForm(
+    data.deleteForm,
+    {
+      dataType: 'json',
+      onResult: ({ result: { type } }) => {
+        if (type === 'success' || type === 'redirect') {
+          deleteModal.close()
+          toast.success('Custom blend has been deleted.')
+        }
       }
     }
-  })
+  )
 
   const deleteModal = createDialog({ label: 'delete blend' })
 </script>
