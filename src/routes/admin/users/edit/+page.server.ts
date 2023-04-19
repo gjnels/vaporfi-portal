@@ -12,23 +12,34 @@ export const load = async ({ locals: { supabase }, url: { searchParams } }) => {
     throw redirect(303, '/admin/users')
   }
 
-  const { data: profile, error: profileError } = await supabase
+  const {
+    data: profile,
+    error: profileError,
+    status: profileStatus
+  } = await supabase
     .from('profiles')
     .select('*, locations(id)')
     .eq('id', id)
     .single()
 
   if (profileError) {
-    throw error(404, 'User not found')
+    throw error(
+      profileStatus,
+      'User profile not found: ' + profileError.message
+    )
   }
 
-  const { data: locations, error: locationsError } = await supabase
-    .from('locations')
-    .select('id, name')
-    .order('name')
+  const {
+    data: locations,
+    error: locationsError,
+    status: locationsStatus
+  } = await supabase.from('locations').select('id, name').order('name')
 
   if (locationsError) {
-    throw error(500, 'Unable to fetch locations. Try again later.')
+    throw error(
+      locationsStatus,
+      'Unable to fetch locations: ' + locationsError.message
+    )
   }
 
   const hasLocation = (id: number) => {
