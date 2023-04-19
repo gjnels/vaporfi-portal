@@ -4,7 +4,11 @@ import type { Blend } from '$lib/types/flavors.types'
 import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
 
 export const load = async ({ locals: { supabase } }) => {
-  const { data: promos, error: err } = await supabase
+  const {
+    data: promos,
+    error: err,
+    status
+  } = await supabase
     .from('promos')
     .select(
       `*,
@@ -24,7 +28,7 @@ export const load = async ({ locals: { supabase } }) => {
     .returns<Array<DatabaseRow<'promos'> & { blend: Blend | null }>>()
 
   if (err) {
-    throw error(404, 'Promotions not found')
+    throw error(status, 'Promotions not found: ' + err.message)
   }
 
   return {

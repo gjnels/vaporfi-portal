@@ -12,16 +12,21 @@ export const load = async ({ locals: { supabase, getSession } }) => {
     throw error(401) // Unauthenticated
   }
 
-  const { data: profile, error: profileError } = await supabase
+  const {
+    data: profile,
+    error: err,
+    status
+  } = await supabase
     .from('profiles')
     .select('role')
     .eq('id', session.user.id)
     .single()
 
-  if (
-    profileError ||
-    (profile.role !== 'Admin' && profile.role !== 'Manager')
-  ) {
+  if (err) {
+    throw error(status, 'Could not find user profile: ' + err.message)
+  }
+
+  if (profile.role !== 'Admin' && profile.role !== 'Manager') {
     throw error(403) // Unauthorized
   }
 
@@ -50,7 +55,7 @@ export const actions = {
 
     // created_by_profile_id and approved_by_profile_id handled by database
 
-    const { error } = await event.locals.supabase
+    const { error, status } = await event.locals.supabase
       .from('custom_blends')
       .insert(data)
 
@@ -66,7 +71,7 @@ export const actions = {
               type: 'error',
               message: 'A custom blend with these flavors already exists.'
             },
-            { status: 400 }
+            { status }
           )
         }
         // there is already a blend with this name
@@ -81,7 +86,7 @@ export const actions = {
               type: 'error',
               message: 'You cannot choose the same flavor more than once'
             },
-            { status: 400 }
+            { status }
           )
         }
         // user set the total shots outside the limits
@@ -92,7 +97,7 @@ export const actions = {
               type: 'error',
               message: 'Total number of shots must be between 1 and 3'
             },
-            { status: 400 }
+            { status }
           )
         }
       }
@@ -102,7 +107,7 @@ export const actions = {
           type: 'error',
           message: ['Unable to create custom blend.', error.message]
         },
-        { status: 500 }
+        { status }
       )
     }
 

@@ -7,13 +7,17 @@ import {
 } from '$lib/schemas/promos'
 
 export const load = async ({ locals: { supabase } }) => {
-  const { data: customBlends, error: customBlendsError } = await supabase
+  const {
+    data,
+    error: err,
+    status
+  } = await supabase
     .from('custom_blends')
     .select('id, name')
     .is('approved', true)
 
-  if (customBlendsError) {
-    throw error(500, 'Unable to fetch custom blends. Try again later.')
+  if (err) {
+    throw error(status, 'Unable to fetch custom blends: ' + err.message)
   }
 
   return {
@@ -21,7 +25,7 @@ export const load = async ({ locals: { supabase } }) => {
       null,
       promoInsertSchema
     ),
-    customBlends
+    customBlends: data
   }
 }
 
@@ -35,11 +39,13 @@ export const actions = {
       return fail(400, { form })
     }
 
-    const { error } = await event.locals.supabase.from('promos').insert({
-      ...form.data,
-      valid_from: form.data.valid_from.toISOString(),
-      valid_until: form.data.valid_until.toISOString()
-    })
+    const { error, status } = await event.locals.supabase
+      .from('promos')
+      .insert({
+        ...form.data,
+        valid_from: form.data.valid_from.toISOString(),
+        valid_until: form.data.valid_until.toISOString()
+      })
 
     if (error) {
       // unique constraint error
@@ -56,7 +62,7 @@ export const actions = {
           type: 'error',
           message: ['Unable to create promotion.', error.message]
         },
-        { status: 422 }
+        { status }
       )
     }
 

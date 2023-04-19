@@ -9,23 +9,30 @@ export const load = async ({ url: { searchParams }, locals: { supabase } }) => {
     throw redirect(303, '/admin/promotions')
   }
 
-  const { data: promo, error: promosError } = await supabase
-    .from('promos')
-    .select('*')
-    .eq('id', promoId)
-    .single()
+  const {
+    data: promo,
+    error: promosError,
+    status: promoStatus
+  } = await supabase.from('promos').select('*').eq('id', promoId).single()
 
   if (promosError) {
-    throw error(404, 'Promotion not found')
+    throw error(promoStatus, 'Promotion not found: ' + promosError.message)
   }
 
-  const { data: customBlends, error: customBlendsError } = await supabase
+  const {
+    data: customBlends,
+    error: customBlendsError,
+    status: customBlendsStatus
+  } = await supabase
     .from('custom_blends')
     .select('id, name')
     .is('approved', true)
 
   if (customBlendsError) {
-    throw error(500, 'Unable to fetch custom blends. Try again later.')
+    throw error(
+      customBlendsStatus,
+      'Unable to fetch custom blends. Try again later.'
+    )
   }
 
   const foundPromo = {
@@ -56,7 +63,7 @@ export const actions = {
       return fail(400, { form })
     }
 
-    const { error } = await event.locals.supabase
+    const { error, status } = await event.locals.supabase
       .from('promos')
       .update({
         ...form.data,
@@ -80,7 +87,7 @@ export const actions = {
           type: 'error',
           message: ['Unable to update promotion.', error.message]
         },
-        { status: 500 }
+        { status }
       )
     }
 
@@ -95,20 +102,16 @@ export const actions = {
       })
     }
 
-    const { data, error } = await supabase
+    const { error, status } = await supabase
       .from('promos')
       .delete()
       .eq('id', promoId)
       .select()
-      .single()
-
-    if (!data) {
-      return fail(404, { deleteError: 'Promotion not found' })
-    }
+      .single() // causes error if id cannot be found
 
     if (error) {
-      return fail(500, {
-        deleteError: 'Unable to delete promotion. Try again later.'
+      return fail(status, {
+        deleteError: 'Unable to delete promotion: ' + error.message
       })
     }
 
