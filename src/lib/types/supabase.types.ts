@@ -204,19 +204,19 @@ export interface Database {
         Row: {
           email: string
           id: string
-          name: string | null
+          name: string
           role: Database['public']['Enums']['role'] | null
         }
         Insert: {
           email: string
           id: string
-          name?: string | null
+          name: string
           role?: Database['public']['Enums']['role'] | null
         }
         Update: {
           email?: string
           id?: string
-          name?: string | null
+          name?: string
           role?: Database['public']['Enums']['role'] | null
         }
       }
