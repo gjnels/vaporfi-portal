@@ -1,13 +1,14 @@
 import { redirect } from '@sveltejs/kit'
 
-import { isRedirectAction, redirects } from '../redirectActions'
-
 export const load = async ({ url: { searchParams } }) => {
   const action = searchParams.get('action')
 
-  if (!isRedirectAction(action)) {
-    throw redirect(303, '/')
-  }
+  switch (action) {
+    case 'password-reset':
+    case 'accept-invite':
+      return { redirectTo: '/change-password' }
 
-  return { redirectTo: redirects[action].redirectTo }
+    default:
+      throw redirect(303, '/')
+  }
 }

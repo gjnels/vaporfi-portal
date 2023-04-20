@@ -4,55 +4,43 @@
   import { ArrowUturnLeft, ExclamationTriangle, Icon } from 'svelte-hero-icons'
   import { superForm } from 'sveltekit-superforms/client'
 
-  import { Modal, PageLayout } from '$components'
-  import FormMessage from '$components/FormMessage.svelte'
+  import { enhance } from '$app/forms'
 
-  import CustomBlendForm from '../CustomBlendForm.svelte'
+  import { Modal, PageLayout } from '$components'
+
+  import PromoForm from '../PromoForm.svelte'
 
   export let data
-  $: ({ flavors, blend } = data)
+  export let form
 
   const superform = superForm(data.updateForm, {
     dataType: 'json',
-    onResult: ({ result: { type }, cancel }) => {
+    onResult: ({ result: { type } }) => {
       if (type === 'success' || type === 'redirect') {
-        toast.success('Custom blend has been updated.')
+        toast.success('Promotion updated successfully.')
       }
     }
   })
 
-  const { enhance: deleteEnhance, message: deleteMessage } = superForm(
-    data.deleteForm,
-    {
-      dataType: 'json',
-      onResult: ({ result: { type }, cancel }) => {
-        if (type === 'success' || type === 'redirect') {
-          deleteModal.close()
-          toast.success('Custom blend has been deleted.')
-        }
-      }
-    }
-  )
-
-  const deleteModal = createDialog({ label: 'delete blend' })
+  const deleteModal = createDialog({ label: 'delete_promotion' })
 </script>
 
 <svelte:head>
-  <title>Edit Custom Blend | VF Columbus</title>
+  <title>Edit Promotion | VF Columbus</title>
 </svelte:head>
 
 <PageLayout contentContainerStyles="max-w-2xl">
   <svelte:fragment slot="header">
-    <h1>Edit Custom Blend</h1>
+    <h1>Edit Promotion | {data.promo.title}</h1>
     <a
-      href="/custom-blends"
+      href="/promotions"
       class="link link-primary"
     >
       <Icon
         src={ArrowUturnLeft}
         size="1em"
       />
-      Back to Custom Blends
+      All Promotions
     </a>
   </svelte:fragment>
 
@@ -60,21 +48,20 @@
     <button
       type="button"
       class="btn btn-danger"
-      on:click={deleteModal.open}>Delete Custom Blend</button
+      on:click={deleteModal.open}>Delete Promotion</button
     >
     <span class="flex items-center gap-2 text-warning-400">
       <Icon
         src={ExclamationTriangle}
-        size="2em"
+        size="1.5em"
       />Warning: this cannot be undone
     </span>
   </div>
 
-  <CustomBlendForm
-    action="?/updateBlend&blend_id={blend.id}"
-    {flavors}
+  <PromoForm
+    action="?/updatePromo&promo_id={data.promo.id}"
     {superform}
-    isAdmin
+    customBlends={data.customBlends}
   />
 </PageLayout>
 
@@ -82,24 +69,35 @@
   modalStore={deleteModal}
   modalWindowStyles="flex flex-col gap-4 items-center"
 >
-  <span>Are you sure you want to delete this custom blend?</span>
-  <span class="text-2xl font-semibold">{blend.name}</span>
+  <span>Are you sure you want to delete this promotion?</span>
+
+  <span class="text-2xl font-semibold">{data.promo.title}</span>
+
   <span class="flex items-center gap-2 text-warning-400">
     <Icon
       src={ExclamationTriangle}
-      size="2em"
+      size="1.5em"
     />Warning: this cannot be undone
   </span>
+
   <div class="flex flex-wrap justify-center gap-4">
     <form
       method="post"
-      action="?/deleteBlend&blend_id={blend.id}"
+      action="?/deletePromo&promo_id={data.promo.id}"
       class="contents"
-      use:deleteEnhance
+      use:enhance={async () => {
+        return async ({ result, update }) => {
+          if (result.type === 'success' || result.type === 'redirect') {
+            toast.success('Promotion has been deleted.')
+            deleteModal.close()
+            update()
+          }
+        }
+      }}
     >
       <button
         type="submit"
-        class="btn btn-danger">Delete Custom Blend</button
+        class="btn btn-danger">Delete Promotion</button
       >
     </form>
     <button
@@ -108,5 +106,8 @@
       on:click={deleteModal.close}>Cancel</button
     >
   </div>
-  <FormMessage message={$deleteMessage} />
+
+  {#if form?.deleteError}
+    <span class="text-lg font-medium text-danger-500">{form.deleteError}</span>
+  {/if}
 </Modal>

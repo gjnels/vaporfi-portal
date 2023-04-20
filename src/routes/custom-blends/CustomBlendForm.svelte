@@ -21,6 +21,7 @@
   export let action: string | null = null
 
   const { form, enhance, message, constraints, errors } = superform
+
   // Prevent already chosen flavors from showing as options for other inputs
   $: flavor1Options = flavors
     .filter(({ id }) => id !== $form.flavor2_id && id !== $form.flavor3_id)

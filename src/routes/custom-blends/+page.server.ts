@@ -7,18 +7,7 @@ import {
 } from '$lib/schemas/customBlends.js'
 import type { DatabaseRow } from '$lib/types/supabaseHelpers.types.js'
 
-export const load = async ({ locals: { supabase, getSession } }) => {
-  const session = await getSession()
-  const role = session
-    ? (
-        await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', session.user.id)
-          .single()
-      ).data?.role ?? null
-    : null
-
+export const load = async ({ locals: { supabase } }) => {
   const {
     data: blends,
     error: err,
@@ -26,8 +15,6 @@ export const load = async ({ locals: { supabase, getSession } }) => {
   } = await supabase
     .from('custom_blends')
     .select('*, flavor1(*), flavor2(*), flavor3(*)')
-    // if user is not an Admin, they can only view approved custom blends
-    .filter('approved', 'in', role === 'Admin' ? '(true,false)' : '(true)')
     // show unapproved blends first, then sort by name
     .order('approved')
     .order('name')
@@ -45,8 +32,6 @@ export const load = async ({ locals: { supabase, getSession } }) => {
 
   return {
     blends,
-    isAdmin: role === 'Admin',
-    isManager: role === 'Manager',
     copyForm: superValidate<typeof copyCustomBlendSchema, Message>(
       null,
       copyCustomBlendSchema,

@@ -1,21 +1,13 @@
 @layer components {
   .link {
-    @apply inline-flex items-center gap-1 font-medium outline-none focus-visible:underline;
+    @apply flex w-fit items-center gap-1 rounded-md font-medium underline underline-offset-1 outline-1 transition-all hover:underline-offset-[6px] focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-surface-50;
 
     &-primary {
-      @apply text-primary-400;
-
-      &:not(:disabled) {
-        @apply hover:text-primary-300;
-      }
+      @apply text-primary-400 hover:text-primary-300;
     }
 
     &-secondary {
-      @apply text-secondary-400;
-
-      &:not(:disabled) {
-        @apply hover:text-secondary-300;
-      }
+      @apply text-secondary-400 hover:text-secondary-300;
     }
   }
 }

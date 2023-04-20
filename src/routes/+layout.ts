@@ -17,16 +17,20 @@ export const load = async ({ fetch, data, depends }) => {
     data: { session }
   } = await supabase.auth.getSession()
 
+  if (!session) {
+    return { supabase, session, currentProfile: null }
+  }
+
   // Get the user profile if there is a valid session
-  const currentProfile = await (async () => {
-    if (!session) return null
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', session.user.id)
-      .single()
-    return data
-  })()
+  const { data: currentProfile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', session.user.id)
+    .single()
+
+  if (!currentProfile) {
+    await supabase.auth.signOut()
+  }
 
   return { supabase, session, currentProfile }
 }

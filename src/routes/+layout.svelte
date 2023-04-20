@@ -1,6 +1,7 @@
 <script lang="ts">
+  import type { RealtimeChannel } from '@supabase/supabase-js'
   import { onMount } from 'svelte'
-  import { Toaster } from 'svelte-french-toast'
+  import toast, { Toaster } from 'svelte-french-toast'
   import { createMenu } from 'svelte-headlessui'
   import {
     ArrowLeftOnRectangle,
@@ -15,6 +16,8 @@
   import { invalidate } from '$app/navigation'
   import { page } from '$app/stores'
 
+  import { profileUpdate } from '$lib/stores/profileUpdate'
+
   import { Divider, Logo } from '$components'
 
   import '../app.postcss'
@@ -27,13 +30,55 @@
     const {
       data: { subscription: authListener }
     } = supabase.auth.onAuthStateChange((event, _session) => {
+      console.log('auth event: ', event)
       if (_session?.expires_at !== session?.expires_at) {
         invalidate('supabase:auth')
       }
     })
 
+    let profileListener: RealtimeChannel
+
+    if (session) {
+      profileListener = supabase
+        .channel('any')
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'profiles',
+            filter: `id=eq.${session.user.id}`
+          },
+          () => {
+            if ($profileUpdate.external) {
+              toast('Your profile has been updated')
+              invalidate('supabase:auth')
+            }
+          }
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: 'DELETE',
+            schema: 'public',
+            table: 'profiles',
+            filter: `id=eq.${session.user.id}`
+          },
+          (payload) => {
+            // supabase filter does not work for delete messages
+            // check this deleted record is the current user's record
+            if (session && payload.old.id === session.user.id) {
+              toast('Your account has been removed')
+              invalidate('supabase:auth')
+            }
+          }
+        )
+        .subscribe()
+    }
+
     return () => {
       authListener.unsubscribe()
+      profileListener?.unsubscribe()
     }
   })
 
@@ -56,7 +101,7 @@
         use:userMenu.button
         >{currentProfile?.name || session.user.email}<Icon
           src={ChevronDown}
-          size="1.5em"
+          width="20px"
           class="transition {$userMenu.expanded
             ? 'rotate-180 duration-300'
             : 'duration-150'}"
@@ -112,7 +157,7 @@
       {/if}
     {:else}
       <a
-        href="/auth/login{$page.url.pathname !== '/'
+        href="/login{$page.url.pathname !== '/'
           ? `?redirectTo=${$page.url.pathname + $page.url.search}`
           : ''}"
         class="btn btn-small btn-secondary ml-auto">Login</a
@@ -160,15 +205,15 @@
       />
       <div class="navlink-section">
         <a
-          href="/admin/promotions"
+          href="/promotions"
           class="navlink"
-          class:active={$page.url.pathname.startsWith('/admin/promotions')}
+          class:active={$page.url.pathname.startsWith('/promotions')}
           ><span>Manage Promotions</span></a
         >
         <a
-          href="/admin/users"
+          href="/users"
           class="navlink"
-          class:active={$page.url.pathname.startsWith('/admin/users')}
+          class:active={$page.url.pathname.startsWith('/users')}
           ><span>Manage Users</span></a
         >
       </div>

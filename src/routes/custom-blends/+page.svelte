@@ -13,7 +13,9 @@
   import FormControl from '$components/FormControl.svelte'
 
   export let data
-  $: ({ isAdmin, isManager } = data)
+
+  $: isAdmin = data.currentProfile?.role === 'Admin'
+  $: isManager = isAdmin || data.currentProfile?.role === 'Manager'
 
   const {
     form: copyForm,
@@ -77,7 +79,6 @@
         bind:value={blendSearchTerms}
         class="grow"
         placeholder="Search for custom blends"
-        autofocus
       />
       {#if isAdmin || isManager}
         <a

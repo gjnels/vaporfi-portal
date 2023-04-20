@@ -6,15 +6,16 @@ const adminProfileSchema = z.object({
   locations: z.record(z.boolean())
 })
 
-export const adminUpdateProfileSchema = adminProfileSchema.extend({
+export const userIdSchema = z.object({
   id: z.string().trim().uuid()
 })
+
+export const adminUpdateProfileSchema = adminProfileSchema.merge(userIdSchema)
 
 export const adminInviteUserSchema = adminProfileSchema.extend({
   email: z.string().trim().email()
 })
 
-export const profileSchema = z.object({
-  id: z.string().trim().uuid(),
-  name: z.string().trim().optional()
+export const profileNameSchema = z.object({
+  name: z.string().trim()
 })
