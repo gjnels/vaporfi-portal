@@ -54,9 +54,12 @@
         type="button"
         class="btn btn-transparent btn-small ml-auto"
         use:userMenu.button
-        >{session.user.email}<Icon
+        >{currentProfile?.name || session.user.email}<Icon
           src={ChevronDown}
           size="1.5em"
+          class="transition {$userMenu.expanded
+            ? 'rotate-180 duration-300'
+            : 'duration-150'}"
         /></button
       >
       {#if $userMenu.expanded}
