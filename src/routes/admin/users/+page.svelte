@@ -54,11 +54,11 @@
                   />
                 </a>
               </td>
-              <td class:text-surface-400={profile.name === null}
-                >{profile.name ?? 'none'}</td
+              <td class:text-surface-500={!profile.name}
+                >{profile.name || 'no name'}</td
               >
               <td>{profile.email}</td>
-              <td class:text-surface-400={profile.role === null}
+              <td class:text-surface-500={profile.role === null}
                 >{profile.role ?? 'none'}</td
               >
               {#if profile.locations}
@@ -76,7 +76,7 @@
                   <td>{profile.locations.name}</td>
                 {/if}
               {:else}
-                <td class="text-surface-400">none</td>
+                <td class="text-surface-500">none</td>
               {/if}
             </tr>
           {/each}
