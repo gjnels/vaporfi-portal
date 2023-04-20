@@ -157,9 +157,13 @@
       {/if}
     {:else}
       <a
-        href="/login{$page.url.pathname !== '/'
-          ? `?redirectTo=${$page.url.pathname + $page.url.search}`
-          : ''}"
+        href={$page.url.pathname.startsWith('/login')
+          ? $page.url.pathname + $page.url.search
+          : `/login${
+              $page.url.pathname !== '/'
+                ? `?redirectTo=${$page.url.pathname + $page.url.search}`
+                : ''
+            }`}
         class="btn btn-small btn-secondary ml-auto">Login</a
       >
     {/if}
