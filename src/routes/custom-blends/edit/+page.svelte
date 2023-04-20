@@ -14,7 +14,7 @@
 
   const superform = superForm(data.updateForm, {
     dataType: 'json',
-    onResult: ({ result: { type }, cancel }) => {
+    onResult: ({ result: { type } }) => {
       if (type === 'success' || type === 'redirect') {
         toast.success('Custom blend has been updated.')
       }
@@ -25,7 +25,7 @@
     data.deleteForm,
     {
       dataType: 'json',
-      onResult: ({ result: { type }, cancel }) => {
+      onResult: ({ result: { type } }) => {
         if (type === 'success' || type === 'redirect') {
           deleteModal.close()
           toast.success('Custom blend has been deleted.')

@@ -17,6 +17,7 @@
     dataType: 'json',
     onResult: ({ result: { type } }) => {
       if (type === 'success' || type === 'redirect') {
+        deleteModal.close()
         toast.success('Promotion updated successfully.')
       }
     }

@@ -30,22 +30,19 @@
     }
   })
 
-  const {
-    form: deleteForm,
-    enhance: deleteEnhance,
-    message: deleteMessage,
-    errors: deleteErrors,
-    constraints: deleteConstraints,
-    delayed: deleteDelayed
-  } = superForm(data.deleteForm, {
-    dataType: 'json',
-    onResult: ({ result: { type } }) => {
-      // show toast notification letting user know the delete was successful before redirecting
-      if (type === 'redirect') {
-        toast.success('User has been deleted')
+  const { enhance: deleteEnhance, message: deleteMessage } = superForm(
+    data.deleteForm,
+    {
+      dataType: 'json',
+      onResult: ({ result: { type } }) => {
+        // show toast notification letting user know the delete was successful before redirecting
+        if (type === 'redirect') {
+          deleteModal.close()
+          toast.success('User has been deleted')
+        }
       }
     }
-  })
+  )
 
   const deleteModal = createDialog({ label: 'delete user' })
 </script>
