@@ -144,11 +144,12 @@
     />
   </FormControl>
 
-  <FormMessage message={$message} />
-
-  <button
-    type="submit"
-    class="btn btn-primary self-start"
-    >{'id' in $form ? 'Update' : 'Create'} Promotion</button
-  >
+  <div class="form-actions flex flex-wrap items-center gap-4">
+    <FormMessage message={$message} />
+    <button
+      type="submit"
+      class="btn btn-primary ml-auto"
+      >{'id' in $form ? 'Update' : 'Create'} Promotion</button
+    >
+  </div>
 </form>

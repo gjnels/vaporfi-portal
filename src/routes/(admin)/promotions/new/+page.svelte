@@ -25,7 +25,10 @@
   <title>Create New Promotion | VF Columbus</title>
 </svelte:head>
 
-<PageLayout contentContainerStyles="max-w-2xl">
+<PageLayout
+  contentContainerStyles="max-w-4xl"
+  headerContainerStyles="max-w-4xl"
+>
   <svelte:fragment slot="header">
     <h1>Create New Promotion</h1>
     <a

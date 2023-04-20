@@ -39,7 +39,7 @@
   <form
     method="post"
     action="?/updateName"
-    class="flex flex-col overflow-hidden rounded-lg border border-surface-500"
+    class="form"
     use:enhance
   >
     <div class="flex flex-col gap-2 p-4">
@@ -64,9 +64,7 @@
       </FormControl>
     </div>
 
-    <div
-      class="flex flex-wrap gap-2 border-t border-surface-500 bg-surface-800 p-4"
-    >
+    <div class="form-actions flex flex-wrap items-center gap-4">
       <FormMessage message={$message} />
       <button
         type="submit"

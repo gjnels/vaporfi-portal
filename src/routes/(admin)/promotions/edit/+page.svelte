@@ -29,7 +29,10 @@
   <title>Edit Promotion | VF Columbus</title>
 </svelte:head>
 
-<PageLayout contentContainerStyles="max-w-2xl">
+<PageLayout
+  contentContainerStyles="max-w-4xl"
+  headerContainerStyles="max-w-4xl"
+>
   <svelte:fragment slot="header">
     <h1>Edit Promotion | {data.promo.title}</h1>
     <a

@@ -15,7 +15,7 @@
   >
     <div
       class={twMerge(
-        'relative overflow-y-scroll rounded-2xl border border-surface-600 bg-surface-800 p-10 shadow',
+        'relative overflow-auto rounded-2xl border border-surface-600 bg-surface-800 p-10 shadow',
         modalWindowStyles
       )}
       transition:scale

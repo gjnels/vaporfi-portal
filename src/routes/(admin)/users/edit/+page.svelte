@@ -54,7 +54,10 @@
   <title>Edit User | VF Columbus</title>
 </svelte:head>
 
-<PageLayout contentContainerStyles="max-w-3xl">
+<PageLayout
+  contentContainerStyles="max-w-4xl"
+  headerContainerStyles="max-w-4xl"
+>
   <svelte:fragment slot="header">
     <h1>Edit User</h1>
     <a
@@ -149,14 +152,15 @@
       </div>
     </FormControl>
 
-    <FormMessage message={$updateMessage} />
-
-    <button
-      type="submit"
-      disabled={$updateDelayed}
-      class="btn btn-primary"
-      >{$updateDelayed ? 'Updating...' : 'Update User'}</button
-    >
+    <div class="form-actions flex flex-wrap items-center gap-4">
+      <FormMessage message={$updateMessage} />
+      <button
+        type="submit"
+        disabled={$updateDelayed}
+        class="btn btn-primary ml-auto"
+        >{$updateDelayed ? 'Updating...' : 'Update User'}</button
+      >
+    </div>
   </form>
 
   <Modal

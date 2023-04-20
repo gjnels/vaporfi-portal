@@ -72,7 +72,7 @@
   {#if data.blends.length === 0}
     <p class="text-center italic text-danger-500">No custom blends found</p>
   {:else}
-    <div class="mb-8 flex w-full flex-wrap items-center justify-center gap-4">
+    <div class="mb-8 flex w-full flex-wrap justify-center gap-4">
       <!-- svelte-ignore a11y-autofocus -->
       <input
         type="search"
@@ -165,7 +165,7 @@
   <form
     method="post"
     action="?/copyBlend"
-    class="form"
+    class="flex flex-col gap-6"
     use:copyEnhance
   >
     <FormControl
@@ -193,14 +193,14 @@
       />
     </FormControl>
 
-    <div class="flex flex-wrap gap-4">
+    <div class="ml-auto flex flex-wrap gap-4">
       <button
         type="submit"
-        class="btn btn-primary flex-1">Copy Blend</button
+        class="btn btn-primary">Copy Blend</button
       >
       <button
         type="button"
-        class="btn flex-1"
+        class="btn"
         on:click={copyModal.close}>Cancel</button
       >
     </div>

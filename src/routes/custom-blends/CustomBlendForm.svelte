@@ -282,11 +282,12 @@
     </label>
   {/if}
 
-  <FormMessage message={$message} />
-
-  <button
-    type="submit"
-    class="btn btn-primary"
-    >{'id' in $form ? 'Update' : 'Create'} Custom Blend</button
-  >
+  <div class="form-actions flex flex-wrap items-center gap-4">
+    <FormMessage message={$message} />
+    <button
+      type="submit"
+      class="btn btn-primary ml-auto"
+      >{'id' in $form ? 'Update' : 'Create'} Custom Blend</button
+    >
+  </div>
 </form>

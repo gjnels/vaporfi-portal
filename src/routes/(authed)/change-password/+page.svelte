@@ -15,7 +15,7 @@
   <title>Change Password | VF Columbus</title>
 </svelte:head>
 
-<PageLayout contentContainerStyles="max-w-xl">
+<PageLayout contentContainerStyles="max-w-4xl">
   <h1 class="mb-8 text-center text-4xl font-semibold">Change Your Password</h1>
   <form
     method="post"
@@ -46,11 +46,12 @@
       />
     </FormControl>
 
-    <FormMessage message={$message} />
-
-    <button
-      type="submit"
-      class="btn btn-primary">Change Password</button
-    >
+    <div class="form-actions flex flex-wrap items-center gap-4">
+      <FormMessage message={$message} />
+      <button
+        type="submit"
+        class="btn btn-primary ml-auto">Change Password</button
+      >
+    </div>
   </form>
 </PageLayout>

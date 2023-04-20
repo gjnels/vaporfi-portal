@@ -78,7 +78,7 @@
     <form
       method="post"
       use:enhance
-      class="form grow"
+      class="form grow self-start"
     >
       <FormControl
         label="Bottle size"
@@ -126,23 +126,24 @@
         {/if}
       {/each}
 
-      <FormMessage message={$message} />
-
-      <div class="flex flex-wrap gap-4">
-        <button
-          type="submit"
-          class="btn btn-primary"
-        >
-          Calculate
-        </button>
-        <button
-          type="button"
-          class="btn"
-          on:click={() => {
-            reset({ keepMessage: false })
-            $result = null
-          }}>Reset</button
-        >
+      <div class="form-actions flex flex-wrap items-center gap-4">
+        <FormMessage message={$message} />
+        <div class="ml-auto flex flex-wrap gap-4">
+          <button
+            type="submit"
+            class="btn btn-primary"
+          >
+            Calculate
+          </button>
+          <button
+            type="button"
+            class="btn"
+            on:click={() => {
+              reset({ keepMessage: false })
+              $result = null
+            }}>Reset</button
+          >
+        </div>
       </div>
     </form>
   </svelte:fragment>

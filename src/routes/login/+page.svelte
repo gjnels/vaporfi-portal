@@ -23,7 +23,7 @@
   <title>Log In | VF Columbus</title>
 </svelte:head>
 
-<PageLayout contentContainerStyles="max-w-xl">
+<PageLayout contentContainerStyles="max-w-4xl">
   <h1 class="mb-8 text-center text-4xl font-semibold">Log In</h1>
 
   <form
@@ -56,16 +56,16 @@
       />
     </FormControl>
 
-    <FormMessage message={$message} />
-
-    <button
-      type="submit"
-      class="btn btn-primary">Log In</button
-    >
-
-    <a
-      href="password/reset{redirectTo ? `?redirectTo=${redirectTo}` : ''}"
-      class="link link-secondary self-center text-lg">Forgot your password?</a
-    >
+    <div class="form-actions flex flex-wrap items-center gap-4">
+      <FormMessage message={$message} />
+      <button
+        type="submit"
+        class="btn btn-primary ml-auto">Log In</button
+      >
+    </div>
   </form>
+  <a
+    href="/auth/reset-password{redirectTo ? `?redirectTo=${redirectTo}` : ''}"
+    class="link link-secondary mx-auto mt-8">Forgot your password?</a
+  >
 </PageLayout>

@@ -26,7 +26,10 @@
   <title>Invite New User | VF Columbus</title>
 </svelte:head>
 
-<PageLayout contentContainerStyles="max-w-3xl">
+<PageLayout
+  contentContainerStyles="max-w-4xl"
+  headerContainerStyles="max-w-4xl"
+>
   <svelte:fragment slot="header">
     <h1>Invite A New User</h1>
     <a
@@ -104,12 +107,14 @@
       </div>
     </FormControl>
 
-    <FormMessage message={$message} />
-
-    <button
-      type="submit"
-      disabled={$delayed}
-      class="btn btn-primary">{$delayed ? 'Inviting...' : 'Invite User'}</button
-    >
+    <div class="form-actions flex flex-wrap items-center gap-4">
+      <FormMessage message={$message} />
+      <button
+        type="submit"
+        disabled={$delayed}
+        class="btn btn-primary ml-auto"
+        >{$delayed ? 'Inviting...' : 'Invite User'}</button
+      >
+    </div>
   </form>
 </PageLayout>
