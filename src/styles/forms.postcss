@@ -1,0 +1,88 @@
+@layer components {
+  .form {
+    @apply flex flex-col gap-6 overflow-hidden rounded-lg border border-surface-500 pt-4 shadow;
+
+    &-error {
+      @apply text-center font-medium text-danger-500;
+    }
+
+    &-success {
+      @apply text-center font-medium text-primary-500;
+    }
+
+    & > * {
+      @apply px-4;
+    }
+
+    &-actions {
+      @apply border-t border-surface-500 bg-surface-800 p-4;
+    }
+  }
+
+  input:not([type='checkbox']):not([type='radio']),
+  select,
+  textarea {
+    @apply rounded-lg px-3 py-2;
+    @apply border-2 border-surface-700 bg-surface-950 text-surface-100 placeholder-surface-400;
+    @apply outline-none focus:border-surface-200 focus:ring-0;
+    @apply transition;
+  }
+
+  select {
+    @apply cursor-pointer;
+  }
+
+  select.placeholder {
+    @apply text-surface-400;
+  }
+
+  .radio-group {
+    @apply flex w-fit flex-wrap gap-x-4 gap-y-1;
+  }
+
+  label.checkbox,
+  .radio-group > label {
+    @apply flex w-fit cursor-pointer items-center gap-1.5;
+
+    & * {
+      @apply cursor-pointer;
+    }
+
+    & span {
+      @apply text-surface-400;
+    }
+
+    &:has(:checked) span {
+      @apply text-surface-50;
+    }
+  }
+
+  label.checkbox,
+  .radio-group {
+    & input {
+      @apply text-primary-400 focus:ring-primary-400 focus:ring-offset-0;
+
+      &:checked {
+        @apply focus:ring-surface-50;
+      }
+    }
+
+    &.secondary input,
+    & input.secondary {
+      @apply text-secondary-400 focus:ring-secondary-400;
+
+      &:checked {
+        @apply focus:ring-surface-50;
+      }
+    }
+  }
+
+  input[type='checkbox'] {
+    @apply rounded-sm;
+  }
+
+  input:disabled,
+  label:has(:disabled) > * {
+    @apply !cursor-not-allowed !opacity-50;
+  }
+}

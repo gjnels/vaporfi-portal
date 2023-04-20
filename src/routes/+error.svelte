@@ -1,0 +1,57 @@
+<script lang="ts">
+  import {
+    ExclamationCircle,
+    ExclamationTriangle,
+    Icon,
+    ShieldExclamation
+  } from 'svelte-hero-icons'
+
+  import { page } from '$app/stores'
+
+  let icon = ExclamationCircle
+  let title = 'Oops!'
+  let message = 'An unexpected error has occurred. Try again later.'
+
+  switch ($page.status) {
+    case 401:
+      icon = ExclamationTriangle
+      title = 'Unauthenticated'
+      message = 'You must be logged in to view this page'
+      break
+    case 403:
+      icon = ShieldExclamation
+      title = 'Unauthorized'
+      message = 'You are not authorized to view this page'
+      break
+    case 404:
+      title = 'Not found'
+      message = 'This page does not exist'
+      break
+  }
+
+  // Set the error message for any expected errors
+  // Errors not thrown from svelte error() will contain 'Error:' in the message
+  if ($page.error?.message && !$page.error.message.includes('Error:')) {
+    message = $page.error.message
+  }
+</script>
+
+<svelte:head>
+  <title>An error has occured | VF Columbus</title>
+</svelte:head>
+
+<div class="mt-10 flex flex-col items-center gap-2">
+  <div class="mb-4 flex items-center gap-2 text-danger-500">
+    <Icon
+      src={icon}
+      size="4rem"
+      class="text-danger-500"
+    />
+    <h1 class="text-xl font-bold uppercase">{title}</h1>
+  </div>
+  <p>{message}</p>
+  <a
+    href="/"
+    class="link link-secondary">Return to Home Page</a
+  >
+</div>
