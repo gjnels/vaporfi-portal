@@ -1,7 +1,7 @@
 <script lang="ts">
   import { twMerge } from 'tailwind-merge'
 
-  export let label: string
+  export let label = ''
   export let errors: string | string[] | undefined
 </script>
 
