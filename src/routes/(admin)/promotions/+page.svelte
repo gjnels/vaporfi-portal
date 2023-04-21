@@ -18,7 +18,7 @@
   <svelte:fragment slot="header">
     <h1>Manage Promotions</h1>
     <a
-      href="promotions/new"
+      href="/promotions/new"
       class="btn btn-primary btn-small">Create New Promotion</a
     >
   </svelte:fragment>
@@ -47,7 +47,7 @@
           >
             <td>
               <a
-                href="promotions/edit?promo_id={promo.id}"
+                href="/promotions/edit?promo_id={promo.id}"
                 title="Edit this promotion"
                 class="btn btn-secondary btn-icon"
               >

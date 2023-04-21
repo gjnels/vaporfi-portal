@@ -82,7 +82,7 @@
       />
       {#if isAdmin || isManager}
         <a
-          href="{$page.url.pathname}/new"
+          href="/custom-blends/new"
           class="btn btn-small btn-primary">Make a new blend</a
         >
       {/if}
@@ -130,7 +130,7 @@
               <!-- Edit and Delete actions are only available to admins -->
               {#if isAdmin}
                 <a
-                  href="{$page.url.pathname}/edit?blend_id={blend.id}"
+                  href="/custom-blends/edit?blend_id={blend.id}"
                   class="btn btn-icon btn-secondary"
                   title="Edit this custom blend"
                   ><Icon
