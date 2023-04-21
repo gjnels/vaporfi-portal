@@ -22,9 +22,9 @@
   <title>Missing SKU | VF Columbus</title>
 </svelte:head>
 
-<PageLayout headerContainerStyles="flex-col items-start gap-0">
+<PageLayout headerContainerStyles="flex-col items-start gap-2">
   <svelte:fragment slot="header">
-    <h1 class="mb-2">Missing SKUs</h1>
+    <h1>Missing SKUs</h1>
     <span class="text-surface-300"
       >Submit SKUs which ring up nothing. If the SKU rings up the wrong item,
       submit an <a
@@ -140,19 +140,17 @@
       {#if data.pendingItems.length === 0}
         <span class="italic text-surface-400">No pending items found</span>
       {:else}
-        <div class="overflow-auto rounded-lg">
-          <table class="w-full">
-            <thead class="bg-surface-700 text-left">
-              <tr class="font-semibold text-surface-300 [&>*]:p-4">
+        <div class="styled-table">
+          <table>
+            <thead>
+              <tr>
                 <th>Item</th>
                 <th>SKU</th>
               </tr>
             </thead>
             <tbody>
               {#each data.pendingItems as pendingItem (pendingItem.id)}
-                <tr
-                  class="whitespace-pre border-b border-surface-700 bg-surface-800 transition last:border-none hover:bg-surface-950 [&>*]:p-4"
-                >
+                <tr>
                   <td>{pendingItem.item_name}</td>
                   <td>{pendingItem.sku}</td>
                 </tr>

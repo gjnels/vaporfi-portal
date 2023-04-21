@@ -25,10 +25,10 @@
       >No profiles found</span
     >
   {:else}
-    <div class="overflow-auto rounded-lg">
-      <table class="w-full">
-        <thead class="bg-surface-700 text-left">
-          <tr class="[&>*]:p-3">
+    <div class="styled-table">
+      <table>
+        <thead>
+          <tr>
             <th />
             <th>Name</th>
             <th>Email</th>
@@ -36,11 +36,9 @@
             <th>Locations</th>
           </tr>
         </thead>
-        <tbody class="bg-surface-800">
+        <tbody>
           {#each profiles as profile (profile.id)}
-            <tr
-              class="whitespace-pre border-b border-surface-700 bg-surface-800 transition last:border-none hover:bg-surface-950 [&>*]:px-3 [&>*]:py-4"
-            >
+            <tr>
               <td>
                 <a
                   href="/users/edit?profile_id={profile.id}"

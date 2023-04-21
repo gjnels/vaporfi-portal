@@ -23,9 +23,9 @@
   <title>Incorrect SKU | VF Columbus</title>
 </svelte:head>
 
-<PageLayout headerContainerStyles="flex-col items-start gap-0">
+<PageLayout headerContainerStyles="flex-col items-start gap-2">
   <svelte:fragment slot="header">
-    <h1 class="mb-2">Incorrect SKUs</h1>
+    <h1>Incorrect SKUs</h1>
     <span class="text-surface-300"
       >Submit SKUs which are ringing up an incorrect item. If the SKU rings up
       nothing, submit a <a
@@ -154,10 +154,10 @@
       {#if data.pendingItems.length === 0}
         <span class="italic text-surface-400">No pending items found</span>
       {:else}
-        <div class="overflow-auto rounded-lg">
-          <table class="w-full">
-            <thead class="bg-surface-700 text-left">
-              <tr class="font-semibold text-surface-300 [&>*]:p-4">
+        <div class="styled-table">
+          <table>
+            <thead>
+              <tr>
                 <th>Incorrect Item</th>
                 <th>Correct Item</th>
                 <th>SKU</th>
@@ -165,9 +165,7 @@
             </thead>
             <tbody>
               {#each data.pendingItems as pendingItem (pendingItem.id)}
-                <tr
-                  class="whitespace-pre border-b border-surface-700 bg-surface-800 transition last:border-none hover:bg-surface-950 [&>*]:p-4"
-                >
+                <tr>
                   <td>{pendingItem.incorrect_item_name}</td>
                   <td>{pendingItem.correct_item_name}</td>
                   <td>{pendingItem.sku}</td>
