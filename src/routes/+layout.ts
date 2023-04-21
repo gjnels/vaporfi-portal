@@ -24,7 +24,7 @@ export const load = async ({ fetch, data, depends }) => {
   // Get the user profile if there is a valid session
   const { data: currentProfile } = await supabase
     .from('profiles')
-    .select('*')
+    .select('*, locations(id, name)')
     .eq('id', session.user.id)
     .single()
 
