@@ -201,6 +201,18 @@
         class:active={$page.url.pathname === '/nicotine-calculator/level'}
         ><span>Nicotine Level Calculator</span></a
       >
+      <a
+        href="/missing-sku"
+        class="navlink"
+        class:active={$page.url.pathname === '/missing-sku'}
+        ><span>Missing SKUs</span></a
+      >
+      <a
+        href="/incorrect-sku"
+        class="navlink"
+        class:active={$page.url.pathname === '/incorrect-sku'}
+        ><span>Incorrect SKUs</span></a
+      >
     </div>
     {#if role === 'Admin'}
       <Divider
