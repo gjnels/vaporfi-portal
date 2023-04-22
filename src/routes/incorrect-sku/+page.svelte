@@ -1,6 +1,5 @@
 <script lang="ts">
   import toast from 'svelte-french-toast'
-  import { ExclamationTriangle, Icon } from 'svelte-hero-icons'
   import { superForm } from 'sveltekit-superforms/client'
 
   import { FormControl, FormMessage, PageLayout } from '$components'
