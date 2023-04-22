@@ -4,8 +4,6 @@
   import { writable } from 'svelte/store'
   import { superForm } from 'sveltekit-superforms/client'
 
-  import { page } from '$app/stores'
-
   import { copyBlendToClipboard } from '$lib/utils/clipboard.js'
   import { createDisplayBlendString } from '$lib/utils/flavors.js'
 
