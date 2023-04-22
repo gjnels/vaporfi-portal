@@ -230,6 +230,18 @@
           class:active={$page.url.pathname.startsWith('/users')}
           ><span>Manage Users</span></a
         >
+        <a
+          href="/missing-sku/manage"
+          class="navlink"
+          class:active={$page.url.pathname.startsWith('/missing-sku/manage')}
+          ><span>Manage Missing SKUs</span></a
+        >
+        <a
+          href="/incorrect-sku/manage"
+          class="navlink"
+          class:active={$page.url.pathname.startsWith('/incorrect-sku/manage')}
+          ><span>Manage Incorrect SKUs</span></a
+        >
       </div>
     {/if}
   </nav>
