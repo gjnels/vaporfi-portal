@@ -23,7 +23,13 @@
   import '../app.postcss'
 
   export let data
-  $: ({ session, supabase, currentProfile } = data)
+  $: ({
+    session,
+    supabase,
+    currentProfile,
+    incorrectSkusCount,
+    missingSkusCount
+  } = data)
   $: role = currentProfile?.role
 
   onMount(() => {
@@ -169,6 +175,40 @@
   <nav
     class="sticky top-0 z-30 flex gap-2 overflow-auto border-b border-surface-700 bg-surface-900/95 px-4 pt-2"
   >
+    {#if role === 'Admin'}
+      <div class="navlink-section">
+        <a
+          href="/promotions"
+          class="navlink"
+          class:active={$page.url.pathname.startsWith('/promotions')}
+          ><span>Manage Promotions</span></a
+        >
+        <a
+          href="/users"
+          class="navlink"
+          class:active={$page.url.pathname.startsWith('/users')}
+          ><span>Manage Users</span></a
+        >
+        <a
+          href="/missing-sku/manage"
+          class="navlink"
+          class:notification={missingSkusCount && missingSkusCount > 0}
+          class:active={$page.url.pathname.startsWith('/missing-sku/manage')}
+          ><span>Manage Missing SKUs</span></a
+        >
+        <a
+          href="/incorrect-sku/manage"
+          class="navlink"
+          class:notification={incorrectSkusCount && incorrectSkusCount > 0}
+          class:active={$page.url.pathname.startsWith('/incorrect-sku/manage')}
+          ><span>Manage Incorrect SKUs</span></a
+        >
+      </div>
+      <Divider
+        vertical
+        styles="h-6 mt-1.5"
+      />
+    {/if}
     <div class="navlink-section">
       <a
         href="/"
@@ -212,38 +252,6 @@
         ><span>Incorrect SKUs</span></a
       >
     </div>
-    {#if role === 'Admin'}
-      <Divider
-        vertical
-        styles="h-6 mt-1.5"
-      />
-      <div class="navlink-section">
-        <a
-          href="/promotions"
-          class="navlink"
-          class:active={$page.url.pathname.startsWith('/promotions')}
-          ><span>Manage Promotions</span></a
-        >
-        <a
-          href="/users"
-          class="navlink"
-          class:active={$page.url.pathname.startsWith('/users')}
-          ><span>Manage Users</span></a
-        >
-        <a
-          href="/missing-sku/manage"
-          class="navlink"
-          class:active={$page.url.pathname.startsWith('/missing-sku/manage')}
-          ><span>Manage Missing SKUs</span></a
-        >
-        <a
-          href="/incorrect-sku/manage"
-          class="navlink"
-          class:active={$page.url.pathname.startsWith('/incorrect-sku/manage')}
-          ><span>Manage Incorrect SKUs</span></a
-        >
-      </div>
-    {/if}
   </nav>
 
   <main class="flex grow flex-col">
@@ -303,6 +311,15 @@
 
       &.active {
         @apply bg-surface-50;
+      }
+    }
+
+    &.notification {
+      @apply relative;
+
+      &::before {
+        content: '';
+        @apply absolute right-0 top-0 h-3 w-3 animate-pulse rounded-full bg-danger-500 motion-reduce:animate-none;
       }
     }
   }

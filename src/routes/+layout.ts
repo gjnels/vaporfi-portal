@@ -32,5 +32,24 @@ export const load = async ({ fetch, data, depends }) => {
     await supabase.auth.signOut()
   }
 
+  if (currentProfile?.role === 'Admin') {
+    const { count: missingSkusCount } = await supabase
+      .from('missing_skus')
+      .select('*', { head: true, count: 'estimated' })
+      .eq('fixed', false)
+    const { count: incorrectSkusCount } = await supabase
+      .from('incorrect_skus')
+      .select('*', { head: true, count: 'estimated' })
+      .eq('fixed', false)
+
+    return {
+      supabase,
+      session,
+      currentProfile,
+      missingSkusCount,
+      incorrectSkusCount
+    }
+  }
+
   return { supabase, session, currentProfile }
 }
