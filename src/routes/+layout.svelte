@@ -102,9 +102,7 @@
         >{currentProfile?.name || session.user.email}<Icon
           src={ChevronDown}
           width="20px"
-          class="transition {$userMenu.expanded
-            ? 'rotate-180 duration-300'
-            : 'duration-150'}"
+          class="transition-transform {$userMenu.expanded ? '-rotate-180' : ''}"
         /></button
       >
       {#if $userMenu.expanded}
