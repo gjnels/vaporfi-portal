@@ -63,18 +63,24 @@
         />
       </FormControl>
 
-      <FormControl
-        label="SKU"
-        errors={$errors.sku}
-      >
-        <input
-          type="text"
-          name="sku"
-          placeholder="e.g. 819905029982"
-          bind:value={$form.sku}
-          {...$constraints.sku}
-        />
-      </FormControl>
+      <div class="flex flex-col gap-1">
+        <span class="text-sm text-warning-400"
+          >Fill out this field last when using a barcode scanner. Scanning an
+          item will submit the form.</span
+        >
+        <FormControl
+          label="SKU"
+          errors={$errors.sku}
+        >
+          <input
+            type="text"
+            name="sku"
+            placeholder="e.g. 819905029982"
+            bind:value={$form.sku}
+            {...$constraints.sku}
+          />
+        </FormControl>
+      </div>
 
       <FormControl
         label="Current Location"
@@ -112,6 +118,7 @@
       >
         <textarea
           rows={3}
+          name="notes"
           placeholder="Any important details to share about this missing SKU?"
           bind:value={$form.notes}
         />
