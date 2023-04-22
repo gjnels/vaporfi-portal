@@ -18,15 +18,15 @@
   <svelte:fragment slot="header">
     <h1>Manage Promotions</h1>
     <a
-      href="promotions/new"
+      href="/promotions/new"
       class="btn btn-primary btn-small">Create New Promotion</a
     >
   </svelte:fragment>
 
-  <div class="overflow-auto rounded-lg">
-    <table class="w-full">
-      <thead class="bg-surface-700 text-left">
-        <tr class="[&>*]:p-4">
+  <div class="styled-table">
+    <table>
+      <thead>
+        <tr>
           <th />
           <th>Title</th>
           <th>Subtitle</th>
@@ -41,13 +41,10 @@
           {@const now = dayjs()}
           {@const active =
             now.isAfter(promo.valid_from) && now.isBefore(promo.valid_until)}
-          <tr
-            class="whitespace-pre border-b border-surface-700 bg-surface-800 transition last:border-none hover:bg-surface-950 [&>*]:p-4"
-            class:opacity-50={!active}
-          >
+          <tr class:opacity-50={!active}>
             <td>
               <a
-                href="promotions/edit?promo_id={promo.id}"
+                href="/promotions/edit?promo_id={promo.id}"
                 title="Edit this promotion"
                 class="btn btn-secondary btn-icon"
               >

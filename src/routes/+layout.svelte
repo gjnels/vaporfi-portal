@@ -102,9 +102,7 @@
         >{currentProfile?.name || session.user.email}<Icon
           src={ChevronDown}
           width="20px"
-          class="transition {$userMenu.expanded
-            ? 'rotate-180 duration-300'
-            : 'duration-150'}"
+          class="transition-transform {$userMenu.expanded ? '-rotate-180' : ''}"
         /></button
       >
       {#if $userMenu.expanded}
@@ -201,6 +199,18 @@
         class:active={$page.url.pathname === '/nicotine-calculator/level'}
         ><span>Nicotine Level Calculator</span></a
       >
+      <a
+        href="/missing-sku"
+        class="navlink"
+        class:active={$page.url.pathname === '/missing-sku'}
+        ><span>Missing SKUs</span></a
+      >
+      <a
+        href="/incorrect-sku"
+        class="navlink"
+        class:active={$page.url.pathname === '/incorrect-sku'}
+        ><span>Incorrect SKUs</span></a
+      >
     </div>
     {#if role === 'Admin'}
       <Divider
@@ -219,6 +229,18 @@
           class="navlink"
           class:active={$page.url.pathname.startsWith('/users')}
           ><span>Manage Users</span></a
+        >
+        <a
+          href="/missing-sku/manage"
+          class="navlink"
+          class:active={$page.url.pathname.startsWith('/missing-sku/manage')}
+          ><span>Manage Missing SKUs</span></a
+        >
+        <a
+          href="/incorrect-sku/manage"
+          class="navlink"
+          class:active={$page.url.pathname.startsWith('/incorrect-sku/manage')}
+          ><span>Manage Incorrect SKUs</span></a
         >
       </div>
     {/if}
