@@ -1,10 +1,12 @@
 # VaporFi Columbus Employee Portal
 
-This is an internal portal for use by the employees of the VaporFi Franchise in Columbus, OH using:
+An internal portal for use by the employees of the VaporFi Franchise in Columbus, OH.
 
-- [SvelteKit](https://kit.svelte.dev/)
-- [TailwindCSS](https://tailwindcss.com/)
-- [Supabase](https://supabase.com/)
+---
+
+Built using [SvelteKit](https://kit.svelte.dev/), [TailwindCSS](https://tailwindcss.com/), and [Supabase](https://supabase.com/). Special thanks to [@ciscoheat](https://github.com/ciscoheat) for creating [sveltekit-superforms](https://github.com/ciscoheat/sveltekit-superforms), which makes handling forms in SvelteKit a breeze.
+
+Site design inspired by [Vercel](https://vercel.com).
 
 ---
 
