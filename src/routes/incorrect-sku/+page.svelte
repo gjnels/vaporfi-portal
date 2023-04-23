@@ -34,7 +34,7 @@
     >
   </svelte:fragment>
 
-  <div class="flex flex-col flex-wrap gap-10 xl:flex-row">
+  <div class="flex flex-col gap-10 xl:flex-row">
     <!-- new incorrect sku form -->
     <form
       method="post"
