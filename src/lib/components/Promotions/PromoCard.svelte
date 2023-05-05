@@ -84,6 +84,6 @@
 
 <style lang="postcss">
   hr {
-    @apply brightness-75;
+    @apply brightness-90;
   }
 </style>
