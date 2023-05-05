@@ -2,10 +2,7 @@ import { error, fail } from '@sveltejs/kit'
 import { message, setError, superValidate } from 'sveltekit-superforms/server'
 import type { z } from 'zod'
 
-import {
-  incorrectSkuRefinedSchema,
-  incorrectSkuSchema
-} from '$lib/schemas/skus'
+import { incorrectSkuRefinedSchema, incorrectSkuSchema } from '$lib/schemas/skus'
 
 export const load = async ({ locals: { supabase, getSession } }) => {
   const {
@@ -15,10 +12,7 @@ export const load = async ({ locals: { supabase, getSession } }) => {
   } = await supabase.from('locations').select('id, name').order('name')
 
   if (locationsError) {
-    throw error(
-      locationsStatus,
-      'Unable to fetch locations: ' + locationsError.message
-    )
+    throw error(locationsStatus, 'Unable to fetch locations: ' + locationsError.message)
   }
 
   const {
@@ -97,12 +91,9 @@ export const actions = {
 
     const { supabase } = event.locals
 
-    const { error, status } = await supabase
-      .from('incorrect_skus')
-      .insert(form.data)
+    const { error, status } = await supabase.from('incorrect_skus').insert(form.data)
 
     if (error) {
-      console.log(error)
       if (error.code === '23505') {
         // duplicate unique values
         return message(
@@ -117,16 +108,8 @@ export const actions = {
       if (error.code === '23514') {
         // constraint violation
         if (error.message.includes('different_items')) {
-          setError(
-            form,
-            'incorrect_item_name',
-            'Item names cannot be the same.'
-          )
-          return setError(
-            form,
-            'correct_item_name',
-            'Item names cannot be the same.'
-          )
+          setError(form, 'incorrect_item_name', 'Item names cannot be the same.')
+          return setError(form, 'correct_item_name', 'Item names cannot be the same.')
         }
       }
       return message(

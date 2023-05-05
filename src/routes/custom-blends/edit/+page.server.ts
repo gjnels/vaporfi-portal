@@ -64,7 +64,6 @@ export const actions = {
       updateCustomBlendRefinedSchema,
       { id: 'update_blend' }
     )
-    console.log(form)
 
     if (!form.valid) {
       return fail(400, { form })
