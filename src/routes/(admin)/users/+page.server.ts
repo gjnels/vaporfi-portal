@@ -1,3 +1,4 @@
+import type { DatabaseRow } from '$lib/types/supabaseHelpers.types.js'
 import { error } from '@sveltejs/kit'
 
 export const load = async ({ locals: { supabase }, parent }) => {
@@ -14,6 +15,9 @@ export const load = async ({ locals: { supabase }, parent }) => {
     .order('role', { ascending: false, nullsFirst: false })
     .order('name', { nullsFirst: false })
     .order('email')
+    .returns<
+      (DatabaseRow<'profiles'> & { locations: Pick<DatabaseRow<'locations'>, 'name'>[] | null })[]
+    >()
 
   if (err) {
     throw error(status, 'Unable to fetch user profiles: ' + err.message)

@@ -1,26 +1,19 @@
 import { fail } from '@sveltejs/kit'
 import { message, superValidate } from 'sveltekit-superforms/server'
-
-import {
-  changePasswordRefinedSchema,
-  changePasswordSchema
-} from '$lib/schemas/auth.js'
+import { changePasswordRefinedSchema, changePasswordSchema } from '$lib/schemas/auth.js'
 
 export const load = async () => {
   return {
-    form: superValidate<typeof changePasswordSchema, Message>(
-      null,
-      changePasswordSchema
-    )
+    form: superValidate(changePasswordSchema)
   }
 }
 
 export const actions = {
   default: async (event) => {
-    const form = await superValidate<
-      typeof changePasswordRefinedSchema,
-      Message
-    >(event, changePasswordRefinedSchema)
+    const form = await superValidate<typeof changePasswordRefinedSchema, Message>(
+      event,
+      changePasswordRefinedSchema
+    )
 
     if (!form.valid) {
       return fail(400, { form })

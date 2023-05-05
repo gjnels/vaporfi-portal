@@ -5,14 +5,10 @@ export const load = async ({ locals: { supabase } }) => {
     data: packets,
     error: err,
     status
-  } = await supabase
-    .from('nicotine_packets')
-    .select('*')
-    .order('salt')
-    .order('mg')
+  } = await supabase.from('nicotine_packets').select('*').order('salt').order('mg')
 
   if (err) {
-    throw error(status, 'Unable to fetch nicotine packets: ' + err.message)
+    throw error(status || 500, 'Unable to fetch nicotine packets: ' + err.message)
   }
 
   return { packets }

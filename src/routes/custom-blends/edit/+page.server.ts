@@ -1,16 +1,13 @@
 import { error, fail, redirect } from '@sveltejs/kit'
 import { message, setError, superValidate } from 'sveltekit-superforms/server'
-
 import {
   deleteCustomBlendSchema,
   updateCustomBlendRefinedSchema,
   updateCustomBlendSchema
 } from '$lib/schemas/customBlends.js'
+import type { CustomBlend } from '$lib/types/flavors.types.js'
 
-export const load = async ({
-  locals: { supabase, getSession },
-  url: { searchParams }
-}) => {
+export const load = async ({ locals: { supabase, getSession }, url: { searchParams } }) => {
   const blendId = searchParams.get('blend_id')
   if (!blendId) {
     throw redirect(303, '/custom-blends')
@@ -25,17 +22,10 @@ export const load = async ({
     data: profile,
     error: profileError,
     status: profileStatus
-  } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', session.user.id)
-    .single()
+  } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
 
   if (profileError) {
-    throw error(
-      profileStatus,
-      'Error fetching your profile: ' + profileError.message
-    )
+    throw error(profileStatus, 'Error fetching your profile: ' + profileError.message)
   }
 
   if (profile.role !== 'Admin') {
@@ -48,40 +38,33 @@ export const load = async ({
     status: blendStatus
   } = await supabase
     .from('custom_blends')
-    .select('*')
+    .select('*, flavor1(*), flavor2(*), flavor3(*)')
     .eq('id', blendId)
     .single()
 
   if (blendError) {
-    throw error(
-      blendStatus,
-      'Error fetching custom blend: ' + blendError.message
-    )
+    throw error(blendStatus, 'Error fetching custom blend: ' + blendError.message)
   }
 
   const flavorCount = blend.flavor3_id ? 3 : blend.flavor2_id ? 2 : 1
 
   return {
-    updateForm: superValidate<typeof updateCustomBlendSchema, Message>(
-      { ...blend, flavorCount },
-      updateCustomBlendSchema,
-      { id: 'update_blend' }
-    ),
-    deleteForm: superValidate<typeof deleteCustomBlendSchema, Message>(
-      { id: blend.id },
-      deleteCustomBlendSchema,
-      { id: 'delete_blend' }
-    ),
-    blend
+    updateForm: superValidate({ ...blend, flavorCount }, updateCustomBlendSchema, {
+      id: 'update_blend'
+    }),
+    deleteForm: superValidate({ id: blend.id }, deleteCustomBlendSchema, { id: 'delete_blend' }),
+    blend: blend as CustomBlend
   }
 }
 
 export const actions = {
   updateBlend: async (event) => {
-    const form = await superValidate<
-      typeof updateCustomBlendRefinedSchema,
-      Message
-    >(event, updateCustomBlendRefinedSchema, { id: 'update_blend' })
+    const form = await superValidate<typeof updateCustomBlendRefinedSchema, Message>(
+      event,
+      updateCustomBlendRefinedSchema,
+      { id: 'update_blend' }
+    )
+    console.log(form)
 
     if (!form.valid) {
       return fail(400, { form })
@@ -157,6 +140,7 @@ export const actions = {
       deleteCustomBlendSchema,
       { id: 'delete_blend' }
     )
+
     if (!form.valid) {
       return message(
         form,
@@ -179,9 +163,7 @@ export const actions = {
           type: 'error',
           message: [
             'Unable to delete custom blend.',
-            error.code === 'PGRST116'
-              ? 'Custom blend could not be found.'
-              : error.message
+            error.code === 'PGRST116' ? 'Custom blend could not be found.' : error.message
           ]
         },
         { status }

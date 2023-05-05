@@ -9,16 +9,7 @@
   "svelteIndentScriptAndStyle": true,
   "bracketSameLine": false,
   "svelteSortOrder": "scripts-markup-options-styles",
-  "printWidth": 80,
+  "printWidth": 100,
   "pluginSearchDirs": ["."],
-  "overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }],
-  "importOrder": [
-    "\\$types",
-    "\\$app(.*)$",
-    "\\$lib(.*)$",
-    "\\$components(.*)$",
-    "^[./]"
-  ],
-  "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true
+  "overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }]
 }

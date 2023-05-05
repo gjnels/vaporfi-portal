@@ -1,15 +1,15 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import { superForm } from 'sveltekit-superforms/client'
 
-  import { page } from '$app/stores'
-
-  import { FormControl, FormMessage } from '$components'
-  import PageLayout from '$components/PageLayout.svelte'
+  // Components
+  import PageLayout from '$components/PageLayout/PageLayout.svelte'
+  import Form from '$components/Form/Form.svelte'
+  import TextInput from '$components/FormControls/TextInput.svelte'
 
   export let data
 
-  const { form, enhance, errors, message, constraints } = superForm(data.form)
-
+  const sForm = superForm(data.form)
   const redirectTo = $page.url.searchParams.get('redirectTo')
 </script>
 
@@ -17,39 +17,29 @@
   <title>Reset Password | VF Columbus</title>
 </svelte:head>
 
-<PageLayout contentContainerStyles="max-w-4xl">
-  <h2 class="mb-8 text-center text-4xl font-semibold">Reset Your Password</h2>
-  <form
-    method="post"
-    use:enhance
-    class="form"
-  >
-    <FormControl
-      label="Email address"
-      errors={$errors.email}
-    >
-      <input
-        type="email"
-        name="email"
-        bind:value={$form.email}
-        {...$constraints.email}
-      />
-    </FormControl>
+<PageLayout contentWrapperStyles="max-w-2xl">
+  <svelte:fragment slot="header">
+    <h1 class="text-center">Reset Your Password</h1>
+  </svelte:fragment>
 
-    <div class="form-actions flex flex-wrap items-center gap-4">
-      <FormMessage message={$message} />
+  <Form superForm={sForm}>
+    <!-- Email input field -->
+    <TextInput
+      form={sForm}
+      field="email"
+    />
+
+    <svelte:fragment slot="actions">
       <button
         type="submit"
-        class="btn btn-primary ml-auto">Send Reset Link</button
+        class="btn variant-filled-primary">Send Reset Link</button
       >
-    </div>
-  </form>
+    </svelte:fragment>
+  </Form>
 
+  <!-- Link to login page -->
   <div class="mx-auto mt-8 flex flex-col items-center">
     <p>Remember your password?</p>
-    <a
-      href="/login{redirectTo ? `?redirectTo=${redirectTo}` : ''}"
-      class="link link-secondary">Login to your account</a
-    >
+    <a href="/login{redirectTo ? `?redirectTo=${redirectTo}` : ''}">Login to your account</a>
   </div>
 </PageLayout>

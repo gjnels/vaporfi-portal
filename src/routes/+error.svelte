@@ -1,12 +1,12 @@
 <script lang="ts">
+  import { page } from '$app/stores'
+  import PageLayout from '$components/PageLayout/PageLayout.svelte'
   import {
     ExclamationCircle,
     ExclamationTriangle,
     Icon,
     ShieldExclamation
   } from 'svelte-hero-icons'
-
-  import { page } from '$app/stores'
 
   let icon = ExclamationCircle
   let title = 'Oops!'
@@ -40,18 +40,16 @@
   <title>An error has occured | VF Columbus</title>
 </svelte:head>
 
-<div class="mt-10 flex flex-col items-center gap-2">
-  <div class="mb-4 flex items-center gap-2 text-danger-500">
-    <Icon
-      src={icon}
-      size="4rem"
-      class="text-danger-500"
-    />
-    <h1 class="text-xl font-bold uppercase">{title}</h1>
+<PageLayout>
+  <div class="flex flex-col items-center gap-2">
+    <div class="mb-4 flex items-center gap-2 text-error-500">
+      <Icon
+        src={icon}
+        size="4rem"
+      />
+      <h2>{title}</h2>
+    </div>
+    <p>{message}</p>
+    <a href="/">Return to Home Page</a>
   </div>
-  <p>{message}</p>
-  <a
-    href="/"
-    class="link link-secondary">Return to Home Page</a
-  >
-</div>
+</PageLayout>

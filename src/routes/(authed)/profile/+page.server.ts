@@ -19,19 +19,19 @@ export const load = async ({ locals: { supabase }, parent, url }) => {
 
   return {
     profile,
-    form: superValidate<typeof profileNameSchema, Message>(
+    nameForm: superValidate<typeof profileNameSchema, Message>(
       { name: profile.name },
-      profileNameSchema
+      profileNameSchema,
+      { id: 'name_form' }
     )
   }
 }
 
 export const actions = {
   updateName: async (event) => {
-    const form = await superValidate<typeof profileNameSchema, Message>(
-      event,
-      profileNameSchema
-    )
+    const form = await superValidate<typeof profileNameSchema, Message>(event, profileNameSchema, {
+      id: 'name_form'
+    })
     if (!form.valid) {
       return fail(400, { form })
     }
@@ -51,13 +51,6 @@ export const actions = {
       return setError(form, 'name', err.message, { status })
     }
 
-    return message(
-      form,
-      {
-        type: 'success',
-        message: 'Your name has been updated.'
-      },
-      { status: 200 }
-    )
+    return { form }
   }
 }

@@ -1,12 +1,14 @@
 <script lang="ts">
   import { superForm } from 'sveltekit-superforms/client'
 
-  import { FormMessage, PageLayout } from '$components'
-  import FormControl from '$components/FormControl.svelte'
+  // Components
+  import PageLayout from '$components/PageLayout/PageLayout.svelte'
+  import Form from '$components/Form/Form.svelte'
+  import TextInput from '$components/FormControls/TextInput.svelte'
 
   export let data
 
-  const { form, enhance, message, errors, constraints } = superForm(data.form, {
+  const sForm = superForm(data.form, {
     resetForm: true
   })
 </script>
@@ -15,43 +17,31 @@
   <title>Change Password | VF Columbus</title>
 </svelte:head>
 
-<PageLayout contentContainerStyles="max-w-4xl">
-  <h1 class="mb-8 text-center text-4xl font-semibold">Change Your Password</h1>
-  <form
-    method="post"
-    use:enhance
-    class="form"
-  >
-    <FormControl
+<PageLayout contentWrapperStyles="max-w-4xl">
+  <svelte:fragment slot="header">
+    <h1>Change Your Password</h1>
+  </svelte:fragment>
+
+  <Form superForm={sForm}>
+    <TextInput
+      form={sForm}
+      field="password"
       label="New Password"
-      errors={$errors.password}
-    >
-      <input
-        type="password"
-        name="password"
-        bind:value={$form.password}
-        {...$constraints.password}
-      />
-    </FormControl>
+      type="password"
+    />
 
-    <FormControl
+    <TextInput
+      form={sForm}
+      field="passwordConfirm"
       label="Confirm New Password"
-      errors={$errors.passwordConfirm}
-    >
-      <input
-        type="password"
-        name="passwordConfirm"
-        bind:value={$form.passwordConfirm}
-        {...$constraints.passwordConfirm}
-      />
-    </FormControl>
+      type="password"
+    />
 
-    <div class="form-actions flex flex-wrap items-center gap-4">
-      <FormMessage message={$message} />
+    <svelte:fragment slot="actions">
       <button
         type="submit"
-        class="btn btn-primary ml-auto">Change Password</button
+        class="btn variant-filled-primary">Change Password</button
       >
-    </div>
-  </form>
+    </svelte:fragment>
+  </Form>
 </PageLayout>

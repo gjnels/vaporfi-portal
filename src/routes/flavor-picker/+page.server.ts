@@ -1,21 +1,13 @@
 import { error, fail } from '@sveltejs/kit'
-import { superValidate } from 'sveltekit-superforms/server'
-
-import {
-  flavorPickerRefinedSchema,
-  flavorPickerSchema
-} from '$lib/schemas/customBlends'
+import { message, superValidate } from 'sveltekit-superforms/server'
+import { flavorPickerRefinedSchema, flavorPickerSchema } from '$lib/schemas/customBlends'
 
 export const load = async ({ locals: { supabase } }) => {
   const {
     data: flavors,
     error: err,
     status
-  } = await supabase
-    .from('flavors')
-    .select('*')
-    .order('category')
-    .order('flavor')
+  } = await supabase.from('flavors').select('*').order('category').order('flavor')
 
   if (err) {
     throw error(status, 'Unable to fetch custom blend flavors: ' + err.message)
@@ -33,6 +25,7 @@ export const actions = {
     if (!form.valid) {
       return fail(400, { form })
     }
+
     return { form }
   }
 }

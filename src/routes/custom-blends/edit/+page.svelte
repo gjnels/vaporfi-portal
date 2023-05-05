@@ -1,40 +1,29 @@
 <script lang="ts">
-  import toast from 'svelte-french-toast'
-  import { createDialog } from 'svelte-headlessui'
-  import { ArrowUturnLeft, ExclamationTriangle, Icon } from 'svelte-hero-icons'
   import { superForm } from 'sveltekit-superforms/client'
+  import { toastStore, modalStore } from '@skeletonlabs/skeleton'
+  import { createDisplayBlendString } from '$lib/utils/flavors.js'
 
-  import { Modal, PageLayout } from '$components'
-  import FormMessage from '$components/FormMessage.svelte'
-
+  // Components
+  import { ArrowUturnLeft, ExclamationTriangle, Icon } from 'svelte-hero-icons'
+  import PageLayout from '$components/PageLayout/PageLayout.svelte'
+  import IconLink from '$components/IconLink/IconLink.svelte'
   import CustomBlendForm from '../CustomBlendForm.svelte'
+  import DeleteModal from './DeleteModal.svelte'
 
   export let data
-  $: ({ flavors, blend } = data)
+  const { flavors, blend } = data
 
-  const superform = superForm(data.updateForm, {
-    dataType: 'json',
+  const updateForm = superForm(data.updateForm, {
     onResult: ({ result: { type } }) => {
       if (type === 'success' || type === 'redirect') {
-        toast.success('Custom blend has been updated.')
+        toastStore.trigger({
+          message: 'Custom blend has been updated.',
+          background: 'variant-filled-success'
+        })
       }
     }
   })
-
-  const { enhance: deleteEnhance, message: deleteMessage } = superForm(
-    data.deleteForm,
-    {
-      dataType: 'json',
-      onResult: ({ result: { type } }) => {
-        if (type === 'success' || type === 'redirect') {
-          deleteModal.close()
-          toast.success('Custom blend has been deleted.')
-        }
-      }
-    }
-  )
-
-  const deleteModal = createDialog({ label: 'delete blend' })
+  const { submitting } = updateForm
 </script>
 
 <svelte:head>
@@ -42,33 +31,40 @@
 </svelte:head>
 
 <PageLayout
-  contentContainerStyles="max-w-4xl"
-  headerContainerStyles="max-w-4xl"
+  contentWrapperStyles="max-w-4xl"
+  headerWrapperStyles="space-y-2"
 >
   <svelte:fragment slot="header">
     <h1>Edit Custom Blend</h1>
-    <a
+    <div class="flex flex-wrap items-center gap-x-4 text-surface-700-200-token">
+      <h3>{blend.name}</h3>
+      <span class="text-sm md:text-base">{createDisplayBlendString(blend)}</span>
+    </div>
+    <IconLink
       href="/custom-blends"
-      class="link link-primary"
-    >
-      <Icon
-        src={ArrowUturnLeft}
-        size="1em"
-      />
-      Back to Custom Blends
-    </a>
+      label="Back to Custom Blends"
+      iconSource={ArrowUturnLeft}
+    />
   </svelte:fragment>
 
   <div class="mb-10 flex flex-wrap items-center gap-x-4 gap-y-2">
     <button
       type="button"
-      class="btn btn-danger"
-      on:click={deleteModal.open}>Delete Custom Blend</button
+      class="btn variant-soft-error hover:variant-filled-error"
+      on:click={() =>
+        modalStore.trigger({
+          type: 'component',
+          component: {
+            ref: DeleteModal,
+            props: { blend, form: data.deleteForm }
+          }
+        })}
+      disabled={$submitting}>Delete Custom Blend</button
     >
-    <span class="flex items-center gap-2 text-warning-400">
+    <span class="flex items-center gap-2 text-warning-600 dark:text-warning-500">
       <Icon
         src={ExclamationTriangle}
-        size="2em"
+        size="1.5em"
       />Warning: this cannot be undone
     </span>
   </div>
@@ -76,40 +72,7 @@
   <CustomBlendForm
     action="?/updateBlend&blend_id={blend.id}"
     {flavors}
-    {superform}
+    superForm={updateForm}
     isAdmin
   />
 </PageLayout>
-
-<Modal
-  modalStore={deleteModal}
-  modalWindowStyles="flex flex-col gap-4 items-center"
->
-  <span>Are you sure you want to delete this custom blend?</span>
-  <span class="text-2xl font-semibold">{blend.name}</span>
-  <span class="flex items-center gap-2 text-warning-400">
-    <Icon
-      src={ExclamationTriangle}
-      size="2em"
-    />Warning: this cannot be undone
-  </span>
-  <div class="flex flex-wrap justify-center gap-4">
-    <form
-      method="post"
-      action="?/deleteBlend&blend_id={blend.id}"
-      class="contents"
-      use:deleteEnhance
-    >
-      <button
-        type="submit"
-        class="btn btn-danger">Delete Custom Blend</button
-      >
-    </form>
-    <button
-      type="button"
-      class="btn btn-secondary"
-      on:click={deleteModal.close}>Cancel</button
-    >
-  </div>
-  <FormMessage message={$deleteMessage} />
-</Modal>

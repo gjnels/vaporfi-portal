@@ -1,25 +1,29 @@
 <script lang="ts">
-  import toast from 'svelte-french-toast'
-  import { ArrowUturnLeft, Icon } from 'svelte-hero-icons'
   import { superForm } from 'sveltekit-superforms/client'
+  import { toastStore } from '@skeletonlabs/skeleton'
 
-  import { FormControl, FormMessage, PageLayout } from '$components'
+  import { ArrowUturnLeft } from 'svelte-hero-icons'
+  import PageLayout from '$components/PageLayout/PageLayout.svelte'
+  import IconLink from '$components/IconLink/IconLink.svelte'
+  import Form from '$components/Form/Form.svelte'
+  import TextInput from '$components/FormControls/TextInput.svelte'
+  import Select from '$components/FormControls/Select.svelte'
+  import FormControl from '$components/FormControls/FormControl.svelte'
 
   export let data
 
-  const { form, enhance, message, errors, constraints, delayed } = superForm(
-    data.form,
-    {
-      dataType: 'json',
-      onResult: ({ result: { type } }) => {
-        if (type === 'success' || type === 'redirect') {
-          toast.success('An invitation email has been sent to ' + $form.email, {
-            duration: 4000
-          })
-        }
+  const sForm = superForm(data.form, {
+    dataType: 'json',
+    onResult: ({ result: { type } }) => {
+      if (type === 'success' || type === 'redirect') {
+        toastStore.trigger({
+          message: 'An invitation email has been sent to ' + $form.email,
+          background: 'variant-filled-success'
+        })
       }
     }
-  )
+  })
+  const { form, errors, delayed } = sForm
 </script>
 
 <svelte:head>
@@ -27,68 +31,40 @@
 </svelte:head>
 
 <PageLayout
-  contentContainerStyles="max-w-4xl"
-  headerContainerStyles="max-w-4xl"
+  contentWrapperStyles="max-w-4xl"
+  headerWrapperStyles="space-y-2"
 >
   <svelte:fragment slot="header">
     <h1>Invite A New User</h1>
-    <a
+    <IconLink
       href="/users"
-      class="link link-primary"
-    >
-      <Icon
-        src={ArrowUturnLeft}
-        size="1em"
-      />
-      All Users
-    </a>
+      label="All Users"
+      iconSource={ArrowUturnLeft}
+    />
   </svelte:fragment>
 
-  <form
-    method="post"
-    use:enhance
-    class="form"
-  >
-    <FormControl
+  <Form superForm={sForm}>
+    <TextInput
+      type="email"
+      form={sForm}
+      field="email"
       label="Email Address"
-      errors={$errors.email}
-    >
-      <input
-        type="email"
-        bind:value={$form.email}
-        data-invalid={$errors.email}
-        {...$constraints.email}
-      />
-    </FormControl>
+    />
 
-    <FormControl
-      label="Name"
-      errors={$errors.name}
-    >
-      <input
-        type="text"
-        bind:value={$form.name}
-        data-invalid={$errors.name}
-        {...$constraints.name}
-        required={false}
-      />
-    </FormControl>
+    <TextInput
+      form={sForm}
+      field="name"
+    />
 
-    <FormControl
-      label="Role"
-      errors={$errors.role}
+    <Select
+      form={sForm}
+      field="role"
     >
-      <select
-        bind:value={$form.role}
-        data-invalid={$errors.role}
-        {...$constraints.role}
-      >
-        <option value={null}>None</option>
-        <option value={'Store'}>Store</option>
-        <option value={'Manager'}>Manager</option>
-        <option value={'Admin'}>Admin</option>
-      </select>
-    </FormControl>
+      <option value={null}>None</option>
+      <option value={'Store'}>Store</option>
+      <option value={'Manager'}>Manager</option>
+      <option value={'Admin'}>Admin</option>
+    </Select>
 
     <FormControl
       label="Locations"
@@ -96,9 +72,10 @@
     >
       <div class="flex flex-wrap gap-x-8 gap-y-2">
         {#each data.locations as location}
-          <label class="checkbox">
+          <label class="flex items-center gap-2">
             <input
               type="checkbox"
+              class="checkbox"
               bind:checked={$form.locations[location.id]}
             />
             <span>{location.name}</span>
@@ -107,14 +84,12 @@
       </div>
     </FormControl>
 
-    <div class="form-actions flex flex-wrap items-center gap-4">
-      <FormMessage message={$message} />
+    <svelte:fragment slot="actions">
       <button
         type="submit"
         disabled={$delayed}
-        class="btn btn-primary ml-auto"
-        >{$delayed ? 'Inviting...' : 'Invite User'}</button
+        class="btn variant-filled-primary">{$delayed ? 'Inviting...' : 'Invite User'}</button
       >
-    </div>
-  </form>
+    </svelte:fragment>
+  </Form>
 </PageLayout>

@@ -1,174 +1,141 @@
 <script lang="ts">
-  import type { superForm as superFormType } from 'sveltekit-superforms/client'
-
-  import type {
-    insertCustomBlendSchema,
-    updateCustomBlendSchema
-  } from '$lib/schemas/customBlends'
+  import type { UnwrapEffects } from 'sveltekit-superforms/index'
+  import type { SuperForm } from 'sveltekit-superforms/client'
+  import type { insertCustomBlendSchema, updateCustomBlendSchema } from '$lib/schemas/customBlends'
   import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
-  import { categoriesFromFlavors } from '$lib/utils/flavors'
+  import {
+    categoriesFromFlavors,
+    setBlendFormValues,
+    setCustomBlendFlavorOptions
+  } from '$lib/utils/flavors'
 
-  import { FormControl, FormMessage } from '$components'
+  // Components
+  import Form from '$components/Form/Form.svelte'
+  import FormControl from '$components/FormControls/FormControl.svelte'
+  import TextInput from '$components/FormControls/TextInput.svelte'
+  import Select from '$components/FormControls/Select.svelte'
+  import RadioButton from '$components/FormControls/RadioButton.svelte'
+  import Checkbox from '$components/FormControls/Checkbox.svelte'
 
-  type Schema = $$Generic<
-    typeof insertCustomBlendSchema | typeof updateCustomBlendSchema
-  >
+  type Schema = $$Generic<typeof insertCustomBlendSchema | typeof updateCustomBlendSchema>
 
-  export let superform: ReturnType<typeof superFormType<Schema>>
+  export let superForm: SuperForm<UnwrapEffects<Schema>>
   export let flavors: DatabaseRow<'flavors'>[]
-  const categories = categoriesFromFlavors(flavors)
   export let isAdmin = false
-  export let action: string | null = null
+  export let action: string | undefined = undefined
+  export let disabled = false
 
-  const { form, enhance, message, constraints, errors } = superform
+  const categories = categoriesFromFlavors(flavors)
+  const { form, errors, reset } = superForm
 
-  // Prevent already chosen flavors from showing as options for other inputs
-  $: flavor1Options = flavors
-    .filter(({ id }) => id !== $form.flavor2_id && id !== $form.flavor3_id)
-    .map((f) => ({ value: f.id, label: f.flavor, group: f.category }))
-  $: flavor2Options = flavors
-    .filter(({ id }) => id !== $form.flavor1_id && id !== $form.flavor3_id)
-    .map((f) => ({ value: f.id, label: f.flavor, group: f.category }))
-  $: flavor3Options = flavors
-    .filter(({ id }) => id !== $form.flavor1_id && id !== $form.flavor2_id)
-    .map((f) => ({ value: f.id, label: f.flavor, group: f.category }))
+  $: ({ flavor1Options, flavor2Options, flavor3Options } = setCustomBlendFlavorOptions(
+    $form,
+    flavors
+  ))
 
-  // Flavor values and shot values depend on the number of flavors
-  $: switch ($form.flavorCount) {
-    case 1:
-      $form.flavor2_id = $form.flavor3_id = $form.shots2 = $form.shots3 = null
-      break
-    case 2:
-      if ($form.shots2 === 2) {
-        $form.shots1 = 1
-      } else if ($form.shots1 >= 2) {
-        $form.shots1 = 2
-        $form.shots2 = 1
-      } else {
-        $form.shots2 = 1
-      }
-      $form.flavor3_id = $form.shots3 = null
-      break
-    case 3:
-      $form.shots1 = $form.shots2 = $form.shots3 = 1
-      break
-  }
+  $: $form = setBlendFormValues($form)
 </script>
 
-<form
-  method="post"
+<Form
+  {superForm}
   {action}
-  use:enhance
-  class="form"
 >
-  <FormControl
-    label="Blend Name"
-    errors={$errors.name}
-  >
+  <!-- Update blend id -->
+  {#if 'id' in $form}
     <input
-      type="text"
-      name="name"
-      bind:value={$form.name}
-      {...$constraints.name}
+      hidden
+      type="hidden"
+      id="id"
+      name="id"
+      bind:value={$form.id}
     />
-  </FormControl>
+  {/if}
 
+  <!-- Blend name -->
+  <TextInput
+    form={superForm}
+    field="name"
+    {disabled}
+  />
+
+  <!-- Flavor count -->
   <FormControl
     label="Flavor Count"
     errors={$errors.flavorCount}
   >
-    <div class="radio-group">
-      <label>
-        <input
-          type="radio"
-          name="flavorCount"
-          value={1}
-          bind:group={$form.flavorCount}
-          {...$constraints.flavorCount}
-        />
-        <span>1 Flavor</span>
-      </label>
-      <label>
-        <input
-          type="radio"
-          name="flavorCount"
-          value={2}
-          bind:group={$form.flavorCount}
-          {...$constraints.flavorCount}
-        />
-        <span>2 Flavors</span>
-      </label>
-      <label>
-        <input
-          type="radio"
-          name="flavorCount"
-          value={3}
-          bind:group={$form.flavorCount}
-          {...$constraints.flavorCount}
-        />
-        <span>3 Flavors</span>
-      </label>
+    <div class="flex flex-wrap items-center gap-4">
+      <RadioButton
+        form={superForm}
+        field="flavorCount"
+        label="1 Flavor"
+        value={1}
+        {disabled}
+      />
+      <RadioButton
+        form={superForm}
+        field="flavorCount"
+        label="2 Flavors"
+        value={2}
+        {disabled}
+      />
+      <RadioButton
+        form={superForm}
+        field="flavorCount"
+        label="3 Flavors"
+        value={3}
+        {disabled}
+      />
     </div>
   </FormControl>
 
   <!-- Flavor 1 and shots 1 -->
   <div class="flex flex-col gap-1">
-    <FormControl
+    <!-- Flavor 1 -->
+    <Select
+      form={superForm}
+      field="flavor1_id"
       label="Flavor 1"
-      errors={$errors.flavor1_id}
+      {disabled}
     >
-      <select
-        class:placeholder={$form.flavor1_id === 0}
-        name="flavor1_id"
-        bind:value={$form.flavor1_id}
-        {...$constraints.flavor1_id}
-      >
-        <option value={0}>Select a flavor</option>
-        {#each categories as group}
-          <optgroup label={group}>
-            {#each flavor1Options.filter((option) => option.group === group) as { value, label }}
-              <option {value}>{label}</option>
-            {/each}
-          </optgroup>
-        {/each}</select
-      >
-    </FormControl>
+      {#each categories as category}
+        <optgroup label={category}>
+          {#each flavor1Options.filter((option) => option.group === category) as { value, label } (value)}
+            <option {value}>{label}</option>
+          {/each}
+        </optgroup>
+      {/each}
+    </Select>
 
+    <!-- Shots 1 -->
     <FormControl
       label="Shots"
       errors={$errors.shots1}
     >
-      <div class="radio-group">
-        <label>
-          <input
-            type="radio"
-            name="shots1"
-            value={1}
-            bind:group={$form.shots1}
-          />
-          <span>Single</span>
-        </label>
+      <div class="flex flex-wrap items-center gap-4">
+        <RadioButton
+          form={superForm}
+          field="shots1"
+          label="Single"
+          value={1}
+          {disabled}
+        />
         {#if $form.flavorCount < 3 && $form.shots2 !== 2}
-          <label>
-            <input
-              type="radio"
-              name="shots1"
-              value={2}
-              bind:group={$form.shots1}
-            />
-            <span>Double</span>
-          </label>
+          <RadioButton
+            form={superForm}
+            field="shots1"
+            label="Double"
+            value={2}
+            {disabled}
+          />
         {/if}
         {#if $form.flavorCount === 1}
-          <label>
-            <input
-              type="radio"
-              name="shots1"
-              value={3}
-              bind:group={$form.shots1}
-            />
-            <span>Triple</span>
-          </label>
+          <RadioButton
+            form={superForm}
+            field="shots1"
+            label="Triple"
+            value={3}
+            {disabled}
+          />
         {/if}
       </div>
     </FormControl>
@@ -177,51 +144,43 @@
   <!-- Flavor 2 and shots 2 -->
   {#if $form.flavorCount > 1}
     <div class="flex flex-col gap-1">
-      <FormControl
+      <!-- Flavor 2 -->
+      <Select
+        form={superForm}
+        field="flavor2_id"
         label="Flavor 2"
-        errors={$errors.flavor2_id}
+        {disabled}
       >
-        <select
-          class:placeholder={$form.flavor2_id === null}
-          name="flavor2_id"
-          bind:value={$form.flavor2_id}
-          {...$constraints.flavor2_id}
-        >
-          <option value={null}>Select a flavor</option>
-          {#each categories as group}
-            <optgroup label={group}>
-              {#each flavor2Options.filter((option) => option.group === group) as { value, label }}
-                <option {value}>{label}</option>
-              {/each}
-            </optgroup>
-          {/each}</select
-        >
-      </FormControl>
+        {#each categories as category}
+          <optgroup label={category}>
+            {#each flavor2Options.filter((option) => option.group === category) as { value, label } (value)}
+              <option {value}>{label}</option>
+            {/each}
+          </optgroup>
+        {/each}
+      </Select>
 
+      <!-- Shots 2 -->
       <FormControl
         label="Shots"
-        errors={$errors.shots2}
+        errors={$errors.shots1}
       >
-        <div class="radio-group">
-          <label>
-            <input
-              type="radio"
-              name="shots2"
-              value={1}
-              bind:group={$form.shots2}
-            />
-            <span>Single</span>
-          </label>
+        <div class="flex flex-wrap items-center gap-4">
+          <RadioButton
+            form={superForm}
+            field="shots2"
+            label="Single"
+            value={1}
+            {disabled}
+          />
           {#if $form.flavorCount === 2 && $form.shots1 !== 2}
-            <label>
-              <input
-                type="radio"
-                name="shots2"
-                value={2}
-                bind:group={$form.shots2}
-              />
-              <span>Double</span>
-            </label>
+            <RadioButton
+              form={superForm}
+              field="shots2"
+              label="Double"
+              value={2}
+              {disabled}
+            />
           {/if}
         </div>
       </FormControl>
@@ -231,63 +190,60 @@
   <!-- Flavor 3 and shots 3 -->
   {#if $form.flavorCount > 2}
     <div class="flex flex-col gap-1">
-      <FormControl
+      <!-- Flavor 3 -->
+      <Select
+        form={superForm}
+        field="flavor3_id"
         label="Flavor 3"
-        errors={$errors.flavor3_id}
+        {disabled}
       >
-        <select
-          class:placeholder={$form.flavor3_id === null}
-          name="flavor3_id"
-          bind:value={$form.flavor3_id}
-          {...$constraints.flavor3_id}
-        >
-          <option value={null}>Select a flavor</option>
-          {#each categories as group}
-            <optgroup label={group}>
-              {#each flavor3Options.filter((option) => option.group === group) as { value, label }}
-                <option {value}>{label}</option>
-              {/each}
-            </optgroup>
-          {/each}</select
-        >
-      </FormControl>
+        {#each categories as category}
+          <optgroup label={category}>
+            {#each flavor3Options.filter((option) => option.group === category) as { value, label } (value)}
+              <option {value}>{label}</option>
+            {/each}
+          </optgroup>
+        {/each}
+      </Select>
 
+      <!-- Shots 3 -->
       <FormControl
         label="Shots"
-        errors={$errors.shots3}
+        errors={$errors.shots1}
       >
-        <div class="radio-group">
-          <label>
-            <input
-              type="radio"
-              name="shots3"
-              value={1}
-              bind:group={$form.shots3}
-            />
-            <span>Single</span>
-          </label>
+        <div class="flex flex-wrap items-center gap-4">
+          <RadioButton
+            form={superForm}
+            field="shots3"
+            label="Single"
+            value={1}
+            {disabled}
+          />
         </div>
       </FormControl>
     </div>
   {/if}
 
   {#if isAdmin}
-    <label class="checkbox">
-      <input
-        type="checkbox"
-        name="approved"
-        bind:checked={$form.approved}
-      />
-      <span>Approved</span>
-    </label>
+    <Checkbox
+      form={superForm}
+      field="approved"
+      label="Approved"
+      {disabled}
+    />
   {/if}
 
-  <div class="form-actions flex flex-wrap items-center gap-4">
-    <FormMessage message={$message} />
+  <svelte:fragment slot="actions">
+    <button
+      type="button"
+      class="btn variant-filled-surface hover:variant-filled"
+      on:click={() => reset({ keepMessage: false })}
+      {disabled}>Reset</button
+    >
     <button
       type="submit"
-      class="btn btn-primary ml-auto"
-      >{'id' in $form ? 'Update' : 'Create'} Custom Blend</button
+      class="btn variant-filled-primary"
+      {disabled}>{'id' in $form ? 'Update' : 'Create'} Blend</button
     >
-  </div>
-</form>
+  </svelte:fragment>
+</Form>

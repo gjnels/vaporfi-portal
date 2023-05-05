@@ -1,26 +1,21 @@
-import toast from 'svelte-french-toast'
-
 import type { Blend } from '$lib/types/flavors.types'
-
+import { toastStore } from '@skeletonlabs/skeleton'
 import { createBlendString } from './flavors'
 
-type Messages = Parameters<typeof toast.promise>['1']
+export const copyToClipboard = (text: string, msgs: { success: string; error: string }) =>
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      toastStore.trigger({ message: msgs.success, background: 'variant-filled-success' })
+      return true
+    })
+    .catch(() => {
+      toastStore.trigger({ message: msgs.error, background: 'variant-filled-error' })
+      return false
+    })
 
-export const copyToClipboard = (
-  text: string,
-  { loading, error, success }: Messages
-) =>
-  toast.promise(navigator.clipboard.writeText(text), {
-    loading,
-    error,
-    success
+export const copyBlendToClipboard = (blend: Blend & { bottleCount: number; nicotine: number }) =>
+  copyToClipboard(createBlendString(blend), {
+    success: 'Blend has been copied to your clipboard.',
+    error: 'Failed to copy blend to your clipboard.'
   })
-
-export const copyBlendToClipboard = (
-  blend: Blend & { bottleCount: number; nicotine: number },
-  msgs: Messages = {
-    loading: 'Copying blend to clipboard...',
-    error: 'Failed to copy blend to clipboard',
-    success: 'Blend copied to clipboard.'
-  }
-) => copyToClipboard(createBlendString(blend), msgs)

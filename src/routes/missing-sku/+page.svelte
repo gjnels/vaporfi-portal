@@ -1,21 +1,27 @@
 <script lang="ts">
-  import toast from 'svelte-french-toast'
+  import { toastStore } from '@skeletonlabs/skeleton'
   import { superForm } from 'sveltekit-superforms/client'
 
-  import { FormControl, FormMessage, PageLayout } from '$components'
+  import PageLayout from '$components/PageLayout/PageLayout.svelte'
+  import Form from '$components/Form/Form.svelte'
+  import TextInput from '$components/FormControls/TextInput.svelte'
+  import Select from '$components/FormControls/Select.svelte'
+  import Textarea from '$components/FormControls/Textarea.svelte'
 
   export let data
 
-  const { form, enhance, message, errors, constraints, reset } = superForm(
-    data.form,
-    {
-      onResult: ({ result: { type } }) => {
-        if (type === 'success') {
-          toast.success('SKU submitted for review.')
-        }
+  const sForm = superForm(data.form, {
+    onResult: ({ result: { type } }) => {
+      if (type === 'success') {
+        toastStore.trigger({
+          message: 'SKU submitted for review.',
+          background: 'variant-filled-success'
+        })
       }
     }
-  )
+  })
+
+  $: ({ form } = sForm)
 </script>
 
 <svelte:head>
@@ -25,22 +31,16 @@
 <PageLayout headerContainerStyles="flex-col items-start gap-2">
   <svelte:fragment slot="header">
     <h1>Missing SKUs</h1>
-    <span class="text-surface-300"
-      >Submit SKUs which ring up nothing. If the SKU rings up the wrong item,
-      submit an <a
-        href="/incorrect-sku"
-        class="link link-secondary inline-flex">incorrect sku</a
+    <span
+      >Submit SKUs which ring up nothing. If the SKU rings up the wrong item, submit an <a
+        href="/incorrect-sku">incorrect sku</a
       > instead.</span
     >
   </svelte:fragment>
 
-  <div class="flex flex-col gap-10 xl:flex-row">
+  <div class="grid gap-10 xl:grid-cols-2">
     <!-- new missing sku form -->
-    <form
-      method="post"
-      use:enhance
-      class="form flex-1"
-    >
+    <Form superForm={sForm}>
       {#if $form.submitted_by_profile_id}
         <input
           type="hidden"
@@ -50,105 +50,66 @@
         />
       {/if}
 
-      <FormControl
+      <TextInput
+        form={sForm}
+        field="item_name"
         label="Item Name"
-        errors={$errors.item_name}
-      >
-        <input
-          type="text"
-          name="item_name"
-          placeholder="Which item should ring up when this SKU is scanned?"
-          bind:value={$form.item_name}
-          {...$constraints.item_name}
-        />
-      </FormControl>
+        placeholder="Which item should ring up when this SKU is scanned?"
+      />
 
-      <div class="flex flex-col gap-1">
-        <span class="text-sm text-warning-400"
-          >Fill out this field last when using a barcode scanner. Scanning an
-          item will submit the form.</span
-        >
-        <FormControl
-          label="SKU"
-          errors={$errors.sku}
-        >
-          <input
-            type="text"
-            name="sku"
-            placeholder="e.g. 819905029982"
-            bind:value={$form.sku}
-            {...$constraints.sku}
-          />
-        </FormControl>
-      </div>
+      <TextInput
+        form={sForm}
+        field="sku"
+        label="SKU"
+        placeholder="e.g. 819905029982"
+      />
 
-      <FormControl
+      <Select
+        form={sForm}
+        field="submitted_from_location_id"
         label="Current Location"
-        errors={$errors.submitted_from_location_id}
       >
-        <select
-          bind:value={$form.submitted_from_location_id}
-          name="submitted_from_location_id"
-          class:placeholder={$form.submitted_from_location_id === -1}
-          {...$constraints.submitted_from_location_id}
-        >
-          <option value={-1}>Select your current location</option>
-          {#each data.locations as location (location.id)}
-            <option value={location.id}>{location.name}</option>
-          {/each}
-        </select>
-      </FormControl>
+        <option value={-1}>Select your current location</option>
+        {#each data.locations as location (location.id)}
+          <option value={location.id}>{location.name}</option>
+        {/each}
+      </Select>
 
-      <FormControl
+      <TextInput
+        form={sForm}
+        field="submitted_by_name"
         label="Your Name"
-        errors={$errors.submitted_by_name}
-      >
-        <input
-          type="text"
-          name="submitted_by_name"
-          placeholder="Who is submitting this incorrect SKU?"
-          bind:value={$form.submitted_by_name}
-          {...$constraints.submitted_by_name}
-        />
-      </FormControl>
+        placeholder="Who is submitting this incorrect SKU?"
+      />
 
-      <FormControl
+      <Textarea
+        form={sForm}
+        field="notes"
         label="Notes"
-        errors={$errors.notes}
-      >
-        <textarea
-          rows={3}
-          name="notes"
-          placeholder="Any important details to share about this missing SKU?"
-          bind:value={$form.notes}
-        />
-      </FormControl>
+        placeholder="Any details to add about this missing sku?"
+      />
 
-      <div class="form-actions flex flex-wrap items-center gap-4">
-        <FormMessage message={$message} />
-
-        <div class="ml-auto flex flex-wrap gap-2">
-          <button
-            type="submit"
-            class="btn btn-primary">Submit</button
-          >
-          <button
-            type="button"
-            class="btn"
-            on:click={() => reset({ keepMessage: false })}>Reset</button
-          >
-        </div>
-      </div>
-    </form>
+      <svelte:fragment slot="actions">
+        <button
+          type="button"
+          class="btn variant-filled-surface hover:variant-filled"
+          on:click={() => sForm.reset({ keepMessage: false })}>Reset</button
+        >
+        <button
+          type="submit"
+          class="btn variant-filled-primary">Submit</button
+        >
+      </svelte:fragment>
+    </Form>
 
     <!-- list of pending missing skus (if any) -->
-    <div class="flex flex-1 flex-col gap-6">
-      <h2 class="text-2xl font-semibold">Pending Missing SKUs</h2>
+    <div class="space-y-4">
+      <h3>Pending Missing SKUs</h3>
       {#if data.pendingItems.length === 0}
-        <span class="italic text-surface-400">No pending items found</span>
+        <p class="italic brightness-50">No pending items found</p>
       {:else}
-        <div class="styled-table">
-          <table>
+        <div class="table-container border-token border-surface-300-600-token">
+          <table class="table">
             <thead>
               <tr>
                 <th>Item</th>

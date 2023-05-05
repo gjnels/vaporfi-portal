@@ -1,50 +1,32 @@
 <script lang="ts">
-  import toast from 'svelte-french-toast'
-  import { createDialog } from 'svelte-headlessui'
-  import {
-    ArrowUturnLeft,
-    ExclamationCircle,
-    ExclamationTriangle,
-    Icon
-  } from 'svelte-hero-icons'
   import { superForm } from 'sveltekit-superforms/client'
+  import { modalStore, toastStore } from '@skeletonlabs/skeleton'
 
-  import { FormControl, FormMessage, Modal, PageLayout } from '$components'
+  import { ArrowUturnLeft, ExclamationTriangle, Icon } from 'svelte-hero-icons'
+  import PageLayout from '$components/PageLayout/PageLayout.svelte'
+  import Form from '$components/Form/Form.svelte'
+  import FormControl from '$components/FormControls/FormControl.svelte'
+  import Select from '$components/FormControls/Select.svelte'
+  import TextInput from '$components/FormControls/TextInput.svelte'
+  import DeleteModal from './DeleteModal.svelte'
+  import IconLink from '$components/IconLink/IconLink.svelte'
 
   export let data
 
-  const {
-    form: updateForm,
-    enhance: updateEnhance,
-    message: updateMessage,
-    errors: updateErrors,
-    constraints: updateConstraints,
-    delayed: updateDelayed
-  } = superForm(data.updateForm, {
+  const updateForm = superForm(data.updateForm, {
     dataType: 'json',
     onResult: ({ result: { type } }) => {
       // show toast notification letting user know the update was successful before redirecting
       if (type === 'redirect') {
-        toast.success('User has been updated')
+        toastStore.trigger({
+          message: 'User has been updated',
+          background: 'variant-filled-success'
+        })
       }
     }
   })
 
-  const { enhance: deleteEnhance, message: deleteMessage } = superForm(
-    data.deleteForm,
-    {
-      dataType: 'json',
-      onResult: ({ result: { type } }) => {
-        // show toast notification letting user know the delete was successful before redirecting
-        if (type === 'redirect') {
-          deleteModal.close()
-          toast.success('User has been deleted')
-        }
-      }
-    }
-  )
-
-  const deleteModal = createDialog({ label: 'delete user' })
+  const { form, errors, delayed } = updateForm
 </script>
 
 <svelte:head>
@@ -52,30 +34,33 @@
 </svelte:head>
 
 <PageLayout
-  contentContainerStyles="max-w-4xl"
-  headerContainerStyles="max-w-4xl"
+  contentWrapperStyles="max-w-4xl"
+  headerWrapperStyles="space-y-2"
 >
   <svelte:fragment slot="header">
     <h1>Edit User</h1>
-    <a
+    <IconLink
       href="/users"
-      class="link link-primary"
-    >
-      <Icon
-        src={ArrowUturnLeft}
-        size="1em"
-      />
-      All Users
-    </a>
+      label="All Users"
+      iconSource={ArrowUturnLeft}
+    />
   </svelte:fragment>
 
   <div class="mb-10 flex flex-wrap items-center gap-x-4 gap-y-2">
     <button
       type="button"
-      class="btn btn-danger"
-      on:click={deleteModal.open}>Delete This User</button
+      class="btn variant-soft-error hover:variant-filled-error"
+      on:click={() => {
+        modalStore.trigger({
+          type: 'component',
+          component: {
+            ref: DeleteModal,
+            props: { profile: data.profile, form: data.deleteForm }
+          }
+        })
+      }}>Delete This User</button
     >
-    <span class="flex items-center gap-2 text-warning-400">
+    <span class="flex items-center gap-2 text-warning-600 dark:text-warning-500">
       <Icon
         src={ExclamationTriangle}
         size="1.5em"
@@ -83,65 +68,36 @@
     </span>
   </div>
 
-  <form
-    method="post"
-    action="?/updateUser"
-    use:updateEnhance
-    class="form"
+  <Form
+    superForm={updateForm}
+    action="?/update&user_id={data.profile.id}"
   >
-    <p class="text-xl">
-      Email: <span class="font-semibold">{data.profile.email}</span>
-    </p>
-    <FormControl
-      label="Name"
-      errors={$updateErrors.name}
-    >
-      <input
-        type="text"
-        bind:value={$updateForm.name}
-        data-invalid={$updateErrors.name}
-        {...$updateConstraints.name}
-        required={false}
-      />
-    </FormControl>
+    <TextInput
+      form={updateForm}
+      field="name"
+    />
 
-    <FormControl
-      label="Role"
-      errors={$updateErrors.role}
+    <Select
+      form={updateForm}
+      field="role"
     >
-      {#if data.profile.id === data.session?.user.id && data.profile.role === 'Admin'}
-        <span class="flex items-center gap-1 text-sm text-warning-400">
-          <Icon
-            src={ExclamationCircle}
-            size="1.5em"
-            class="inline shrink-0"
-          />
-          If you change your own role to anything but Admin, only a different Admin
-          user can change it back.
-        </span>
-      {/if}
-      <select
-        bind:value={$updateForm.role}
-        data-invalid={$updateErrors.role}
-        {...$updateConstraints.role}
-      >
-        <option value={null}>None</option>
-        <option value={'Store'}>Store</option>
-        <option value={'Manager'}>Manager</option>
-        <option value={'Admin'}>Admin</option>
-      </select>
-    </FormControl>
+      <option value={null}>None</option>
+      <option value={'Store'}>Store</option>
+      <option value={'Manager'}>Manager</option>
+      <option value={'Admin'}>Admin</option>
+    </Select>
 
     <FormControl
       label="Locations"
-      errors={$updateErrors.locations}
+      errors={$errors.locations}
     >
       <div class="flex flex-wrap gap-x-8 gap-y-2">
         {#each data.locations as location}
-          <label class="checkbox">
+          <label class="flex items-center gap-2">
             <input
               type="checkbox"
-              bind:checked={$updateForm.locations[location.id]}
+              class="checkbox"
+              bind:checked={$form.locations[location.id]}
             />
             <span>{location.name}</span>
           </label>
@@ -149,49 +105,12 @@
       </div>
     </FormControl>
 
-    <div class="form-actions flex flex-wrap items-center gap-4">
-      <FormMessage message={$updateMessage} />
+    <svelte:fragment slot="actions">
       <button
         type="submit"
-        disabled={$updateDelayed}
-        class="btn btn-primary ml-auto"
-        >{$updateDelayed ? 'Updating...' : 'Update User'}</button
+        disabled={$delayed}
+        class="btn variant-filled-primary">{$delayed ? 'Inviting...' : 'Invite User'}</button
       >
-    </div>
-  </form>
-
-  <Modal
-    modalStore={deleteModal}
-    modalWindowStyles="flex flex-col gap-4 items-center"
-  >
-    <p>Are you sure you want to delete this user?</p>
-
-    <span class="flex items-center gap-2 text-warning-400">
-      <Icon
-        src={ExclamationTriangle}
-        size="1.5em"
-      />Warning: this cannot be undone
-    </span>
-
-    <div class="grid w-full grid-cols-2 gap-4">
-      <form
-        method="post"
-        use:deleteEnhance
-        action="?/deleteUser"
-        class="contents"
-      >
-        <button
-          type="submit"
-          class="btn btn-danger">Yes</button
-        >
-      </form>
-      <button
-        type="button"
-        class="btn"
-        on:click={deleteModal.close}>No</button
-      >
-    </div>
-
-    <FormMessage message={$deleteMessage} />
-  </Modal>
+    </svelte:fragment>
+  </Form>
 </PageLayout>

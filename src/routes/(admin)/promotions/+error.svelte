@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { ExclamationTriangle, Icon } from 'svelte-hero-icons'
-
   import { page } from '$app/stores'
+  import { ExclamationTriangle, Icon } from 'svelte-hero-icons'
 </script>
 
 <svelte:head>
@@ -9,22 +8,16 @@
 </svelte:head>
 
 <div class="mt-10 flex flex-col items-center gap-2">
-  <div class="mb-4 flex items-center gap-2 text-danger-500">
+  <div class="mb-4 flex items-center gap-2 text-error-500">
     <Icon
       src={ExclamationTriangle}
       size="4rem"
     />
-    <h1 class="text-xl font-semibold">{$page.error?.message}</h1>
+    <h2>{$page.error?.message}</h2>
   </div>
   {#if !$page.url.pathname.endsWith('promotions')}
-    <a
-      href="/promotions"
-      class="link link-secondary">Return to Promotions Manager</a
-    >
+    <a href="/promotions">Return to Promotions Manager</a>
   {:else}
-    <a
-      href="/"
-      class="link link-secondary">Return to Home Page</a
-    >
+    <a href="/">Return to Home Page</a>
   {/if}
 </div>

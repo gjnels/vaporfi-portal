@@ -2,6 +2,7 @@ import { PUBLIC_SUPABASE_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public'
 import { createSupabaseLoadClient } from '@supabase/auth-helpers-sveltekit'
 
 import type { Database } from '$lib/types/supabase.types'
+import type { CurrentUserProfile } from '$lib/types/profile.types'
 
 export const load = async ({ fetch, data, depends }) => {
   depends('supabase:auth')
@@ -17,8 +18,18 @@ export const load = async ({ fetch, data, depends }) => {
     data: { session }
   } = await supabase.auth.getSession()
 
+  const defaultData = {
+    currentThemeCSS: data.currentThemeCSS,
+    currentTheme: data.currentTheme,
+    supabase,
+    session
+  }
+
   if (!session) {
-    return { supabase, session, currentProfile: null }
+    return {
+      ...defaultData,
+      currentProfile: null
+    }
   }
 
   // Get the user profile if there is a valid session
@@ -43,13 +54,15 @@ export const load = async ({ fetch, data, depends }) => {
       .eq('fixed', false)
 
     return {
-      supabase,
-      session,
-      currentProfile,
+      ...defaultData,
+      currentProfile: currentProfile as CurrentUserProfile,
       missingSkusCount,
       incorrectSkusCount
     }
   }
 
-  return { supabase, session, currentProfile }
+  return {
+    ...defaultData,
+    currentProfile: currentProfile as CurrentUserProfile | null
+  }
 }
