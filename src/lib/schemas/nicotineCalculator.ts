@@ -43,11 +43,7 @@ export const totalNicotineSchema = calculatorCommonSchema.extend({
   packets: nicotinePacketSchema
     .extend({
       selected: z.boolean().default(false),
-      count: z
-        .number()
-        .int()
-        .min(1, 'You must have at least one packet')
-        .default(1)
+      count: z.number().int().min(1, 'You must have at least one packet').default(1)
     })
     .omit({ salt: true })
     .array()

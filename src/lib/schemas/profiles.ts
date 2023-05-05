@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 const adminProfileSchema = z.object({
   name: z.string().trim(),
-  role: z.enum(['Admin', 'Manager', 'Store']).nullable(),
+  role: z.enum(['Admin', 'Manager', 'Store']).nullable().default(null),
   locations: z.record(z.boolean())
 })
 

@@ -1,9 +1,7 @@
 import type { z } from 'zod'
 
-import type {
-  flavorPickerSchema,
-  savedFlavorPickerBlendSchema
-} from '$lib/schemas/customBlends'
+import type { flavorPickerSchema, savedFlavorPickerBlendSchema } from '$lib/schemas/customBlends'
+import type { DatabaseRow } from './supabaseHelpers.types'
 
 export type Blend = {
   name?: string
@@ -16,6 +14,10 @@ export type Blend = {
 }
 
 export type FlavorPickerBlend = z.infer<typeof flavorPickerSchema>
-export type SavedFlavorPickerBlend = z.infer<
-  typeof savedFlavorPickerBlendSchema
->
+export type SavedFlavorPickerBlend = z.infer<typeof savedFlavorPickerBlendSchema>
+
+export type CustomBlend = DatabaseRow<'custom_blends'> & {
+  flavor1: DatabaseRow<'flavors'>
+  flavor2: DatabaseRow<'flavors'> | null
+  flavor3: DatabaseRow<'flavors'> | null
+}

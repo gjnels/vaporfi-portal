@@ -13,16 +13,13 @@ const getFromStorage = () => {
     if (storedData) {
       const parsedData = JSON.parse(storedData)
       if (Array.isArray(parsedData)) {
-        return parsedData.reduce(
-          (packets: SavedNicotinePacket[], savedPacket) => {
-            const result = savedNicotinePacketSchema.safeParse(savedPacket)
-            if (result.success) {
-              return [...packets, result.data]
-            }
-            return packets
-          },
-          []
-        )
+        return parsedData.reduce((packets: SavedNicotinePacket[], savedPacket) => {
+          const result = savedNicotinePacketSchema.safeParse(savedPacket)
+          if (result.success) {
+            return [...packets, result.data]
+          }
+          return packets
+        }, [])
       }
     }
   }

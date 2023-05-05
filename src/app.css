@@ -1,0 +1,52 @@
+/* Global styles */
+
+/* Google Fonts */
+@font-face {
+  font-family: 'Quicksand';
+  src: url('/fonts/Quicksand.ttf');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/fonts/SpaceGrotesk.ttf');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins-Regular.ttf');
+  font-display: swap;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+html,
+body {
+  @apply h-full overflow-hidden;
+}
+
+/* Add animated underline on hover to the same anchor tags skeleton applies styles to */
+a:not(.unstyled):not(.permalink):is(:not(.prose *)):not(.btn):not(.btn-icon):not(.app-bar a):not(
+    .logo-item
+  ):not(a.card):not(.list-nav a) {
+  @apply text-primary-600 underline-offset-1 transition-all hover:underline-offset-4 dark:text-primary-500;
+}
+
+div.table-container.border-token tr {
+  @apply last:border-b-0;
+}
+
+table th {
+  @apply whitespace-nowrap;
+}
+
+table td {
+  @apply !whitespace-nowrap !align-middle;
+}
+
+.list-nav a:focus,
+.list-nav button:focus,
+.list-nav .list-option:focus {
+  @apply !bg-surface-500 !text-on-surface-token;
+}

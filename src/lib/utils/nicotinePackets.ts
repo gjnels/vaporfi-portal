@@ -1,7 +1,4 @@
-import type {
-  PacketFormData,
-  SavedNicotinePacket
-} from '$lib/types/nicotinePackets.types'
+import type { PacketFormData, SavedNicotinePacket } from '$lib/types/nicotinePackets.types'
 
 export const packetColors: { [key: string]: string } = {
   yellow: 'border-yellow-500',
@@ -32,9 +29,7 @@ export function calculatePackets(
   const nicAdded = totalNic - currentNic
 
   // filter available nic packets to have salt nicotine or not
-  const packets = availablePackets.filter(
-    (packet) => packet.available && packet.salt === salt
-  )
+  const packets = availablePackets.filter((packet) => packet.available && packet.salt === salt)
 
   if (packets == null || !packets.length) return []
 
@@ -115,9 +110,7 @@ function findPacketsAbove(packets: SavedNicotinePacket[], nicToAdd: number) {
     } else if (higher) {
       currentNic -= higher.mg
 
-      const addedPacket = higherPackets.find(
-        (packet) => packet.id === higher.id
-      )
+      const addedPacket = higherPackets.find((packet) => packet.id === higher.id)
 
       if (addedPacket) {
         addedPacket.count += 1
@@ -131,15 +124,16 @@ function findPacketsAbove(packets: SavedNicotinePacket[], nicToAdd: number) {
 }
 
 // Get the most accurate count of packets without duplicates or packets that could be combined into another packet
-function filterPackets(
-  packets: FoundPacket[],
-  allPackets: SavedNicotinePacket[]
-): FoundPacket[] {
-  const { packets: filteredDuplicatePackets, found: foundDuplicates } =
-    findDuplicatePackets(packets, allPackets)
+function filterPackets(packets: FoundPacket[], allPackets: SavedNicotinePacket[]): FoundPacket[] {
+  const { packets: filteredDuplicatePackets, found: foundDuplicates } = findDuplicatePackets(
+    packets,
+    allPackets
+  )
 
-  const { packets: filteredAdditivePackets, found: foundAdditive } =
-    findAdditivePackets(filteredDuplicatePackets, allPackets)
+  const { packets: filteredAdditivePackets, found: foundAdditive } = findAdditivePackets(
+    filteredDuplicatePackets,
+    allPackets
+  )
 
   // Adjustments were found, so run again until there are no adjustments left to make
   if (foundDuplicates || foundAdditive) {
@@ -151,10 +145,7 @@ function filterPackets(
 
 // Filter the results to look for packets that have multiple counts that can be combined to a equal a packet of a higher nicotine level
 // e.g. if there are 2 blue packets (180mg) and purple packets (360mg) are available, remove the 2 blue packets and add one purple packet
-function findDuplicatePackets(
-  currentPackets: FoundPacket[],
-  allPackets: SavedNicotinePacket[]
-) {
+function findDuplicatePackets(currentPackets: FoundPacket[], allPackets: SavedNicotinePacket[]) {
   const packets: FoundPacket[] = []
   let found = false
   currentPackets.forEach((packet) => {
@@ -162,9 +153,7 @@ function findDuplicatePackets(
       (p) => p.mg === packet.mg * packet.count && p.id !== packet.id
     )
 
-    const foundPacketIndex = packets.findIndex(
-      (packet) => packet.id === betterPacket?.id
-    )
+    const foundPacketIndex = packets.findIndex((packet) => packet.id === betterPacket?.id)
 
     if (foundPacketIndex >= 0) {
       packets[foundPacketIndex].count += 1
@@ -181,23 +170,16 @@ function findDuplicatePackets(
 
 // Filter packets to find packets that can be added together to make a higher packet
 // e.g. if there is a blue packet (180mg) and a purple packet (360mg) and brown packets (540mg) are available, remove the blue and purple and add a brown
-function findAdditivePackets(
-  currentPackets: FoundPacket[],
-  allPackets: SavedNicotinePacket[]
-) {
+function findAdditivePackets(currentPackets: FoundPacket[], allPackets: SavedNicotinePacket[]) {
   let found = false
   const packets = [...currentPackets]
 
   for (let i = 0; i < packets.length; i++) {
     for (let j = i + 1; j < packets.length; j++) {
-      const foundPacket = allPackets.find(
-        (p) => p.mg === packets[i].mg + packets[j].mg
-      )
+      const foundPacket = allPackets.find((p) => p.mg === packets[i].mg + packets[j].mg)
 
       if (foundPacket) {
-        const packetInResultIndex = packets.findIndex(
-          (p) => p.id === foundPacket.id
-        )
+        const packetInResultIndex = packets.findIndex((p) => p.id === foundPacket.id)
         if (packetInResultIndex >= 0) {
           packets[packetInResultIndex].count++
           packets.splice(j, 1)
@@ -216,38 +198,32 @@ function findAdditivePackets(
 
 // find the packet that is closest to the current nicotine level to be added without being less than that nicotine level
 function findHigherPacket(packets: SavedNicotinePacket[], nicToAdd: number) {
-  return packets.reduce<SavedNicotinePacket | null>(
-    (closestPacket, currentPacket) => {
-      if (currentPacket.mg < nicToAdd) {
-        return closestPacket
-      }
+  return packets.reduce<SavedNicotinePacket | null>((closestPacket, currentPacket) => {
+    if (currentPacket.mg < nicToAdd) {
+      return closestPacket
+    }
 
-      if (closestPacket && currentPacket.mg > closestPacket.mg) {
-        return closestPacket
-      }
+    if (closestPacket && currentPacket.mg > closestPacket.mg) {
+      return closestPacket
+    }
 
-      return currentPacket
-    },
-    null
-  )
+    return currentPacket
+  }, null)
 }
 
 // find the packet that is closest to the current nicotine level to be added without being more than that nicotine level
 function findLowerPacket(packets: SavedNicotinePacket[], nicToAdd: number) {
-  return packets.reduce<SavedNicotinePacket | null>(
-    (closestPacket, currentPacket) => {
-      if (currentPacket.mg > nicToAdd) {
-        return closestPacket
-      }
+  return packets.reduce<SavedNicotinePacket | null>((closestPacket, currentPacket) => {
+    if (currentPacket.mg > nicToAdd) {
+      return closestPacket
+    }
 
-      if (closestPacket && currentPacket.mg < closestPacket.mg) {
-        return closestPacket
-      }
+    if (closestPacket && currentPacket.mg < closestPacket.mg) {
+      return closestPacket
+    }
 
-      return currentPacket
-    },
-    null
-  )
+    return currentPacket
+  }, null)
 }
 
 // calculate the final nicotine level of the bottle based on all packets being added, the bottle size, and the current nicotine level of the bottle

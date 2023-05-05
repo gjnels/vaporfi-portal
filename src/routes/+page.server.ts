@@ -1,3 +1,4 @@
+import themes from '$components/Themes/themes.js'
 import type { Blend } from '$lib/types/flavors.types'
 import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
 
@@ -26,4 +27,15 @@ export const load = async ({ locals: { supabase } }) => {
     .returns<Array<DatabaseRow<'promos'> & { blend: Blend | null }>>()
 
   return { promos }
+}
+
+export const actions = {
+  setTheme: async ({ request, cookies, locals }) => {
+    const theme = (await request.formData()).get('theme') as string
+    if (!themes.find(({ type }) => type === theme)) {
+      return { theme: locals.theme }
+    }
+    cookies.set('theme', theme, { path: '/' })
+    return { theme }
+  }
 }

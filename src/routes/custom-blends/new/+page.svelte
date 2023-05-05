@@ -1,22 +1,29 @@
 <script lang="ts">
-  import toast from 'svelte-french-toast'
-  import { ArrowUturnLeft, Icon } from 'svelte-hero-icons'
+  import { ArrowUturnLeft } from 'svelte-hero-icons'
   import { superForm } from 'sveltekit-superforms/client'
+  import { toastStore, type ToastSettings } from '@skeletonlabs/skeleton'
 
-  import { PageLayout } from '$components'
-
+  // Components
+  import PageLayout from '$components/PageLayout/PageLayout.svelte'
+  import IconLink from '$components/IconLink/IconLink.svelte'
   import CustomBlendForm from '../CustomBlendForm.svelte'
-  import CustomToast from './CustomToast.svelte'
 
   export let data
-  $: ({ form, flavors, isAdmin } = data)
+  $: ({ flavors, isAdmin } = data)
 
-  const superform = superForm(form, {
+  const adminToast: ToastSettings = {
+    message: 'Custom blend has been created.',
+    background: 'variant-filled-success'
+  }
+  const managerToast: ToastSettings = {
+    message: 'Custom blend has been created. Awaiting approval...',
+    background: 'variant-filled-warning'
+  }
+
+  const form = superForm(data.form, {
     onResult: ({ result: { type } }) => {
       if (type === 'success' || type === 'redirect') {
-        toast.success(isAdmin ? 'Custom blend has been created' : CustomToast, {
-          duration: 4000
-        })
+        toastStore.trigger(isAdmin ? adminToast : managerToast)
       }
     }
   })
@@ -26,27 +33,20 @@
   <title>Create New Custom Blend | VF Columbus</title>
 </svelte:head>
 
-<PageLayout
-  contentContainerStyles="max-w-4xl"
-  headerContainerStyles="max-w-4xl"
->
+<PageLayout contentWrapperStyles="max-w-4xl">
   <svelte:fragment slot="header">
     <h1>Create New Custom Blend</h1>
-    <a
+    <IconLink
       href="/custom-blends"
-      class="link link-primary"
-    >
-      <Icon
-        src={ArrowUturnLeft}
-        size="1em"
-      />
-      Back to Custom Blends
-    </a>
+      classes="mt-4"
+      label="Back to Custom Blends"
+      iconSource={ArrowUturnLeft}
+    />
   </svelte:fragment>
 
   <CustomBlendForm
+    superForm={form}
     {flavors}
-    {superform}
     {isAdmin}
   />
 </PageLayout>

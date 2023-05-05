@@ -1,7 +1,9 @@
 import { error, fail, redirect } from '@sveltejs/kit'
 import { message, setError, superValidate } from 'sveltekit-superforms/server'
+import { deletePromoSchema, updatePromoSchema } from '$lib/schemas/promos.js'
 
-import { promoSchema, refinedPromoSchema } from '$lib/schemas/promos.js'
+const UPDATE_FORM_ID = 'update_promo'
+const DELETE_FORM_ID = 'delete_promo'
 
 export const load = async ({ url: { searchParams }, locals: { supabase } }) => {
   const promoId = searchParams.get('promo_id')
@@ -23,42 +25,33 @@ export const load = async ({ url: { searchParams }, locals: { supabase } }) => {
     data: customBlends,
     error: customBlendsError,
     status: customBlendsStatus
-  } = await supabase
-    .from('custom_blends')
-    .select('id, name')
-    .is('approved', true)
+  } = await supabase.from('custom_blends').select('id, name').is('approved', true)
 
   if (customBlendsError) {
-    throw error(
-      customBlendsStatus,
-      'Unable to fetch custom blends. Try again later.'
-    )
+    throw error(customBlendsStatus, 'Unable to fetch custom blends. Try again later.')
   }
 
   const foundPromo = {
     ...promo,
+    custom_blend_id: promo.custom_blend_id || -1,
     valid_from: new Date(promo.valid_from),
     valid_until: new Date(promo.valid_until)
   }
 
   return {
-    updateForm: superValidate<typeof promoSchema, Message>(
-      foundPromo,
-      promoSchema,
-      { id: 'update_promo' }
-    ),
+    updateForm: superValidate(foundPromo, updatePromoSchema, { id: UPDATE_FORM_ID }),
+    deleteForm: superValidate(deletePromoSchema, { id: DELETE_FORM_ID }),
     promo: foundPromo,
     customBlends
   }
 }
 
 export const actions = {
-  updatePromo: async (event) => {
-    const form = await superValidate<typeof refinedPromoSchema, Message>(
-      event,
-      refinedPromoSchema,
-      { id: 'update_promo' }
-    )
+  update: async (event) => {
+    const form = await superValidate<typeof updatePromoSchema, Message>(event, updatePromoSchema, {
+      id: UPDATE_FORM_ID
+    })
+
     if (!form.valid) {
       return fail(400, { form })
     }
@@ -67,6 +60,7 @@ export const actions = {
       .from('promos')
       .update({
         ...form.data,
+        custom_blend_id: form.data.custom_blend_id > 0 ? form.data.custom_blend_id : null,
         valid_from: form.data.valid_from.toISOString(),
         valid_until: form.data.valid_until.toISOString()
       })
@@ -75,11 +69,7 @@ export const actions = {
     if (error) {
       // unique constraint error
       if (error.code === '23505') {
-        return setError(
-          form,
-          'title',
-          'A promotion with this title already exists'
-        )
+        return setError(form, 'title', 'A promotion with this title already exists')
       }
       return message(
         form,
@@ -94,25 +84,33 @@ export const actions = {
     throw redirect(303, '/promotions')
   },
 
-  deletePromo: async ({ locals: { supabase }, url: { searchParams } }) => {
-    const promoId = searchParams.get('promo_id')
-    if (!promoId) {
-      return fail(400, {
-        deleteError: 'Promotion id is missing.'
-      })
+  delete: async ({ locals: { supabase }, request }) => {
+    const form = await superValidate<typeof deletePromoSchema, Message>(
+      request,
+      deletePromoSchema,
+      { id: DELETE_FORM_ID }
+    )
+
+    if (!form.valid) {
+      return message(form, { type: 'error', message: 'Invalid promotion id' }, { status: 400 })
     }
 
     const { error, status } = await supabase
       .from('promos')
       .delete()
-      .eq('id', promoId)
+      .eq('id', form.data.id)
       .select()
       .single() // causes error if id cannot be found
 
     if (error) {
-      return fail(status, {
-        deleteError: 'Unable to delete promotion: ' + error.message
-      })
+      return message(
+        form,
+        {
+          type: 'error',
+          message: 'Unable to delete promotion: ' + error.message
+        },
+        { status }
+      )
     }
 
     throw redirect(303, '/promotions')

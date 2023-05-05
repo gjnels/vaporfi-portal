@@ -12,10 +12,7 @@ export const load = async ({ locals: { supabase, getSession } }) => {
   } = await supabase.from('locations').select('id, name')
 
   if (locationsError) {
-    throw error(
-      locationsStatus,
-      'Unable to fetch locations: ' + locationsError.message
-    )
+    throw error(locationsStatus, 'Unable to fetch locations: ' + locationsError.message)
   }
 
   const {
@@ -67,11 +64,9 @@ export const load = async ({ locals: { supabase, getSession } }) => {
   }
 
   return {
-    form: superValidate<typeof missingSkuSchema, Message>(
-      getDefaultValues(),
-      missingSkuSchema,
-      { noErrors: true }
-    ),
+    form: superValidate<typeof missingSkuSchema, Message>(getDefaultValues(), missingSkuSchema, {
+      noErrors: true
+    }),
     locations,
     pendingItems: missingSkus
   }
@@ -79,20 +74,14 @@ export const load = async ({ locals: { supabase, getSession } }) => {
 
 export const actions = {
   default: async (event) => {
-    const form = await superValidate<typeof missingSkuSchema, Message>(
-      event,
-      missingSkuSchema
-    )
-    console.log(form)
+    const form = await superValidate<typeof missingSkuSchema, Message>(event, missingSkuSchema)
     if (!form.valid) {
       return fail(400, { form })
     }
 
     const { supabase } = event.locals
 
-    const { error, status } = await supabase
-      .from('missing_skus')
-      .insert(form.data)
+    const { error, status } = await supabase.from('missing_skus').insert(form.data)
 
     if (error) {
       if (error.code === '23505') {

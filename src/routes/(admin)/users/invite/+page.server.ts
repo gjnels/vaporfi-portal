@@ -19,10 +19,7 @@ export const load = async ({ locals: { supabase } }) => {
 
   return {
     locations,
-    form: superValidate<typeof adminInviteUserSchema, Message>(
-      null,
-      adminInviteUserSchema
-    )
+    form: superValidate<typeof adminInviteUserSchema, Message>(null, adminInviteUserSchema)
   }
 }
 
@@ -43,10 +40,12 @@ export const actions = {
       event
     })
 
-    const { data, error: inviteError } =
-      await supabaseAdminClient.auth.admin.inviteUserByEmail(form.data.email, {
+    const { data, error: inviteError } = await supabaseAdminClient.auth.admin.inviteUserByEmail(
+      form.data.email,
+      {
         redirectTo: `${event.url.origin}/auth/redirect?action=accept-invite`
-      })
+      }
+    )
 
     if (inviteError) {
       return message(
@@ -64,8 +63,10 @@ export const actions = {
     const { user } = data
 
     // profile has already been created from a trigger on the insert on auth.users table
-    const { error: updateProfileError, status: updateProfileStatus } =
-      await supabase.from('profiles').update({ name, role }).eq('id', user.id)
+    const { error: updateProfileError, status: updateProfileStatus } = await supabase
+      .from('profiles')
+      .update({ name, role })
+      .eq('id', user.id)
 
     if (updateProfileError) {
       return message(

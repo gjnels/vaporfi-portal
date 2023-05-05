@@ -2,7 +2,7 @@
   import { browser } from '$app/environment'
   import { goto } from '$app/navigation'
 
-  import { PageLayout } from '$components'
+  import PageLayout from '$components/PageLayout/PageLayout.svelte'
 
   export let data
 
@@ -16,7 +16,7 @@
 </svelte:head>
 
 <PageLayout>
-  <p class="animate-pulse text-center text-2xl text-primary-400">
+  <h2 class="animate-pulse text-center text-tertiary-600 dark:text-tertiary-500">
     Confirming your account...
-  </p>
+  </h2>
 </PageLayout>

@@ -8,15 +8,12 @@ export const load = async ({ locals: { getSession } }) => {
   if (await getSession()) {
     throw redirect(303, '/password-change')
   }
-  return { form: superValidate<typeof emailSchema, Message>(null, emailSchema) }
+  return { form: superValidate(null, emailSchema) }
 }
 
 export const actions = {
   default: async (event) => {
-    const form = await superValidate<typeof emailSchema, Message>(
-      event,
-      emailSchema
-    )
+    const form = await superValidate<typeof emailSchema, Message>(event, emailSchema)
 
     if (!form.valid) {
       return fail(400, { form })
@@ -26,10 +23,7 @@ export const actions = {
 
     const redirectTo = `${event.url.origin}/auth/redirect?action=password-reset`
 
-    const { error } = await supabase.auth.resetPasswordForEmail(
-      form.data.email,
-      { redirectTo }
-    )
+    const { error } = await supabase.auth.resetPasswordForEmail(form.data.email, { redirectTo })
 
     if (error) {
       if (error instanceof AuthApiError && error.status === 400) {

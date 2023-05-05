@@ -1,7 +1,6 @@
 <script lang="ts">
   import { Icon, PencilSquare } from 'svelte-hero-icons'
-
-  import { PageLayout } from '$components'
+  import PageLayout from '$components/PageLayout/PageLayout.svelte'
 
   export let data
   $: ({ profiles } = data)
@@ -11,22 +10,20 @@
   <title>Manage Users | VF Columbus</title>
 </svelte:head>
 
-<PageLayout>
+<PageLayout headerWrapperStyles="space-y-2">
   <svelte:fragment slot="header">
     <h1>Manage Users</h1>
     <a
       href="/users/invite"
-      class="btn btn-primary btn-small">Invite New User</a
+      class="btn btn-sm variant-soft-primary hover:variant-filled-primary">Invite New User</a
     >
   </svelte:fragment>
 
   {#if profiles.length === 0}
-    <span class="text-center text-lg font-medium italic text-danger-500"
-      >No profiles found</span
-    >
+    <span class="text-center text-lg font-medium italic text-error-500">No profiles found</span>
   {:else}
-    <div class="styled-table">
-      <table>
+    <div class="table-container">
+      <table class="table-hover table">
         <thead>
           <tr>
             <th />
@@ -43,38 +40,22 @@
                 <a
                   href="/users/edit?profile_id={profile.id}"
                   title="Edit this user"
-                  class="btn btn-secondary btn-icon mx-auto w-fit"
+                  class="btn-icon btn-icon-sm variant-soft-secondary hover:variant-filled-secondary"
                 >
                   <Icon
                     src={PencilSquare}
-                    size="1.5rem"
+                    size="1.5em"
                     solid
                   />
                 </a>
               </td>
-              <td class:text-surface-500={!profile.name}
-                >{profile.name || 'no name'}</td
-              >
+              <td class:brightness-50={!profile.name}>{profile.name || 'no name'}</td>
               <td>{profile.email}</td>
-              <td class:text-surface-500={profile.role === null}
-                >{profile.role ?? 'none'}</td
-              >
-              {#if profile.locations}
-                {#if Array.isArray(profile.locations)}
-                  {#if profile.locations.length === 0}
-                    <td class="text-surface-400">none</td>
-                  {:else}
-                    <td
-                      >{profile.locations
-                        .map(({ name }) => name)
-                        .join(', ')}</td
-                    >
-                  {/if}
-                {:else}
-                  <td>{profile.locations.name}</td>
-                {/if}
+              <td class:brightness-50={profile.role === null}>{profile.role ?? 'none'}</td>
+              {#if profile.locations && profile.locations.length > 0}
+                <td>{profile.locations.map(({ name }) => name).join(', ')}</td>
               {:else}
-                <td class="text-surface-500">none</td>
+                <td class="brightness-50">none</td>
               {/if}
             </tr>
           {/each}

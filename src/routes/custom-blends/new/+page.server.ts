@@ -1,10 +1,6 @@
 import { error, fail, redirect } from '@sveltejs/kit'
 import { message, setError, superValidate } from 'sveltekit-superforms/server'
-
-import {
-  insertCustomBlendRefinedSchema,
-  insertCustomBlendSchema
-} from '$lib/schemas/customBlends'
+import { insertCustomBlendRefinedSchema, insertCustomBlendSchema } from '$lib/schemas/customBlends'
 
 export const load = async ({ locals: { supabase, getSession } }) => {
   const session = await getSession()
@@ -16,11 +12,7 @@ export const load = async ({ locals: { supabase, getSession } }) => {
     data: profile,
     error: err,
     status
-  } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', session.user.id)
-    .single()
+  } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
 
   if (err) {
     throw error(status, 'Could not find user profile: ' + err.message)
@@ -32,19 +24,16 @@ export const load = async ({ locals: { supabase, getSession } }) => {
 
   return {
     isAdmin: profile.role === 'Admin',
-    form: superValidate<typeof insertCustomBlendSchema, Message>(
-      null,
-      insertCustomBlendSchema
-    )
+    form: superValidate<typeof insertCustomBlendSchema, Message>(null, insertCustomBlendSchema)
   }
 }
 
 export const actions = {
   default: async (event) => {
-    const form = await superValidate<
-      typeof insertCustomBlendRefinedSchema,
-      Message
-    >(event, insertCustomBlendRefinedSchema)
+    const form = await superValidate<typeof insertCustomBlendRefinedSchema, Message>(
+      event,
+      insertCustomBlendRefinedSchema
+    )
 
     if (!form.valid) {
       return fail(400, { form })
@@ -55,9 +44,7 @@ export const actions = {
 
     // created_by_profile_id and approved_by_profile_id handled by database
 
-    const { error, status } = await event.locals.supabase
-      .from('custom_blends')
-      .insert(data)
+    const { error, status } = await event.locals.supabase.from('custom_blends').insert(data)
 
     if (error) {
       // unique constraint violation

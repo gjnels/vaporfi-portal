@@ -19,7 +19,16 @@ export const handle = async ({ event, resolve }) => {
     return session
   }
 
-  return resolve(event, {
+  // Get preferred theme from cookies
+  let theme = event.cookies.get('theme')
+  // If no theme, set theme to vf (VaporFi)
+  if (!theme) {
+    event.cookies.set('theme', 'vf', { path: '/' })
+    theme = 'vf'
+  }
+  event.locals.theme = theme
+
+  return await resolve(event, {
     // Tell SvelteKit that supabase needs the content-range header
     filterSerializedResponseHeaders(name) {
       return name === 'content-range'

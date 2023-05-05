@@ -1,21 +1,25 @@
 <script lang="ts">
-  import toast from 'svelte-french-toast'
+  import { page } from '$app/stores'
   import { superForm } from 'sveltekit-superforms/client'
 
-  import { page } from '$app/stores'
-
-  import { FormControl, FormMessage, PageLayout } from '$components'
+  // Components
+  import PageLayout from '$components/PageLayout/PageLayout.svelte'
+  import Form from '$lib/components/Form/Form.svelte'
+  import TextInput from '$components/FormControls/TextInput.svelte'
+  import { toastStore } from '@skeletonlabs/skeleton'
 
   export let data
 
-  const { form, enhance, errors, message, constraints } = superForm(data.form, {
+  const sForm = superForm(data.form, {
     onResult: ({ result }) => {
-      if (result.type === 'redirect') {
-        toast.success('Successfully logged in')
+      if (result.type === 'redirect' || result.type === 'success') {
+        toastStore.trigger({
+          message: 'Successfully logged in',
+          background: 'variant-filled-success'
+        })
       }
     }
   })
-
   const redirectTo = $page.url.searchParams.get('redirectTo')
 </script>
 
@@ -23,49 +27,37 @@
   <title>Log In | VF Columbus</title>
 </svelte:head>
 
-<PageLayout contentContainerStyles="max-w-4xl">
-  <h1 class="mb-8 text-center text-4xl font-semibold">Log In</h1>
+<PageLayout contentWrapperStyles="max-w-2xl">
+  <svelte:fragment slot="header">
+    <h1 class="text-center">Log In</h1>
+  </svelte:fragment>
 
-  <form
+  <Form
     method="post"
     action="?redirectTo={$page.url.searchParams.get('redirectTo') ?? '/'}"
-    class="form"
-    use:enhance
+    superForm={sForm}
   >
-    <FormControl
-      label="Email address"
-      errors={$errors.email}
-    >
-      <input
-        type="email"
-        name="email"
-        bind:value={$form.email}
-        {...$constraints.email}
-      />
-    </FormControl>
+    <TextInput
+      form={sForm}
+      field="email"
+    />
 
-    <FormControl
-      label="Password"
-      errors={$errors.password}
-    >
-      <input
-        type="password"
-        name="password"
-        bind:value={$form.password}
-        {...$constraints.password}
-      />
-    </FormControl>
+    <TextInput
+      form={sForm}
+      field="password"
+      type="password"
+    />
 
-    <div class="form-actions flex flex-wrap items-center gap-4">
-      <FormMessage message={$message} />
+    <svelte:fragment slot="actions">
       <button
         type="submit"
-        class="btn btn-primary ml-auto">Log In</button
+        class="btn variant-filled-primary">Log In</button
       >
-    </div>
-  </form>
+    </svelte:fragment>
+  </Form>
+
   <a
     href="/auth/reset-password{redirectTo ? `?redirectTo=${redirectTo}` : ''}"
-    class="link link-secondary mx-auto mt-8">Forgot your password?</a
+    class="mx-auto mt-8 block w-fit">Forgot your password?</a
   >
 </PageLayout>

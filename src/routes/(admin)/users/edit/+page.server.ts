@@ -3,17 +3,12 @@ import { PUBLIC_SUPABASE_URL } from '$env/static/public'
 import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit'
 import { error, fail, redirect } from '@sveltejs/kit'
 import { message, superValidate } from 'sveltekit-superforms/server'
+import { adminUpdateProfileSchema, userIdSchema } from '$lib/schemas/profiles.js'
 
-import {
-  adminUpdateProfileSchema,
-  userIdSchema
-} from '$lib/schemas/profiles.js'
+const UPDATE_USER_ID = 'update_user'
+const DELETE_USER_ID = 'delete_user'
 
-export const load = async ({
-  locals: { supabase },
-  url: { searchParams },
-  parent
-}) => {
+export const load = async ({ locals: { supabase }, url: { searchParams }, parent }) => {
   const id = searchParams.get('profile_id')
   if (!id) {
     throw redirect(303, '/users')
@@ -42,10 +37,7 @@ export const load = async ({
   } = await supabase.from('locations').select('id, name').order('name')
 
   if (locationsError) {
-    throw error(
-      locationsStatus,
-      'Unable to fetch locations: ' + locationsError.message
-    )
+    throw error(locationsStatus, 'Unable to fetch locations: ' + locationsError.message)
   }
 
   const hasLocation = (id: number) => {
@@ -66,25 +58,21 @@ export const load = async ({
   return {
     profile,
     locations,
-    updateForm: superValidate<typeof adminUpdateProfileSchema, Message>(
+    updateForm: superValidate(
       { ...profile, locations: locationsObject },
       adminUpdateProfileSchema,
-      { id: 'editUserForm' }
+      { id: UPDATE_USER_ID, errors: false }
     ),
-    deleteForm: superValidate<typeof userIdSchema, Message>(
-      { id },
-      userIdSchema,
-      { id: 'deleteUserForm' }
-    )
+    deleteForm: superValidate({ id }, userIdSchema, { id: DELETE_USER_ID })
   }
 }
 
 export const actions = {
-  updateUser: async (event) => {
+  update: async (event) => {
     const form = await superValidate<typeof adminUpdateProfileSchema, Message>(
       event,
       adminUpdateProfileSchema,
-      { id: 'editUserForm' }
+      { id: UPDATE_USER_ID }
     )
 
     if (!form.valid) {
@@ -104,10 +92,7 @@ export const actions = {
         form,
         {
           type: 'error',
-          message: [
-            'Unable to update user profile.',
-            updateProfileError.message
-          ]
+          message: ['Unable to update user profile.', updateProfileError.message]
         },
         { status }
       )
@@ -156,18 +141,12 @@ export const actions = {
     throw redirect(303, '/users')
   },
 
-  deleteUser: async (event) => {
-    const form = await superValidate<typeof userIdSchema, Message>(
-      event,
-      userIdSchema,
-      { id: 'deleteUserForm' }
-    )
+  delete: async (event) => {
+    const form = await superValidate<typeof userIdSchema, Message>(event, userIdSchema, {
+      id: DELETE_USER_ID
+    })
     if (!form.valid) {
-      return message(
-        form,
-        { type: 'error', message: 'Invalid user id' },
-        { status: 400 }
-      )
+      return message(form, { type: 'error', message: 'Invalid user id' }, { status: 400 })
     }
 
     const supabaseAdminClient = createSupabaseServerClient({
@@ -176,9 +155,7 @@ export const actions = {
       event
     })
 
-    const { error } = await supabaseAdminClient.auth.admin.deleteUser(
-      form.data.id
-    )
+    const { error } = await supabaseAdminClient.auth.admin.deleteUser(form.data.id)
     if (error) {
       return message(
         form,

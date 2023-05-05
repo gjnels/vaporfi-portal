@@ -1,16 +1,15 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { superForm } from 'sveltekit-superforms/client'
-
   import { profileUpdate } from '$lib/stores/profileUpdate.js'
-
-  import { FormControl, FormMessage, PageLayout } from '$components'
+  import PageLayout from '$components/PageLayout/PageLayout.svelte'
+  import Form from '$components/Form/Form.svelte'
+  import TextInput from '$components/FormControls/TextInput.svelte'
 
   export let data
 
-  const { form, enhance, message, errors, constraints, delayed } = superForm(
-    data.form
-  )
+  const nameForm = superForm(data.nameForm)
+  $: ({ delayed: nameDelayed, form: nameFormStore } = nameForm)
 
   onMount(() => {
     $profileUpdate.external = false
@@ -25,53 +24,44 @@
 </svelte:head>
 
 <PageLayout
-  headerContainerStyles="max-w-4xl justify-between"
-  contentContainerStyles="max-w-4xl flex flex-col gap-8"
+  headerWrapperStyles="flex flex-wrap gap-8 justify-between items-center"
+  contentWrapperStyles="max-w-4xl flex flex-col gap-8"
 >
   <svelte:fragment slot="header">
     <h1>My Profile</h1>
     <a
       href="/change-password"
-      class="btn btn-secondary btn-small">Change my Password</a
+      class="btn btn-sm variant-soft-tertiary hover:variant-filled-tertiary">Change my Password</a
     >
   </svelte:fragment>
 
-  <form
-    method="post"
+  <Form
+    superForm={nameForm}
     action="?/updateName"
-    class="form"
-    use:enhance
   >
-    <div class="flex flex-col gap-2 p-4">
-      <label
-        for="name"
-        class="text-2xl font-medium">My Name</label
+    <label
+      for="name"
+      class="flex flex-col gap-2"
+    >
+      <h3>My Name</h3>
+      <span class="text-sm text-surface-600-300-token"
+        >Enter your name you wish to display. Leave blank to remove your name from your profile.</span
       >
-      <span class="text-sm text-surface-300"
-        >Enter your name you wish to display. Leave blank to remove your name
-        from your profile.</span
-      >
-      <FormControl errors={$errors.name}>
-        <input
-          type="text"
-          name="name"
-          id="name"
-          bind:value={$form.name}
-          {...$constraints.name}
-          required={false}
-          class="grow"
-        />
-      </FormControl>
-    </div>
+      <TextInput
+        form={nameForm}
+        field="name"
+        label={false}
+        required={false}
+      />
+    </label>
 
-    <div class="form-actions flex flex-wrap items-center gap-4">
-      <FormMessage message={$message} />
+    <svelte:fragment slot="actions">
       <button
         type="submit"
-        class="btn btn-primary btn-small ml-auto"
-        disabled={$delayed || $form.name === data.profile.name}
-        >{$delayed ? 'Updating...' : 'Update Name'}</button
+        class="btn variant-filled-primary"
+        disabled={$nameDelayed || $nameFormStore.name === data.profile.name}
+        >{$nameDelayed ? 'Updating...' : 'Update Name'}</button
       >
-    </div>
-  </form>
+    </svelte:fragment>
+  </Form>
 </PageLayout>

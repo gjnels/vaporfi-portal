@@ -1,6 +1,10 @@
-import { error, fail, redirect } from '@sveltejs/kit'
-
 import type { DatabaseRow } from '$lib/types/supabaseHelpers.types.js'
+import { error, fail, redirect } from '@sveltejs/kit'
+import { message, superValidate } from 'sveltekit-superforms/client'
+import { fixSkuSchema, skuIdSchema } from '$lib/schemas/skus.js'
+
+const UPDATE_FORM_ID = 'update_incorrect_sku'
+const DELETE_FORM_ID = 'delete_incorrect_sku'
 
 export const load = async ({ locals: { supabase } }) => {
   const {
@@ -9,9 +13,7 @@ export const load = async ({ locals: { supabase } }) => {
     status
   } = await supabase
     .from('incorrect_skus')
-    .select(
-      '*, submitted_from:locations(name), submitted_by:profiles(name, email)'
-    )
+    .select('*, submitted_from:locations(name), submitted_by:profiles(name, email)')
     .order('correct_item_name')
     .order('incorrect_item_name')
     .returns<
@@ -26,44 +28,55 @@ export const load = async ({ locals: { supabase } }) => {
   }
 
   return {
-    skus
+    skus,
+    updateForm: superValidate(fixSkuSchema, { id: UPDATE_FORM_ID }),
+    deleteForm: superValidate(skuIdSchema, { id: DELETE_FORM_ID })
   }
 }
 
 export const actions = {
-  update: async ({ url: { searchParams }, locals: { supabase } }) => {
-    const id = Number(searchParams.get('sku_id'))
-    if (isNaN(id)) {
-      return fail(400, { message: 'SKU id is missing' })
-    }
+  update: async ({ request, locals: { supabase } }) => {
+    const form = await superValidate<typeof fixSkuSchema, Message>(request, fixSkuSchema, {
+      id: UPDATE_FORM_ID
+    })
 
-    const fixed = searchParams.get('fixed') === 'true'
+    if (!form.valid) {
+      return fail(400, { form })
+    }
 
     const { error: err, status } = await supabase
       .from('incorrect_skus')
-      .update({ fixed })
-      .eq('id', id)
+      .update({ fixed: form.data.fixed })
+      .eq('id', form.data.id)
       .single()
 
     if (err) {
-      return fail(status, {
-        message: 'Unable to update record: ' + err.message
-      })
+      return message(
+        form,
+        {
+          type: 'error',
+          message: 'Unable to update record: ' + err.message
+        },
+        { status }
+      )
     }
 
     throw redirect(303, '/incorrect-sku/manage')
   },
 
-  delete: async ({ url: { searchParams }, locals: { supabase } }) => {
-    const id = Number(searchParams.get('sku_id'))
-    if (isNaN(id)) {
-      return fail(400, { message: 'SKU id is missing' })
+  delete: async ({ request, locals: { supabase } }) => {
+    const form = await superValidate<typeof skuIdSchema, Message>(request, skuIdSchema, {
+      id: DELETE_FORM_ID
+    })
+
+    if (!form.valid) {
+      return fail(400, { form })
     }
 
     const { error: err, status } = await supabase
       .from('incorrect_skus')
       .delete()
-      .eq('id', id)
+      .eq('id', form.data.id)
       .single()
 
     if (err) {

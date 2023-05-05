@@ -1,11 +1,7 @@
 import { error, fail } from '@sveltejs/kit'
 import { superValidate } from 'sveltekit-superforms/server'
-
-import {
-  copyCustomBlendSchema,
-  deleteCustomBlendSchema
-} from '$lib/schemas/customBlends.js'
-import type { DatabaseRow } from '$lib/types/supabaseHelpers.types.js'
+import { copyCustomBlendSchema } from '$lib/schemas/customBlends.js'
+import type { CustomBlend } from '$lib/types/flavors.types.js'
 
 export const load = async ({ locals: { supabase } }) => {
   const {
@@ -18,13 +14,7 @@ export const load = async ({ locals: { supabase } }) => {
     // show unapproved blends first, then sort by name
     .order('approved')
     .order('name')
-    .returns<
-      (DatabaseRow<'custom_blends'> & {
-        flavor1: DatabaseRow<'flavors'>
-        flavor2: DatabaseRow<'flavors'> | null
-        flavor3: DatabaseRow<'flavors'> | null
-      })[]
-    >()
+    .returns<CustomBlend[]>()
 
   if (err) {
     throw error(status, 'Unable to fetch custom blends. ' + err.message)
@@ -32,25 +22,13 @@ export const load = async ({ locals: { supabase } }) => {
 
   return {
     blends,
-    copyForm: superValidate<typeof copyCustomBlendSchema, Message>(
-      null,
-      copyCustomBlendSchema,
-      { id: 'copy' }
-    ),
-    deleteForm: superValidate<typeof deleteCustomBlendSchema, Message>(
-      null,
-      deleteCustomBlendSchema,
-      { id: 'delete' }
-    )
+    form: superValidate(copyCustomBlendSchema, { id: 'copy_blend' })
   }
 }
 
 export const actions = {
-  copyBlend: async (event) => {
-    const form = await superValidate<typeof copyCustomBlendSchema, Message>(
-      event,
-      copyCustomBlendSchema
-    )
+  default: async (event) => {
+    const form = await superValidate(event, copyCustomBlendSchema, { id: 'copy_blend' })
     if (!form.valid) {
       return fail(400, { form })
     }

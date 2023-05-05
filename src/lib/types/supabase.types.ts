@@ -1,10 +1,4 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json }
-  | Json[]
+export type Json = string | number | boolean | null | { [key: string]: Json } | Json[]
 
 export interface Database {
   public: {
@@ -366,14 +360,7 @@ export interface Database {
       }
     }
     Enums: {
-      flavorcategory:
-        | 'Fruit'
-        | 'Candy'
-        | 'Dessert'
-        | 'Tobacco'
-        | 'Menthol'
-        | 'Drinks'
-        | 'Other'
+      flavorcategory: 'Fruit' | 'Candy' | 'Dessert' | 'Tobacco' | 'Menthol' | 'Drinks' | 'Other'
       role: 'Store' | 'Manager' | 'Admin'
     }
     CompositeTypes: {

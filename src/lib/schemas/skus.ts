@@ -21,29 +21,37 @@ export const missingSkuSchema = skuSchema.extend({
 })
 
 export const incorrectSkuSchema = skuSchema.extend({
-  correct_item_name: z
-    .string()
-    .trim()
-    .min(1, 'Enter the name of the item this SKU belongs to'),
+  correct_item_name: z.string().trim().min(1, 'Enter the name of the item this SKU belongs to'),
   incorrect_item_name: z
     .string()
     .trim()
     .min(1, 'Enter the name of the item that is currently ringing up')
 })
 
-export const incorrectSkuRefinedSchema = incorrectSkuSchema.superRefine(
-  (data, ctx) => {
-    if (data.incorrect_item_name === data.correct_item_name) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Item names cannot be the same',
-        path: ['incorrect_item_name']
-      })
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Item names cannot be the same',
-        path: ['correct_item_name']
-      })
-    }
+export const incorrectSkuRefinedSchema = incorrectSkuSchema.superRefine((data, ctx) => {
+  if (data.incorrect_item_name === data.correct_item_name) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Item names cannot be the same',
+      path: ['incorrect_item_name']
+    })
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Item names cannot be the same',
+      path: ['correct_item_name']
+    })
   }
+})
+
+export const skuIdSchema = z.object({
+  id: z.number().positive()
+})
+
+export const updateMissingSkuSchema = missingSkuSchema.merge(skuIdSchema)
+export const updateIncorrectSkuSchema = incorrectSkuSchema.merge(skuIdSchema)
+
+export const fixSkuSchema = skuIdSchema.merge(
+  z.object({
+    fixed: z.boolean()
+  })
 )

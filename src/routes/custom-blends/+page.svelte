@@ -1,206 +1,118 @@
 <script lang="ts">
-  import { createDialog } from 'svelte-headlessui'
-  import { DocumentDuplicate, Icon, PencilSquare } from 'svelte-hero-icons'
-  import { writable } from 'svelte/store'
-  import { superForm } from 'sveltekit-superforms/client'
+  import type { CustomBlend } from '$lib/types/flavors.types'
 
-  import { copyBlendToClipboard } from '$lib/utils/clipboard.js'
-  import { createDisplayBlendString } from '$lib/utils/flavors.js'
-
-  import { Modal, PageLayout } from '$components'
-  import FormControl from '$components/FormControl.svelte'
+  // Components
+  import PageLayout from '$components/PageLayout/PageLayout.svelte'
+  import CustomBlendList from './CustomBlendList.svelte'
+  import { CheckCircle, Icon } from 'svelte-hero-icons'
 
   export let data
 
   $: isAdmin = data.currentProfile?.role === 'Admin'
   $: isManager = isAdmin || data.currentProfile?.role === 'Manager'
 
-  const {
-    form: copyForm,
-    enhance: copyEnhance,
-    constraints: copyConstraints,
-    errors: copyErrors
-  } = superForm(data.copyForm, {
-    taintedMessage: null, // don't confirm before leaving page
-    onResult: ({ result: { type } }) => {
-      if (type === 'success' && $currentCopyBlend) {
-        copyBlendToClipboard({
-          ...$currentCopyBlend,
-          nicotine: $copyForm.nicotine,
-          bottleCount: $copyForm.bottleCount
-        })
-
-        copyModal.close()
-      }
-    }
-  })
-
-  const copyModal = createDialog({ label: 'custom_blend:copy' })
-
-  const currentCopyBlend = writable<(typeof data.blends)[number] | null>(null)
-
-  // Reset blend stores when modals close
-  $: if (!$copyModal.expanded) $currentCopyBlend = null
-
+  // Filter blends based on search terms
+  // Includes any blends which have matches to search terms in name or flavors
   let blendSearchTerms = ''
-  $: filteredBlends = data.blends.filter((blend) =>
-    blendSearchTerms.trim().length > 0
-      ? blendSearchTerms
-          .trim()
-          .toLowerCase()
-          .split(' ')
-          .every(
-            (term) =>
-              blend.name.toLowerCase().includes(term) ||
-              blend.flavor1.flavor.toLowerCase().includes(term) ||
-              blend.flavor2?.flavor.toLowerCase().includes(term) ||
-              blend.flavor3?.flavor.toLowerCase().includes(term)
-          )
-      : true
-  )
+  $: filterBlends = (blends: CustomBlend[]) =>
+    blends.filter((blend) =>
+      blendSearchTerms.trim().length > 0
+        ? blendSearchTerms
+            .trim()
+            .toLowerCase()
+            .split(' ')
+            .every(
+              (term) =>
+                blend.name.toLowerCase().includes(term) ||
+                blend.flavor1.flavor.toLowerCase().includes(term) ||
+                blend.flavor2?.flavor.toLowerCase().includes(term) ||
+                blend.flavor3?.flavor.toLowerCase().includes(term)
+            )
+        : true
+    )
+
+  const approvedBlends = data.blends.filter((blend) => blend.approved)
+  const unapprovedBlends = data.blends.filter((blend) => !blend.approved)
+  $: filteredApprovedBlends = filterBlends(approvedBlends)
+  $: filteredUnapprovedBlends = filterBlends(unapprovedBlends)
 </script>
 
 <svelte:head>
   <title>Custom Blends | VF Columbus</title>
 </svelte:head>
 
-<PageLayout headerContainerStyles="flex-col items-stretch">
-  <h1 slot="header">Custom Blends</h1>
+<PageLayout contentWrapperStyles="space-y-8">
+  <svelte:fragment slot="header">
+    <h1>Custom Blends</h1>
+  </svelte:fragment>
 
   {#if data.blends.length === 0}
-    <p class="text-center italic text-danger-500">No custom blends found</p>
+    <p class="text-center italic text-error-500">No custom blends found</p>
   {:else}
-    <div class="mb-8 flex w-full flex-wrap justify-center gap-4">
-      <!-- svelte-ignore a11y-autofocus -->
+    <!-- Above blend list -->
+    <div class="flex w-full flex-wrap justify-center gap-4">
+      <!-- Search bar -->
       <input
         type="search"
+        class="input w-auto grow"
         bind:value={blendSearchTerms}
-        class="grow"
         placeholder="Search for custom blends"
       />
+      <!-- Link to new blend page for managers and admins -->
       {#if isAdmin || isManager}
         <a
           href="/custom-blends/new"
-          class="btn btn-small btn-primary">Make a new blend</a
+          class="btn btn-sm variant-soft hover:variant-filled-tertiary">Make a new blend</a
         >
       {/if}
     </div>
 
-    {#if filteredBlends.length === 0}
-      <p class="text-center italic text-danger-400">
-        No custom blends match your search terms
-      </p>
-    {:else}
-      <ul class="space-y-2">
-        {#each filteredBlends as blend (blend.id)}
-          <li
-            class="flex flex-wrap items-center gap-4 rounded-xl border bg-surface-800 px-4 py-3 transition focus-within:bg-surface-950 hover:bg-surface-950 {blend.approved
-              ? 'border-transparent focus-within:border-surface-600 hover:border-surface-600'
-              : 'border-red-500'}"
-          >
-            <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
-              <span
-                class="text-lg font-medium {blend.approved
-                  ? 'text-primary-300'
-                  : 'text-danger-300'}">{blend.name}</span
-              >
-              <span>{createDisplayBlendString(blend)}</span>
-            </div>
-            {#if !blend.approved}
-              <p class="text-red-500">Not approved</p>
-            {/if}
-            <div class="ml-auto flex items-center gap-2">
-              <button
-                type="button"
-                class="btn btn-icon btn-primary"
-                title="Copy this custom blend"
-                on:click={() => {
-                  $currentCopyBlend = blend
-                  $copyForm = { ...$copyForm, ...blend }
-                  copyModal.open()
-                }}
-                ><Icon
-                  src={DocumentDuplicate}
-                  size="1.5rem"
-                  solid
-                /></button
-              >
-              <!-- Edit and Delete actions are only available to admins -->
-              {#if isAdmin}
-                <a
-                  href="/custom-blends/edit?blend_id={blend.id}"
-                  class="btn btn-icon btn-secondary"
-                  title="Edit this custom blend"
-                  ><Icon
-                    src={PencilSquare}
-                    size="1.5rem"
-                    solid
-                  /></a
-                >
-              {/if}
-            </div>
-          </li>
-        {/each}
-      </ul>
+    <!-- Unapproved blends - only visible to admins -->
+    {#if isAdmin}
+      <div class="space-y-2">
+        <h3>Unapproved Custom Blends</h3>
+        {#if unapprovedBlends.length === 0}
+          <hr />
+          <div class="flex items-center gap-2 italic brightness-75">
+            <Icon
+              src={CheckCircle}
+              size="1.5em"
+              solid
+              class="text-primary-600 dark:text-primary-500"
+            />
+            <span>All custom blends are approved</span>
+          </div>
+        {:else if filteredUnapprovedBlends.length === 0}
+          <hr />
+          <p class="italic text-error-500">No unapproved custom blends match your search terms</p>
+        {:else}
+          <CustomBlendList
+            blends={filteredUnapprovedBlends}
+            form={data.form}
+            {isAdmin}
+          />
+        {/if}
+      </div>
     {/if}
+
+    <!-- Approved blends - visible to everyone -->
+    <div class="space-y-2">
+      {#if isAdmin}
+        <h3>Approved Custom Blends</h3>
+      {/if}
+      {#if approvedBlends.length === 0}
+        <p class="italic text-error-500">No {isAdmin ? 'approved' : ''} custom blends found</p>
+      {:else if filteredApprovedBlends.length === 0}
+        <p class="italic text-error-500">
+          No {isAdmin ? 'approved' : ''} custom blends match your search terms
+        </p>
+      {:else}
+        <CustomBlendList
+          blends={filteredApprovedBlends}
+          form={data.form}
+          {isAdmin}
+        />
+      {/if}
+    </div>
   {/if}
 </PageLayout>
-
-<!-- Copy blend modal -->
-<Modal
-  modalStore={copyModal}
-  modalWindowStyles="w-full max-w-lg"
->
-  {#if $currentCopyBlend !== null}
-    <p class="mb-6 text-center">
-      <span class="block text-2xl font-semibold">{$currentCopyBlend.name}</span>
-      <span>
-        {createDisplayBlendString($currentCopyBlend)}
-      </span>
-    </p>
-  {/if}
-
-  <form
-    method="post"
-    action="?/copyBlend"
-    class="flex flex-col gap-6"
-    use:copyEnhance
-  >
-    <FormControl
-      label="Nicotine level"
-      errors={$copyErrors.nicotine}
-    >
-      <input
-        type="number"
-        name="nicotine"
-        bind:value={$copyForm.nicotine}
-        {...$copyConstraints.nicotine}
-        step="any"
-      />
-    </FormControl>
-
-    <FormControl
-      label="Number of bottles"
-      errors={$copyErrors.bottleCount}
-    >
-      <input
-        type="number"
-        name="bottleCount"
-        bind:value={$copyForm.bottleCount}
-        {...$copyConstraints.bottleCount}
-      />
-    </FormControl>
-
-    <div class="ml-auto flex flex-wrap gap-4">
-      <button
-        type="submit"
-        class="btn btn-primary">Copy Blend</button
-      >
-      <button
-        type="button"
-        class="btn"
-        on:click={copyModal.close}>Cancel</button
-      >
-    </div>
-  </form>
-</Modal>

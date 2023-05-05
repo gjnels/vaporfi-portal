@@ -4,10 +4,7 @@ import { message, superValidate } from 'sveltekit-superforms/server'
 
 import { loginSchema } from '$lib/schemas/auth.js'
 
-export const load = async ({
-  locals: { getSession },
-  url: { searchParams }
-}) => {
+export const load = async ({ locals: { getSession }, url: { searchParams } }) => {
   const session = await getSession()
 
   // Redirect when there is a valid session
@@ -17,16 +14,13 @@ export const load = async ({
   }
 
   return {
-    form: superValidate<typeof loginSchema, Message>(null, loginSchema)
+    form: superValidate<typeof loginSchema>(null, loginSchema)
   }
 }
 
 export const actions = {
   default: async (event) => {
-    const form = await superValidate<typeof loginSchema, Message>(
-      event,
-      loginSchema
-    )
+    const form = await superValidate<typeof loginSchema, Message>(event, loginSchema)
 
     if (!form.valid) {
       return fail(400, { form })
@@ -40,11 +34,7 @@ export const actions = {
 
     if (error) {
       if (error instanceof AuthApiError && error.status === 400) {
-        return message(
-          form,
-          { type: 'error', message: error.message },
-          { status: 400 }
-        )
+        return message(form, { type: 'error', message: error.message }, { status: 400 })
       }
       return message(
         form,

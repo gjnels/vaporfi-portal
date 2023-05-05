@@ -1,57 +1,39 @@
 <script lang="ts">
-  import { createPopover } from 'svelte-headlessui'
-  import {
-    Icon,
-    InformationCircle,
-    PencilSquare,
-    Trash
-  } from 'svelte-hero-icons'
-  import { scale } from 'svelte/transition'
-
-  import { savedBlends, storeSavedBlends } from '$lib/stores/savedBlends'
   import type { SavedFlavorPickerBlend } from '$lib/types/flavors.types'
+  import { savedBlends, storeSavedBlends } from '$lib/stores/savedBlends'
   import { copyBlendToClipboard } from '$lib/utils/clipboard'
   import { createBlendString } from '$lib/utils/flavors'
+  import { popup, type PopupSettings } from '@skeletonlabs/skeleton'
 
   export let onEdit: (blend: SavedFlavorPickerBlend) => void
   export let onDelete: (blend: SavedFlavorPickerBlend) => void
+  export let onClear: () => void
 
-  const popover = createPopover({ label: 'saved blends popover' })
+  let tooltip: PopupSettings = {
+    event: 'hover',
+    target: 'savedBlendTooltip',
+    placement: 'top'
+  }
 </script>
 
 <div>
   <div class="mb-4 flex flex-wrap items-center justify-between gap-4">
-    <div class="relative flex items-center gap-1">
-      <h2 class="text-2xl font-semibold">Saved Blends</h2>
-      <button
-        type="button"
-        class="btn btn-icon btn-secondary"
-        title="View explanation"
-        use:popover.button
-        ><Icon
-          src={InformationCircle}
-          size="1.25rem"
-        /></button
-      >
-      {#if $popover.expanded}
-        <div
-          class="absolute bottom-full z-20 mb-2 flex w-max max-w-[95vw] origin-bottom rounded-md border border-surface-400 bg-surface-950 px-4 py-3 ring-4 ring-surface-500/25 transition"
-          transition:scale={{
-            start: 0.75,
-            duration: 200
-          }}
-          use:popover.panel
-        >
-          Click a custom blend to copy it to your clipboard.
-        </div>
-      {/if}
+    <h3 use:popup={tooltip}>Saved Blends</h3>
+    <div
+      class="card variant-filled-surface p-2 text-center text-sm shadow-xl"
+      data-popup={tooltip.target}
+    >
+      Click a saved blend to copy it to your clipboard.
+      <!-- Arrow -->
+      <div class="arrow variant-filled-surface" />
     </div>
     <button
       type="button"
-      class="btn btn-danger btn-small"
+      class="btn btn-sm variant-soft hover:variant-filled-error"
       on:click={() => {
         $savedBlends = []
         storeSavedBlends()
+        onClear()
       }}>Clear All</button
     >
   </div>
@@ -61,34 +43,25 @@
     <ul class="space-y-3">
       {#each $savedBlends as blend (blend.id)}
         <li
-          class="flex items-center gap-2 rounded-lg border border-transparent bg-surface-800 px-3 py-2 transition focus-within:border-surface-600 focus-within:bg-surface-950 hover:border-surface-600 hover:bg-surface-950"
+          class="card card-hover flex flex-wrap items-center gap-x-6 gap-y-1 px-3 py-2 border-token border-surface-300-600-token hover:brightness-105 dark:hover:brightness-[1.15]"
         >
           <button
             type="button"
-            class="btn btn-small btn-transparent"
-            on:click={() => copyBlendToClipboard(blend)}
-            >{createBlendString(blend)}</button
+            class="btn btn-sm text-base hover:variant-soft"
+            on:click={() => copyBlendToClipboard(blend)}>{createBlendString(blend)}</button
           >
-          <button
-            type="button"
-            class="btn btn-secondary btn-icon ml-auto"
-            on:click={() => onEdit(blend)}
-            ><Icon
-              src={PencilSquare}
-              size="1.5rem"
-              solid
-            /></button
-          >
-          <button
-            type="button"
-            class="btn btn-danger btn-icon"
-            on:click={() => onDelete(blend)}
-            ><Icon
-              src={Trash}
-              size="1.5rem"
-              solid
-            /></button
-          >
+          <div class="ml-auto flex items-center gap-x-3">
+            <button
+              type="button"
+              class="btn btn-sm variant-soft-tertiary hover:variant-filled-tertiary"
+              on:click={() => onEdit(blend)}>Edit</button
+            >
+            <button
+              type="button"
+              class="btn btn-sm variant-soft-error hover:variant-filled-error"
+              on:click={() => onDelete(blend)}>Delete</button
+            >
+          </div>
         </li>
       {/each}
     </ul>

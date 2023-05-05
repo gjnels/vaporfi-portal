@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html
+  lang="en"
+  class="dark"
+>
   <head>
     <meta charset="utf-8" />
     <link
@@ -14,34 +17,12 @@
     %sveltekit.head%
   </head>
 
-  <noscript>
-    <style>
-      .app {
-        display: none;
-      }
-    </style>
-
+  <body>
     <div
-      class="absolute inset-0 grid place-content-center gap-2 text-center text-2xl"
+      style="display: contents"
+      class="h-full overflow-hidden"
     >
-      <span>
-        For full functionality of this site it is necessary to enable
-        JavaScript.</span
-      >
-      <span
-        >Here are the
-        <a
-          href="https://www.enable-javascript.com/"
-          class="text-primary-300 underline hover:text-primary-500 focus:text-primary-500"
-          target="_blank"
-        >
-          instructions how to enable JavaScript in your web browser</a
-        >.
-      </span>
+      %sveltekit.body%
     </div>
-  </noscript>
-
-  <body data-sveltekit-preload-data="hover">
-    <div class="app contents">%sveltekit.body%</div>
   </body>
 </html>
