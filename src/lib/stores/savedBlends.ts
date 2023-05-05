@@ -13,16 +13,13 @@ const getFromStorage = () => {
     if (storedData) {
       const parsedData = JSON.parse(storedData)
       if (Array.isArray(parsedData)) {
-        return parsedData.reduce(
-          (blends: SavedFlavorPickerBlend[], savedBlend) => {
-            const result = flavorPickerRefinedSchema.safeParse(savedBlend)
-            if (result.success) {
-              return [...blends, result.data]
-            }
-            return blends
-          },
-          []
-        )
+        return parsedData.reduce((blends: SavedFlavorPickerBlend[], savedBlend) => {
+          const result = flavorPickerRefinedSchema.safeParse(savedBlend)
+          if (result.success) {
+            return [...blends, result.data]
+          }
+          return blends
+        }, [])
       }
     }
   }

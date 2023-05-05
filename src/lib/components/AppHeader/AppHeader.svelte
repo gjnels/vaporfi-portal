@@ -1,7 +1,5 @@
 <script>
   import { page } from '$app/stores'
-  import { enhance } from '$app/forms'
-
   import { AppBar, drawerStore } from '@skeletonlabs/skeleton'
   import { Bars3, Icon } from 'svelte-hero-icons'
   import Logo from '$components/Logo/Logo.svelte'

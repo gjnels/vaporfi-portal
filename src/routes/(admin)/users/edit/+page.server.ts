@@ -3,12 +3,10 @@ import { PUBLIC_SUPABASE_URL } from '$env/static/public'
 import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit'
 import { error, fail, redirect } from '@sveltejs/kit'
 import { message, superValidate } from 'sveltekit-superforms/server'
+import { adminUpdateProfileSchema, userIdSchema } from '$lib/schemas/profiles.js'
 
 const UPDATE_USER_ID = 'update_user'
 const DELETE_USER_ID = 'delete_user'
-
-import { adminUpdateProfileSchema, userIdSchema } from '$lib/schemas/profiles.js'
-import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
 
 export const load = async ({ locals: { supabase }, url: { searchParams }, parent }) => {
   const id = searchParams.get('profile_id')

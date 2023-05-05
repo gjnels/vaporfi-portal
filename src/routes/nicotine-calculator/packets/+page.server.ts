@@ -1,10 +1,7 @@
 import { fail } from '@sveltejs/kit'
 import { superValidate } from 'sveltekit-superforms/server'
 
-import {
-  totalPacketsRefinedSchema,
-  totalPacketsSchema
-} from '$lib/schemas/nicotineCalculator'
+import { totalPacketsRefinedSchema, totalPacketsSchema } from '$lib/schemas/nicotineCalculator'
 
 export const load = async () => {
   return {

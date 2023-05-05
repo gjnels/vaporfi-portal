@@ -90,8 +90,7 @@
 </script>
 
 <svelte:head>
-  <!-- Select Preset Theme CSS DO NOT REMOVE ESCAPES-->
-  {@html `\<style\>${currentThemeCSS}}\</style\>`}
+  {@html `<style>${currentThemeCSS}}</style>`}
 </svelte:head>
 
 <svelte:window bind:innerWidth={windowWidth} />

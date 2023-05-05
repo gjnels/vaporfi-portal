@@ -4,7 +4,7 @@
   // Components
   import PageLayout from '$components/PageLayout/PageLayout.svelte'
   import CustomBlendList from './CustomBlendList.svelte'
-  import { Check, CheckBadge, CheckCircle, Icon } from 'svelte-hero-icons'
+  import { CheckCircle, Icon } from 'svelte-hero-icons'
 
   export let data
 
@@ -14,7 +14,7 @@
   // Filter blends based on search terms
   // Includes any blends which have matches to search terms in name or flavors
   let blendSearchTerms = ''
-  $: filterBlends = (blends: CustomBlend[], approved: boolean) =>
+  $: filterBlends = (blends: CustomBlend[]) =>
     blends.filter((blend) =>
       blendSearchTerms.trim().length > 0
         ? blendSearchTerms
@@ -33,8 +33,8 @@
 
   const approvedBlends = data.blends.filter((blend) => blend.approved)
   const unapprovedBlends = data.blends.filter((blend) => !blend.approved)
-  $: filteredApprovedBlends = filterBlends(approvedBlends, true)
-  $: filteredUnapprovedBlends = filterBlends(unapprovedBlends, false)
+  $: filteredApprovedBlends = filterBlends(approvedBlends)
+  $: filteredUnapprovedBlends = filterBlends(unapprovedBlends)
 </script>
 
 <svelte:head>

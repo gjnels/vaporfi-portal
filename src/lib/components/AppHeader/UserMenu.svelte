@@ -2,7 +2,7 @@
   import { enhance } from '$app/forms'
   import { page } from '$app/stores'
   import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
-  import { LightSwitch, popup, storePopup } from '@skeletonlabs/skeleton'
+  import { popup, storePopup } from '@skeletonlabs/skeleton'
   import { ChevronDown, Icon, UserCircle } from 'svelte-hero-icons'
 
   export let currentProfile: DatabaseRow<'profiles'>

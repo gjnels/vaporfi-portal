@@ -4,7 +4,7 @@
   import type { ModalProps } from '@skeletonlabs/skeleton/dist/utilities/Modal/Modal.svelte'
   import type { fixSkuSchema } from '$lib/schemas/skus'
   import { superForm } from 'sveltekit-superforms/client'
-  import { focusTrap, toastStore } from '@skeletonlabs/skeleton'
+  import { toastStore } from '@skeletonlabs/skeleton'
 
   import Form from '$components/Form/Form.svelte'
 

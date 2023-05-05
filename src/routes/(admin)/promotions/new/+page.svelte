@@ -32,12 +32,6 @@
   const validUntilProxy = dateProxy(formStore, 'valid_until', {
     format: 'datetime-local'
   })
-
-  const getInitialRows = (str: string | null | undefined) => {
-    if (!str) return 0
-    const rows = (str.match(/\n/g) || '').length + 1
-    return rows > 3 ? rows : 3
-  }
 </script>
 
 <svelte:head>
