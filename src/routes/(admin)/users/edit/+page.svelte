@@ -109,7 +109,7 @@
       <button
         type="submit"
         disabled={$delayed}
-        class="btn variant-filled-primary">{$delayed ? 'Inviting...' : 'Invite User'}</button
+        class="btn variant-filled-primary">{$delayed ? 'Updating...' : 'Update User'}</button
       >
     </svelte:fragment>
   </Form>
