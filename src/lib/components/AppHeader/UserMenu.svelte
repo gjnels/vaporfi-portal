@@ -36,7 +36,7 @@
         <li>
           <a
             href="/profile"
-            class="w-full focus:!variant-filled-surface">My Profile</a
+            class="w-full focus:variant-filled-surface">My Profile</a
           >
         </li>
 

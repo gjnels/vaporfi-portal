@@ -74,7 +74,6 @@
             <li>
               <a
                 href={link.href}
-                class="focus:!variant-filled-surface"
                 class:bg-primary-active-token={active}
                 class:relative={link.notification}
               >

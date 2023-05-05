@@ -44,3 +44,9 @@ table th {
 table td {
   @apply !whitespace-nowrap !align-middle;
 }
+
+.list-nav a:focus,
+.list-nav button:focus,
+.list-nav .list-option:focus {
+  @apply !bg-surface-500 !text-on-surface-token;
+}
