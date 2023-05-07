@@ -1,6 +1,7 @@
 <script lang="ts">
   import { dateProxy, superForm } from 'sveltekit-superforms/client'
   import { toastStore } from '@skeletonlabs/skeleton'
+  import { page } from '$app/stores'
 
   import { ArrowUturnLeft } from 'svelte-hero-icons'
   import PageLayout from '$components/PageLayout/PageLayout.svelte'
@@ -74,6 +75,13 @@
       {#each data.customBlends as blend (blend.id)}
         <option value={blend.id}>{blend.name}</option>
       {/each}
+      <!-- Link to create a new custom blend -->
+      <svelte:fragment slot="after">
+        <a
+          href="/custom-blends/new?redirectTo={$page.url.pathname + $page.url.search}"
+          class="btn btn-sm variant-soft-secondary hover:variant-filled-secondary">Create Blend</a
+        >
+      </svelte:fragment>
     </Select>
 
     <!-- Sale -->
