@@ -8,7 +8,7 @@ export const load = async ({ locals: { supabase }, url: { searchParams } }) => {
     data: customBlends,
     error: err,
     status
-  } = await supabase.from('custom_blends').select('id, name').is('approved', true)
+  } = await supabase.from('custom_blends').select('id, name').is('approved', true).order('name')
 
   if (err) {
     throw error(status, 'Unable to fetch custom blends: ' + err.message)
