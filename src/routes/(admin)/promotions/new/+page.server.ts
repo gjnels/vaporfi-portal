@@ -3,7 +3,7 @@ import { message, setError, superValidate } from 'sveltekit-superforms/server'
 
 import { insertPromoSchema } from '$lib/schemas/promos'
 
-export const load = async ({ locals: { supabase } }) => {
+export const load = async ({ locals: { supabase }, url: { searchParams } }) => {
   const {
     data: customBlends,
     error: err,
@@ -12,6 +12,19 @@ export const load = async ({ locals: { supabase } }) => {
 
   if (err) {
     throw error(status, 'Unable to fetch custom blends: ' + err.message)
+  }
+
+  // User was redirected from creating a new custom blend
+  // Select that newly created blend by default
+  const param_blend_id = searchParams.get('blend_id')
+  if (param_blend_id) {
+    const custom_blend_id = Number(param_blend_id)
+    if (!isNaN(custom_blend_id) && customBlends.find(({ id }) => id === custom_blend_id)) {
+      return {
+        form: superValidate({ custom_blend_id }, insertPromoSchema, { errors: false }),
+        customBlends
+      }
+    }
   }
 
   return {
