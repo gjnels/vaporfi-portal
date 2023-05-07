@@ -44,7 +44,11 @@ export const actions = {
 
     // created_by_profile_id and approved_by_profile_id handled by database
 
-    const { error, status } = await event.locals.supabase.from('custom_blends').insert(data)
+    const {
+      data: newBlend,
+      error,
+      status
+    } = await event.locals.supabase.from('custom_blends').insert(data).select('id').single()
 
     if (error) {
       // unique constraint violation
@@ -96,6 +100,16 @@ export const actions = {
         },
         { status }
       )
+    }
+
+    // Redirect on submission if there is a redirect search param
+    const redirectTo = event.url.searchParams.get('redirectTo')
+    if (redirectTo) {
+      // Only add new blend id when redirecting to promotions manager
+      if (redirectTo.startsWith('/promotions')) {
+        throw redirect(303, redirectTo + `?blend_id=${newBlend.id}`)
+      }
+      throw redirect(303, redirectTo)
     }
 
     throw redirect(303, '/custom-blends')

@@ -1,22 +1,43 @@
+import type { CustomBlend } from '$lib/types/flavors.types.js'
 import { error, fail, redirect } from '@sveltejs/kit'
 import { message, setError, superValidate } from 'sveltekit-superforms/server'
-
 import { insertPromoSchema } from '$lib/schemas/promos'
 
-export const load = async ({ locals: { supabase } }) => {
+export const load = async ({ locals: { supabase }, url: { searchParams } }) => {
   const {
-    data,
+    data: customBlends,
     error: err,
     status
-  } = await supabase.from('custom_blends').select('id, name').is('approved', true)
+  } = await supabase
+    .from('custom_blends')
+    .select('id, name, shots1, shots2, shots3, flavor1(flavor), flavor2(flavor), flavor3(flavor)')
+    .is('approved', true)
+    .order('name')
+    .returns<
+      Pick<
+        CustomBlend,
+        'id' | 'name' | 'shots1' | 'shots2' | 'shots3' | 'flavor1' | 'flavor2' | 'flavor3'
+      >[]
+    >()
 
   if (err) {
     throw error(status, 'Unable to fetch custom blends: ' + err.message)
   }
 
+  // User was redirected from creating a new custom blend
+  // Select that newly created blend by default
+  const param_blend_id = searchParams.get('blend_id')
+  let custom_blend_id = 0
+  if (param_blend_id) {
+    const selected_blend_id = Number(param_blend_id)
+    if (!isNaN(selected_blend_id) && customBlends.find(({ id }) => id === selected_blend_id)) {
+      custom_blend_id = selected_blend_id
+    }
+  }
+
   return {
-    form: superValidate(insertPromoSchema),
-    customBlends: data
+    form: superValidate({ custom_blend_id }, insertPromoSchema, { errors: false }),
+    customBlends
   }
 }
 
@@ -29,6 +50,7 @@ export const actions = {
 
     const { error, status } = await event.locals.supabase.from('promos').insert({
       ...form.data,
+      custom_blend_id: form.data.custom_blend_id || null, // if id is 0, make it null
       valid_from: form.data.valid_from.toISOString(),
       valid_until: form.data.valid_until.toISOString()
     })

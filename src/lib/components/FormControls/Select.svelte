@@ -21,16 +21,36 @@
   label={capitalize(label || String(path))}
   errors={$errors}
 >
-  <select
-    class="select"
-    id={String(path)}
-    name={String(path)}
-    data-invalid={$errors}
-    class:input-error={$errors}
-    bind:value={$value}
-    {...$constraints}
-    {...$$restProps}
-  >
-    <slot />
-  </select>
+  {#if $$slots.after}
+    <div class="flex gap-2">
+      <select
+        class="select grow"
+        id={String(path)}
+        name={String(path)}
+        data-invalid={$errors}
+        class:input-error={$errors}
+        bind:value={$value}
+        {...$constraints}
+        {...$$restProps}
+      >
+        <slot />
+      </select>
+      <slot name="after" />
+    </div>
+  {:else}
+    <select
+      class="select"
+      id={String(path)}
+      name={String(path)}
+      data-invalid={$errors}
+      class:input-error={$errors}
+      bind:value={$value}
+      {...$constraints}
+      {...$$restProps}
+    >
+      <slot />
+    </select>
+  {/if}
+
+  <slot name="below" />
 </FormControl>

@@ -1,6 +1,8 @@
 <script lang="ts">
   import { dateProxy, superForm } from 'sveltekit-superforms/client'
   import { toastStore } from '@skeletonlabs/skeleton'
+  import { page } from '$app/stores'
+  import { createDisplayBlendString } from '$lib/utils/flavors.js'
 
   import { ArrowUturnLeft } from 'svelte-hero-icons'
   import PageLayout from '$components/PageLayout/PageLayout.svelte'
@@ -32,6 +34,8 @@
   const validUntilProxy = dateProxy(formStore, 'valid_until', {
     format: 'datetime-local'
   })
+
+  $: selectedBlend = data.customBlends.find(({ id }) => id === $formStore.custom_blend_id)
 </script>
 
 <svelte:head>
@@ -70,10 +74,23 @@
       field="custom_blend_id"
       label="Custom Blend"
     >
-      <option value={null}>None</option>
+      <option value={0}>None</option>
       {#each data.customBlends as blend (blend.id)}
         <option value={blend.id}>{blend.name}</option>
       {/each}
+      <!-- Link to create a new custom blend -->
+      <svelte:fragment slot="after">
+        <a
+          href="/custom-blends/new?redirectTo={$page.url.pathname + $page.url.search}"
+          class="btn btn-sm variant-soft-secondary hover:variant-filled-secondary">Create Blend</a
+        >
+      </svelte:fragment>
+      <!-- Show selected blend flavors -->
+      <svelte:fragment slot="below">
+        {#if selectedBlend}
+          <span class="text-sm brightness-90">{createDisplayBlendString(selectedBlend)}</span>
+        {/if}
+      </svelte:fragment>
     </Select>
 
     <!-- Sale -->
