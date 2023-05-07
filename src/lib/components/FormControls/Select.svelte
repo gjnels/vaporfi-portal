@@ -51,4 +51,6 @@
       <slot />
     </select>
   {/if}
+
+  <slot name="below" />
 </FormControl>
