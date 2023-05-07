@@ -105,7 +105,11 @@ export const actions = {
     // Redirect on submission if there is a redirect search param
     const redirectTo = event.url.searchParams.get('redirectTo')
     if (redirectTo) {
-      throw redirect(303, redirectTo + `?blend_id=${newBlend.id}`)
+      // Only add new blend id when redirecting to promotions manager
+      if (redirectTo.startsWith('/promotions')) {
+        throw redirect(303, redirectTo + `?blend_id=${newBlend.id}`)
+      }
+      throw redirect(303, redirectTo)
     }
 
     throw redirect(303, '/custom-blends')
