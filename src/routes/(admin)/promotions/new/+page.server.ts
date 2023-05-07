@@ -5,7 +5,7 @@ import { insertPromoSchema } from '$lib/schemas/promos'
 
 export const load = async ({ locals: { supabase } }) => {
   const {
-    data,
+    data: customBlends,
     error: err,
     status
   } = await supabase.from('custom_blends').select('id, name').is('approved', true)
@@ -16,7 +16,7 @@ export const load = async ({ locals: { supabase } }) => {
 
   return {
     form: superValidate(insertPromoSchema),
-    customBlends: data
+    customBlends
   }
 }
 
@@ -29,6 +29,7 @@ export const actions = {
 
     const { error, status } = await event.locals.supabase.from('promos').insert({
       ...form.data,
+      custom_blend_id: form.data.custom_blend_id || null, // if id is 0, make it null
       valid_from: form.data.valid_from.toISOString(),
       valid_until: form.data.valid_until.toISOString()
     })

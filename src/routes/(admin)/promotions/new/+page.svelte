@@ -71,7 +71,7 @@
       field="custom_blend_id"
       label="Custom Blend"
     >
-      <option value={null}>None</option>
+      <option value={0}>None</option>
       {#each data.customBlends as blend (blend.id)}
         <option value={blend.id}>{blend.name}</option>
       {/each}
