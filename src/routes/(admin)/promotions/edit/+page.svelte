@@ -15,11 +15,9 @@
   import { createDisplayBlendString } from '$lib/utils/flavors'
 
   export let data
-  export let form
-
-  $: console.log(form)
 
   const sForm = superForm(data.updateForm, {
+    dataType: 'json',
     onResult: ({ result }) => {
       if (result.type === 'redirect') {
         toastStore.trigger({

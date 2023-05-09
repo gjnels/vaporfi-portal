@@ -78,18 +78,6 @@ export const actions = {
       return fail(400, { form })
     }
 
-    const date = form.data.valid_from
-    console.log(date)
-    console.log(date.toLocaleString())
-    console.log(date.toUTCString())
-    console.log(date.toISOString())
-    return {
-      form,
-      localeDate: date.toLocaleString(),
-      utcString: date.toUTCString(),
-      isoString: date.toISOString()
-    }
-
     const { error, status } = await event.locals.supabase
       .from('promos')
       .update({
