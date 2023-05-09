@@ -83,7 +83,12 @@ export const actions = {
     console.log(now.toLocaleString())
     console.log(now.toUTCString())
     console.log(now.toISOString())
-    return
+    return {
+      form,
+      localeDate: now.toLocaleString(),
+      utcString: now.toUTCString(),
+      isoString: now.toISOString()
+    }
 
     const { error, status } = await event.locals.supabase
       .from('promos')
