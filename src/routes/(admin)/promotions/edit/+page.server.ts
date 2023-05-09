@@ -78,16 +78,16 @@ export const actions = {
       return fail(400, { form })
     }
 
-    const now = new Date()
-    console.log(now)
-    console.log(now.toLocaleString())
-    console.log(now.toUTCString())
-    console.log(now.toISOString())
+    const date = form.data.valid_from
+    console.log(date)
+    console.log(date.toLocaleString())
+    console.log(date.toUTCString())
+    console.log(date.toISOString())
     return {
       form,
-      localeDate: now.toLocaleString(),
-      utcString: now.toUTCString(),
-      isoString: now.toISOString()
+      localeDate: date.toLocaleString(),
+      utcString: date.toUTCString(),
+      isoString: date.toISOString()
     }
 
     const { error, status } = await event.locals.supabase
