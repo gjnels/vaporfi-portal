@@ -78,6 +78,13 @@ export const actions = {
       return fail(400, { form })
     }
 
+    const now = new Date()
+    console.log(now)
+    console.log(now.toLocaleString())
+    console.log(now.toUTCString())
+    console.log(now.toISOString())
+    return
+
     const { error, status } = await event.locals.supabase
       .from('promos')
       .update({
