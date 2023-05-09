@@ -50,7 +50,7 @@ export const actions = {
 
     const { error, status } = await event.locals.supabase.from('promos').insert({
       ...form.data,
-      custom_blend_id: form.data.custom_blend_id || null, // if id is 0, make it null
+      custom_blend_id: form.data.custom_blend_id > 0 ? form.data.custom_blend_id : null,
       valid_from: form.data.valid_from.toISOString(),
       valid_until: form.data.valid_until.toISOString()
     })

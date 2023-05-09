@@ -17,6 +17,7 @@
   export let data
 
   const sForm = superForm(data.updateForm, {
+    dataType: 'json',
     onResult: ({ result }) => {
       if (result.type === 'redirect') {
         toastStore.trigger({
