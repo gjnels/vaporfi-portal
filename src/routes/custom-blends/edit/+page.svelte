@@ -14,6 +14,7 @@
   const { flavors, blend } = data
 
   const updateForm = superForm(data.updateForm, {
+    dataType: 'json',
     onResult: ({ result: { type } }) => {
       if (type === 'success' || type === 'redirect') {
         toastStore.trigger({

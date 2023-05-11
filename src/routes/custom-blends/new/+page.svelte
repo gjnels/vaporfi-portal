@@ -21,6 +21,7 @@
   }
 
   const form = superForm(data.form, {
+    dataType: 'json',
     onResult: ({ result: { type } }) => {
       if (type === 'success' || type === 'redirect') {
         toastStore.trigger(isAdmin ? adminToast : managerToast)
