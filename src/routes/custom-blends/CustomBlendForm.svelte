@@ -97,6 +97,7 @@
       label="Flavor 1"
       {disabled}
     >
+      <option value={0}>Select a flavor</option>
       {#each categories as category}
         <optgroup label={category}>
           {#each flavor1Options.filter((option) => option.group === category) as { value, label } (value)}
@@ -151,6 +152,7 @@
         label="Flavor 2"
         {disabled}
       >
+        <option value={null}>Select a flavor</option>
         {#each categories as category}
           <optgroup label={category}>
             {#each flavor2Options.filter((option) => option.group === category) as { value, label } (value)}
@@ -197,6 +199,7 @@
         label="Flavor 3"
         {disabled}
       >
+        <option value={null}>Select a flavor</option>
         {#each categories as category}
           <optgroup label={category}>
             {#each flavor3Options.filter((option) => option.group === category) as { value, label } (value)}
