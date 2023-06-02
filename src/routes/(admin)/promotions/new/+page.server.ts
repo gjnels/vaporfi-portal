@@ -2,13 +2,14 @@ import type { CustomBlend } from '$lib/types/flavors.types.js'
 import { error, fail, redirect } from '@sveltejs/kit'
 import { message, setError, superValidate } from 'sveltekit-superforms/server'
 import { insertPromoSchema } from '$lib/schemas/promos'
+import type { Actions, PageServerLoad } from './$types'
 
-export const load = async ({ locals: { supabase }, url: { searchParams } }) => {
+export const load = (async (event) => {
   const {
     data: customBlends,
     error: err,
     status
-  } = await supabase
+  } = await event.locals.supabase
     .from('custom_blends')
     .select('id, name, shots1, shots2, shots3, flavor1(flavor), flavor2(flavor), flavor3(flavor)')
     .is('approved', true)
@@ -26,7 +27,7 @@ export const load = async ({ locals: { supabase }, url: { searchParams } }) => {
 
   // User was redirected from creating a new custom blend
   // Select that newly created blend by default
-  const param_blend_id = searchParams.get('blend_id')
+  const param_blend_id = event.url.searchParams.get('blend_id')
   let custom_blend_id = 0
   if (param_blend_id) {
     const selected_blend_id = Number(param_blend_id)
@@ -39,7 +40,7 @@ export const load = async ({ locals: { supabase }, url: { searchParams } }) => {
     form: superValidate({ custom_blend_id }, insertPromoSchema, { errors: false }),
     customBlends
   }
-}
+}) satisfies PageServerLoad
 
 export const actions = {
   default: async (event) => {
@@ -72,4 +73,4 @@ export const actions = {
 
     throw redirect(303, '/promotions')
   }
-}
+} satisfies Actions

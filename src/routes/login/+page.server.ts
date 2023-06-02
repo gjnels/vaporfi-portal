@@ -3,8 +3,10 @@ import { fail, redirect } from '@sveltejs/kit'
 import { message, superValidate } from 'sveltekit-superforms/server'
 
 import { loginSchema } from '$lib/schemas/auth.js'
+import { parseRedirect } from '$lib/utils/auth.js'
+import type { Actions, PageServerLoad } from './$types'
 
-export const load = async ({ locals: { getSession }, url: { searchParams } }) => {
+export const load = (async ({ locals: { getSession }, url: { searchParams } }) => {
   const session = await getSession()
 
   // Redirect when there is a valid session
@@ -16,7 +18,7 @@ export const load = async ({ locals: { getSession }, url: { searchParams } }) =>
   return {
     form: superValidate<typeof loginSchema>(null, loginSchema)
   }
-}
+}) satisfies PageServerLoad
 
 export const actions = {
   default: async (event) => {
@@ -48,6 +50,8 @@ export const actions = {
       )
     }
 
-    throw redirect(303, event.url.searchParams.get('redirectTo') || '/')
+    const redirectToParam = event.url.searchParams.get('redirectTo')
+
+    throw redirect(303, redirectToParam ? parseRedirect(redirectToParam) : '/')
   }
-}
+} satisfies Actions

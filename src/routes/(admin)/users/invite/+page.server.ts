@@ -5,13 +5,17 @@ import { error, fail, redirect } from '@sveltejs/kit'
 import { message, superValidate } from 'sveltekit-superforms/server'
 
 import { adminInviteUserSchema } from '$lib/schemas/profiles'
+import type { Actions, PageServerLoad } from './$types'
+import { requireAuth } from '$lib/utils/auth'
 
-export const load = async ({ locals: { supabase } }) => {
+export const load = (async (event) => {
+  await requireAuth(event, ['Admin'])
+
   const {
     data: locations,
     error: err,
     status
-  } = await supabase.from('locations').select('id, name').order('name')
+  } = await event.locals.supabase.from('locations').select('id, name').order('name')
 
   if (err) {
     throw error(status, 'Unable to fetch locations: ' + err.message)
@@ -21,7 +25,7 @@ export const load = async ({ locals: { supabase } }) => {
     locations,
     form: superValidate<typeof adminInviteUserSchema, Message>(null, adminInviteUserSchema)
   }
-}
+}) satisfies PageServerLoad
 
 export const actions = {
   default: async (event) => {
@@ -114,4 +118,4 @@ export const actions = {
 
     throw redirect(303, '/users')
   }
-}
+} satisfies Actions

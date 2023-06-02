@@ -1,12 +1,16 @@
 import { fail } from '@sveltejs/kit'
 import { message, superValidate } from 'sveltekit-superforms/server'
 import { changePasswordRefinedSchema, changePasswordSchema } from '$lib/schemas/auth.js'
+import type { Actions, PageServerLoad } from './$types'
+import { requireAuth } from '$lib/utils/auth'
 
-export const load = async () => {
+export const load = (async (event) => {
+  await requireAuth(event)
+
   return {
     form: superValidate(changePasswordSchema)
   }
-}
+}) satisfies PageServerLoad
 
 export const actions = {
   default: async (event) => {
@@ -43,4 +47,4 @@ export const actions = {
       }
     )
   }
-}
+} satisfies Actions

@@ -1,14 +1,16 @@
 import type { DatabaseRow } from '$lib/types/supabaseHelpers.types.js'
 import { error } from '@sveltejs/kit'
+import type { PageServerLoad } from './$types'
+import { requireAuth } from '$lib/utils/auth'
 
-export const load = async ({ locals: { supabase }, parent }) => {
-  const { session } = await parent()
+export const load = (async (event) => {
+  const { session } = await requireAuth(event, ['Admin'])
 
   const {
     data: profiles,
     error: err,
     status
-  } = await supabase
+  } = await event.locals.supabase
     .from('profiles')
     .select('*, locations(name)')
     .not('id', 'eq', session.user.id) // don't need current user's profile
@@ -26,4 +28,4 @@ export const load = async ({ locals: { supabase }, parent }) => {
   return {
     profiles
   }
-}
+}) satisfies PageServerLoad

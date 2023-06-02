@@ -2,13 +2,17 @@ import { error } from '@sveltejs/kit'
 
 import type { Blend } from '$lib/types/flavors.types'
 import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
+import type { PageServerLoad } from './$types'
+import { requireAuth } from '$lib/utils/auth'
 
-export const load = async ({ locals: { supabase } }) => {
+export const load = (async (event) => {
+  await requireAuth(event, ['Admin'])
+
   const {
     data: promos,
     error: err,
     status
-  } = await supabase
+  } = await event.locals.supabase
     .from('promos')
     .select(
       `*,
@@ -34,4 +38,4 @@ export const load = async ({ locals: { supabase } }) => {
   return {
     promos
   }
-}
+}) satisfies PageServerLoad
