@@ -59,7 +59,7 @@
         <!-- Available packets list -->
         <div class="grid grid-cols-2 gap-2 sm:grid-cols-1">
           {#if $savedPackets.length === 0}
-            {#each Array(10).fill(null) as placeholder}
+            {#each Array(10).fill(null) as _}
               <div class="placeholder my-1 animate-pulse" />
             {/each}
           {:else}
