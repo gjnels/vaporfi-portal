@@ -6,8 +6,9 @@ import {
   updateCustomBlendSchema
 } from '$lib/schemas/customBlends.js'
 import type { CustomBlend } from '$lib/types/flavors.types.js'
+import type { Actions, PageServerLoad } from './$types'
 
-export const load = async ({ locals: { supabase, getSession }, url: { searchParams } }) => {
+export const load: PageServerLoad = async ({ locals: { supabase, getSession }, url: { searchParams } }) => {
   const blendId = searchParams.get('blend_id')
   if (!blendId) {
     throw redirect(303, '/custom-blends')
@@ -57,7 +58,7 @@ export const load = async ({ locals: { supabase, getSession }, url: { searchPara
   }
 }
 
-export const actions = {
+export const actions: Actions = {
   updateBlend: async (event) => {
     const form = await superValidate<typeof updateCustomBlendRefinedSchema, Message>(
       event,

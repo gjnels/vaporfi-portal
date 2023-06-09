@@ -4,23 +4,26 @@ import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit'
 import { error, fail, redirect } from '@sveltejs/kit'
 import { message, superValidate } from 'sveltekit-superforms/server'
 import { adminUpdateProfileSchema, userIdSchema } from '$lib/schemas/profiles.js'
+import type { Actions, PageServerLoad } from './$types'
+import { requireAuth } from '$lib/utils/auth'
 
 const UPDATE_USER_ID = 'update_user'
 const DELETE_USER_ID = 'delete_user'
 
-export const load = async ({ locals: { supabase }, url: { searchParams }, parent }) => {
-  const id = searchParams.get('profile_id')
+export const load: PageServerLoad = async (event) => {
+  const { session } = await requireAuth(event, ['Admin'])
+
+  const id = event.url.searchParams.get('profile_id')
   if (!id) {
     throw redirect(303, '/users')
   }
 
   // prevent user from accessing this edit page for their own account
-  const { session } = await parent()
   if (session.user.id === id) {
     throw redirect(303, '/users')
   }
 
-  const { data: profile, error: profileError } = await supabase
+  const { data: profile, error: profileError } = await event.locals.supabase
     .from('profiles')
     .select('*, locations(id)')
     .eq('id', id)
@@ -34,7 +37,7 @@ export const load = async ({ locals: { supabase }, url: { searchParams }, parent
     data: locations,
     error: locationsError,
     status: locationsStatus
-  } = await supabase.from('locations').select('id, name').order('name')
+  } = await event.locals.supabase.from('locations').select('id, name').order('name')
 
   if (locationsError) {
     throw error(locationsStatus, 'Unable to fetch locations: ' + locationsError.message)
@@ -67,7 +70,7 @@ export const load = async ({ locals: { supabase }, url: { searchParams }, parent
   }
 }
 
-export const actions = {
+export const actions: Actions = {
   update: async (event) => {
     const form = await superValidate<typeof adminUpdateProfileSchema, Message>(
       event,

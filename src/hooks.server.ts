@@ -2,13 +2,18 @@ import { PUBLIC_SUPABASE_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public'
 import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit'
 
 import type { Database } from '$lib/types/supabase.types'
+import type { Handle } from '@sveltejs/kit'
 
-export const handle = async ({ event, resolve }) => {
+export const handle: Handle = async ({ event, resolve }) => {
   // Initialize supabase client
   event.locals.supabase = createSupabaseServerClient<Database>({
     supabaseUrl: PUBLIC_SUPABASE_URL,
     supabaseKey: PUBLIC_SUPABASE_KEY,
-    event
+    event,
+    cookieOptions: {
+      secure: true,
+      sameSite: 'none'
+    }
   })
 
   // Helper function to get session

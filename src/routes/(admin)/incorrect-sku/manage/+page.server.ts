@@ -2,16 +2,20 @@ import type { DatabaseRow } from '$lib/types/supabaseHelpers.types.js'
 import { error, fail, redirect } from '@sveltejs/kit'
 import { message, superValidate } from 'sveltekit-superforms/client'
 import { fixSkuSchema, skuIdSchema } from '$lib/schemas/skus.js'
+import type { Actions, PageServerLoad } from './$types'
+import { requireAuth } from '$lib/utils/auth'
 
 const UPDATE_FORM_ID = 'update_incorrect_sku'
 const DELETE_FORM_ID = 'delete_incorrect_sku'
 
-export const load = async ({ locals: { supabase } }) => {
+export const load: PageServerLoad = async (event) => {
+  await requireAuth(event, ['Admin'])
+
   const {
     data: skus,
     error: err,
     status
-  } = await supabase
+  } = await event.locals.supabase
     .from('incorrect_skus')
     .select('*, submitted_from:locations(name), submitted_by:profiles(name, email)')
     .order('correct_item_name')
@@ -34,7 +38,7 @@ export const load = async ({ locals: { supabase } }) => {
   }
 }
 
-export const actions = {
+export const actions: Actions = {
   update: async ({ request, locals: { supabase } }) => {
     const form = await superValidate<typeof fixSkuSchema, Message>(request, fixSkuSchema, {
       id: UPDATE_FORM_ID

@@ -1,8 +1,9 @@
 import { error, fail, redirect } from '@sveltejs/kit'
 import { message, setError, superValidate } from 'sveltekit-superforms/server'
 import { insertCustomBlendRefinedSchema, insertCustomBlendSchema } from '$lib/schemas/customBlends'
+import type { Actions, PageServerLoad } from './$types'
 
-export const load = async ({ locals: { supabase, getSession } }) => {
+export const load: PageServerLoad = async ({ locals: { supabase, getSession } }) => {
   const session = await getSession()
   if (!session) {
     throw error(401) // Unauthenticated
@@ -28,7 +29,7 @@ export const load = async ({ locals: { supabase, getSession } }) => {
   }
 }
 
-export const actions = {
+export const actions: Actions = {
   default: async (event) => {
     const form = await superValidate<typeof insertCustomBlendRefinedSchema, Message>(
       event,

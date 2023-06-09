@@ -3,8 +3,9 @@ import { message, superValidate } from 'sveltekit-superforms/server'
 import type { z } from 'zod'
 
 import { missingSkuSchema } from '$lib/schemas/skus'
+import type { Actions, PageServerLoad } from './$types'
 
-export const load = async ({ locals: { supabase, getSession } }) => {
+export const load: PageServerLoad = async ({ locals: { supabase, getSession } }) => {
   const {
     data: locations,
     error: locationsError,
@@ -72,7 +73,7 @@ export const load = async ({ locals: { supabase, getSession } }) => {
   }
 }
 
-export const actions = {
+export const actions: Actions = {
   default: async (event) => {
     const form = await superValidate<typeof missingSkuSchema, Message>(event, missingSkuSchema)
     if (!form.valid) {

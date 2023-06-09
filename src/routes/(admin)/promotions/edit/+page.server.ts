@@ -2,12 +2,16 @@ import type { CustomBlend } from '$lib/types/flavors.types'
 import { error, fail, redirect } from '@sveltejs/kit'
 import { message, setError, superValidate } from 'sveltekit-superforms/server'
 import { deletePromoSchema, updatePromoSchema } from '$lib/schemas/promos.js'
+import type { Actions, PageServerLoad } from './$types'
+import { requireAuth } from '$lib/utils/auth'
 
 const UPDATE_FORM_ID = 'update_promo'
 const DELETE_FORM_ID = 'delete_promo'
 
-export const load = async ({ url: { searchParams }, locals: { supabase } }) => {
-  const promoId = searchParams.get('promo_id')
+export const load: PageServerLoad = async (event) => {
+  await requireAuth(event, ['Admin'])
+
+  const promoId = event.url.searchParams.get('promo_id')
   if (!promoId) {
     throw redirect(303, '/promotions')
   }
@@ -16,7 +20,7 @@ export const load = async ({ url: { searchParams }, locals: { supabase } }) => {
     data: promo,
     error: promosError,
     status: promoStatus
-  } = await supabase.from('promos').select('*').eq('id', promoId).single()
+  } = await event.locals.supabase.from('promos').select('*').eq('id', promoId).single()
 
   if (promosError) {
     throw error(promoStatus, 'Promotion not found: ' + promosError.message)
@@ -26,7 +30,7 @@ export const load = async ({ url: { searchParams }, locals: { supabase } }) => {
     data: customBlends,
     error: customBlendsError,
     status: customBlendsStatus
-  } = await supabase
+  } = await event.locals.supabase
     .from('custom_blends')
     .select('id, name, shots1, shots2, shots3, flavor1(flavor), flavor2(flavor), flavor3(flavor)')
     .is('approved', true)
@@ -44,7 +48,7 @@ export const load = async ({ url: { searchParams }, locals: { supabase } }) => {
 
   // User was redirected from creating a new custom blend
   // Select that newly created blend by default
-  const param_blend_id = searchParams.get('blend_id')
+  const param_blend_id = event.url.searchParams.get('blend_id')
   let custom_blend_id = promo.custom_blend_id || 0
   if (param_blend_id) {
     const selected_blend_id = Number(param_blend_id)
@@ -68,7 +72,7 @@ export const load = async ({ url: { searchParams }, locals: { supabase } }) => {
   }
 }
 
-export const actions = {
+export const actions: Actions = {
   update: async (event) => {
     const form = await superValidate<typeof updatePromoSchema, Message>(event, updatePromoSchema, {
       id: UPDATE_FORM_ID

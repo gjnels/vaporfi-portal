@@ -3,15 +3,16 @@ import { fail, redirect } from '@sveltejs/kit'
 import { message, setError, superValidate } from 'sveltekit-superforms/server'
 
 import { emailSchema } from '$lib/schemas/auth'
+import type { Actions, PageServerLoad } from './$types'
 
-export const load = async ({ locals: { getSession } }) => {
+export const load: PageServerLoad = async ({ locals: { getSession } }) => {
   if (await getSession()) {
     throw redirect(303, '/password-change')
   }
   return { form: superValidate(null, emailSchema) }
 }
 
-export const actions = {
+export const actions: Actions = {
   default: async (event) => {
     const form = await superValidate<typeof emailSchema, Message>(event, emailSchema)
 
