@@ -10,7 +10,7 @@ import { requireAuth } from '$lib/utils/auth'
 const UPDATE_USER_ID = 'update_user'
 const DELETE_USER_ID = 'delete_user'
 
-export const load = (async (event) => {
+export const load: PageServerLoad = async (event) => {
   const { session } = await requireAuth(event, ['Admin'])
 
   const id = event.url.searchParams.get('profile_id')
@@ -68,9 +68,9 @@ export const load = (async (event) => {
     ),
     deleteForm: superValidate({ id }, userIdSchema, { id: DELETE_USER_ID })
   }
-}) satisfies PageServerLoad
+}
 
-export const actions = {
+export const actions: Actions = {
   update: async (event) => {
     const form = await superValidate<typeof adminUpdateProfileSchema, Message>(
       event,
@@ -172,4 +172,4 @@ export const actions = {
 
     throw redirect(303, '/users')
   }
-} satisfies Actions
+}

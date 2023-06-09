@@ -3,7 +3,7 @@ import { error } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
 import { requireAuth } from '$lib/utils/auth'
 
-export const load = (async (event) => {
+export const load: PageServerLoad = async (event) => {
   const { session } = await requireAuth(event, ['Admin'])
 
   const {
@@ -28,4 +28,4 @@ export const load = (async (event) => {
   return {
     profiles
   }
-}) satisfies PageServerLoad
+}

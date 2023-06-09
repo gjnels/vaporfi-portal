@@ -8,7 +8,7 @@ import { requireAuth } from '$lib/utils/auth'
 const UPDATE_FORM_ID = 'update_incorrect_sku'
 const DELETE_FORM_ID = 'delete_incorrect_sku'
 
-export const load = (async (event) => {
+export const load: PageServerLoad = async (event) => {
   await requireAuth(event, ['Admin'])
 
   const {
@@ -36,9 +36,9 @@ export const load = (async (event) => {
     updateForm: superValidate(fixSkuSchema, { id: UPDATE_FORM_ID }),
     deleteForm: superValidate(skuIdSchema, { id: DELETE_FORM_ID })
   }
-}) satisfies PageServerLoad
+}
 
-export const actions = {
+export const actions: Actions = {
   update: async ({ request, locals: { supabase } }) => {
     const form = await superValidate<typeof fixSkuSchema, Message>(request, fixSkuSchema, {
       id: UPDATE_FORM_ID
@@ -91,4 +91,4 @@ export const actions = {
 
     throw redirect(303, '/incorrect-sku/manage')
   }
-} satisfies Actions
+}

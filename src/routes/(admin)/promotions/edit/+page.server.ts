@@ -8,7 +8,7 @@ import { requireAuth } from '$lib/utils/auth'
 const UPDATE_FORM_ID = 'update_promo'
 const DELETE_FORM_ID = 'delete_promo'
 
-export const load = (async (event) => {
+export const load: PageServerLoad = async (event) => {
   await requireAuth(event, ['Admin'])
 
   const promoId = event.url.searchParams.get('promo_id')
@@ -70,9 +70,9 @@ export const load = (async (event) => {
     promo: foundPromo,
     customBlends
   }
-}) satisfies PageServerLoad
+}
 
-export const actions = {
+export const actions: Actions = {
   update: async (event) => {
     const form = await superValidate<typeof updatePromoSchema, Message>(event, updatePromoSchema, {
       id: UPDATE_FORM_ID
@@ -141,4 +141,4 @@ export const actions = {
 
     throw redirect(303, '/promotions')
   }
-} satisfies Actions
+}

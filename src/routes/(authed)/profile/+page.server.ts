@@ -5,7 +5,7 @@ import { profileNameSchema } from '$lib/schemas/profiles.js'
 import type { Actions, PageServerLoad } from './$types'
 import { alterRedirect, requireAuth } from '$lib/utils/auth'
 
-export const load = (async (event) => {
+export const load: PageServerLoad = async (event) => {
   const { session } = await requireAuth(event)
 
   const { data: profile } = await event.locals.supabase
@@ -27,9 +27,9 @@ export const load = (async (event) => {
       { id: 'name_form' }
     )
   }
-}) satisfies PageServerLoad
+}
 
-export const actions = {
+export const actions: Actions = {
   updateName: async (event) => {
     const form = await superValidate<typeof profileNameSchema, Message>(event, profileNameSchema, {
       id: 'name_form'
@@ -55,4 +55,4 @@ export const actions = {
 
     return { form }
   }
-} satisfies Actions
+}

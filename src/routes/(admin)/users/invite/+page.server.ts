@@ -8,7 +8,7 @@ import { adminInviteUserSchema } from '$lib/schemas/profiles'
 import type { Actions, PageServerLoad } from './$types'
 import { requireAuth } from '$lib/utils/auth'
 
-export const load = (async (event) => {
+export const load: PageServerLoad = async (event) => {
   await requireAuth(event, ['Admin'])
 
   const {
@@ -25,9 +25,9 @@ export const load = (async (event) => {
     locations,
     form: superValidate<typeof adminInviteUserSchema, Message>(null, adminInviteUserSchema)
   }
-}) satisfies PageServerLoad
+}
 
-export const actions = {
+export const actions: Actions = {
   default: async (event) => {
     const form = await superValidate<typeof adminInviteUserSchema, Message>(
       event,
@@ -118,4 +118,4 @@ export const actions = {
 
     throw redirect(303, '/users')
   }
-} satisfies Actions
+}

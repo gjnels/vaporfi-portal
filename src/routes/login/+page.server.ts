@@ -6,7 +6,7 @@ import { loginSchema } from '$lib/schemas/auth.js'
 import { parseRedirect } from '$lib/utils/auth.js'
 import type { Actions, PageServerLoad } from './$types'
 
-export const load = (async ({ locals: { getSession }, url: { searchParams } }) => {
+export const load: PageServerLoad = async ({ locals: { getSession }, url: { searchParams } }) => {
   const session = await getSession()
 
   // Redirect when there is a valid session
@@ -18,9 +18,9 @@ export const load = (async ({ locals: { getSession }, url: { searchParams } }) =
   return {
     form: superValidate<typeof loginSchema>(null, loginSchema)
   }
-}) satisfies PageServerLoad
+}
 
-export const actions = {
+export const actions: Actions = {
   default: async (event) => {
     const form = await superValidate<typeof loginSchema, Message>(event, loginSchema)
 
@@ -54,4 +54,4 @@ export const actions = {
 
     throw redirect(303, redirectToParam ? parseRedirect(redirectToParam) : '/')
   }
-} satisfies Actions
+}

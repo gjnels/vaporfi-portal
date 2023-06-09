@@ -1,6 +1,7 @@
 import { redirect } from '@sveltejs/kit'
+import type { LayoutServerLoad } from './$types'
 
-export const load = async ({ locals, cookies, url }) => {
+export const load: LayoutServerLoad = async ({ locals, cookies, url }) => {
   // Imports theme as a string
   const modules = import.meta.glob(`$lib/themes/*.css`, { as: 'raw' })
   if (!Object.hasOwn(modules, `/src/lib/themes/theme-${locals.theme}.css`)) {

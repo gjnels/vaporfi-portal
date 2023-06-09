@@ -5,7 +5,7 @@ import type { DatabaseRow } from '$lib/types/supabaseHelpers.types'
 import type { PageServerLoad } from './$types'
 import { requireAuth } from '$lib/utils/auth'
 
-export const load = (async (event) => {
+export const load: PageServerLoad = async (event) => {
   await requireAuth(event, ['Admin'])
 
   const {
@@ -38,4 +38,4 @@ export const load = (async (event) => {
   return {
     promos
   }
-}) satisfies PageServerLoad
+}

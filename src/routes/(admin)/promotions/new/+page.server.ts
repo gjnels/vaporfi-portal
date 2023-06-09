@@ -4,7 +4,7 @@ import { message, setError, superValidate } from 'sveltekit-superforms/server'
 import { insertPromoSchema } from '$lib/schemas/promos'
 import type { Actions, PageServerLoad } from './$types'
 
-export const load = (async (event) => {
+export const load: PageServerLoad = async (event) => {
   const {
     data: customBlends,
     error: err,
@@ -40,9 +40,9 @@ export const load = (async (event) => {
     form: superValidate({ custom_blend_id }, insertPromoSchema, { errors: false }),
     customBlends
   }
-}) satisfies PageServerLoad
+}
 
-export const actions = {
+export const actions: Actions = {
   default: async (event) => {
     const form = await superValidate<typeof insertPromoSchema, Message>(event, insertPromoSchema)
     if (!form.valid) {
@@ -73,4 +73,4 @@ export const actions = {
 
     throw redirect(303, '/promotions')
   }
-} satisfies Actions
+}

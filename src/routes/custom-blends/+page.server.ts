@@ -2,8 +2,9 @@ import { error, fail } from '@sveltejs/kit'
 import { superValidate } from 'sveltekit-superforms/server'
 import { copyCustomBlendSchema } from '$lib/schemas/customBlends.js'
 import type { CustomBlend } from '$lib/types/flavors.types.js'
+import type { Actions, PageServerLoad } from './$types'
 
-export const load = async ({ locals: { supabase } }) => {
+export const load: PageServerLoad = async ({ locals: { supabase } }) => {
   const {
     data: blends,
     error: err,
@@ -26,7 +27,7 @@ export const load = async ({ locals: { supabase } }) => {
   }
 }
 
-export const actions = {
+export const actions: Actions = {
   default: async (event) => {
     const form = await superValidate(event, copyCustomBlendSchema, { id: 'copy_blend' })
     if (!form.valid) {
