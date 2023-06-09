@@ -4,8 +4,14 @@ import type { z } from 'zod'
 
 import { missingSkuSchema } from '$lib/schemas/skus'
 import type { Actions, PageServerLoad } from './$types'
+import { requireAuth } from '$lib/utils/auth'
 
-export const load: PageServerLoad = async ({ locals: { supabase, getSession } }) => {
+export const load: PageServerLoad = async (event) => {
+  // Authorize user
+  const { session } = await requireAuth(event, ['Store', 'Manager', 'Admin'])
+
+  const { supabase } = event.locals
+
   const {
     data: locations,
     error: locationsError,
@@ -30,11 +36,10 @@ export const load: PageServerLoad = async ({ locals: { supabase, getSession } })
   }
 
   // If the currently logged in user is assigned to a single location, this will be set as the default submitted_from_id
-  const session = await getSession()
   const { data: currentProfile } = await supabase
     .from('profiles')
     .select('*, locations(id, name)')
-    .eq('id', session?.user.id)
+    .eq('id', session.user.id)
     .single()
 
   const getDefaultValues = () => {
