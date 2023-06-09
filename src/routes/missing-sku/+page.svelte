@@ -108,7 +108,7 @@
       {#if data.pendingItems.length === 0}
         <p class="italic brightness-50">No pending items found</p>
       {:else}
-        <div class="table-container border-token border-surface-300-600-token">
+        <div class="table-container">
           <table class="table">
             <thead>
               <tr>
