@@ -12,7 +12,7 @@ const skuSchema = z.object({
     .positive('You must choose your current location')
     .default(-1),
   submitted_by_profile_id: z.string().trim().uuid().optional(),
-  submitted_by_name: z.string().trim().optional(),
+  submitted_by_name: z.string().trim(),
   notes: z.string().trim().optional()
 })
 
