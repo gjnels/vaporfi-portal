@@ -1,9 +1,8 @@
+import type { z } from 'zod'
+import type { Actions, PageServerLoad } from './$types'
 import { error, fail } from '@sveltejs/kit'
 import { message, setError, superValidate } from 'sveltekit-superforms/server'
-import type { z } from 'zod'
-
 import { incorrectSkuRefinedSchema, incorrectSkuSchema } from '$lib/schemas/skus'
-import type { Actions, PageServerLoad } from './$types'
 import { requireAuth } from '$lib/utils/auth'
 
 export const load: PageServerLoad = async (event) => {
@@ -56,11 +55,14 @@ export const load: PageServerLoad = async (event) => {
       submitted_by_profile_id: currentProfile.id
     }
 
-    if (currentProfile.name) {
+    // Set the name to the current user's name if they have one and if this user is not a Store
+    // If user is a Store, it could be any user submitting a sku, so leave the name blank
+    if (currentProfile.role !== 'Store' && currentProfile.name) {
       values.submitted_by_name = currentProfile.name
     }
 
     if (currentProfile.locations) {
+      // locations may be returned as an array
       if (Array.isArray(currentProfile.locations)) {
         if (currentProfile.locations.length === 1) {
           values.submitted_from_location_id = currentProfile.locations[0].id
