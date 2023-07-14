@@ -9,7 +9,7 @@ const UPDATE_FORM_ID = 'update_promo'
 const DELETE_FORM_ID = 'delete_promo'
 
 export const load: PageServerLoad = async (event) => {
-  await requireAuth(event, ['Admin'])
+  await requireAuth({ event, roles: ['Admin'] })
 
   const promoId = event.url.searchParams.get('promo_id')
   if (!promoId) {

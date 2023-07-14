@@ -6,7 +6,11 @@ import { incorrectSkuRefinedSchema, incorrectSkuSchema } from '$lib/schemas/skus
 import { requireAuth } from '$lib/utils/auth'
 
 export const load: PageServerLoad = async (event) => {
-  const { session } = await requireAuth(event, ['Store', 'Manager', 'Admin'])
+  const { user } = await requireAuth({
+    event,
+    roles: ['Store', 'Manager', 'Admin'],
+    returnUser: true
+  })
 
   const { supabase } = event.locals
 
@@ -38,37 +42,26 @@ export const load: PageServerLoad = async (event) => {
     )
   }
 
-  // If the currently logged in user is assigned to a single location, this will be set as the default submitted_from_id
-  const { data: currentProfile } = await supabase
-    .from('profiles')
-    .select('*, locations(id, name)')
-    .eq('id', session.user.id)
-    .single()
-
   const getDefaultValues = () => {
-    // form will be blank without a profile
-    if (!currentProfile) {
-      return null
-    }
-
     const values: Partial<z.infer<typeof incorrectSkuSchema>> = {
-      submitted_by_profile_id: currentProfile.id
+      submitted_by_profile_id: user.id
     }
 
     // Set the name to the current user's name if they have one and if this user is not a Store
     // If user is a Store, it could be any user submitting a sku, so leave the name blank
-    if (currentProfile.role !== 'Store' && currentProfile.name) {
-      values.submitted_by_name = currentProfile.name
+    if (user.role !== 'Store' && user.name) {
+      values.submitted_by_name = user.name
     }
 
-    if (currentProfile.locations) {
+    // If the currently logged in user is assigned to a single location, this will be set as the default submitted_from_id
+    if (user.locations) {
       // locations may be returned as an array
-      if (Array.isArray(currentProfile.locations)) {
-        if (currentProfile.locations.length === 1) {
-          values.submitted_from_location_id = currentProfile.locations[0].id
+      if (Array.isArray(user.locations)) {
+        if (user.locations.length === 1) {
+          values.submitted_from_location_id = user.locations[0].id
         }
       } else {
-        values.submitted_from_location_id = currentProfile.locations.id
+        values.submitted_from_location_id = user.locations.id
       }
     }
 

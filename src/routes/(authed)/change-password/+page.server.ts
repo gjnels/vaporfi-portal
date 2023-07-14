@@ -4,8 +4,8 @@ import { changePasswordRefinedSchema, changePasswordSchema } from '$lib/schemas/
 import type { Actions, PageServerLoad } from './$types'
 import { requireAuth } from '$lib/utils/auth'
 
-export const load:PageServerLoad = async (event) => {
-  await requireAuth(event)
+export const load: PageServerLoad = async (event) => {
+  await requireAuth({ event })
 
   return {
     form: superValidate(changePasswordSchema)

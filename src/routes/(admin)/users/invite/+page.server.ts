@@ -9,7 +9,7 @@ import type { Actions, PageServerLoad } from './$types'
 import { requireAuth } from '$lib/utils/auth'
 
 export const load: PageServerLoad = async (event) => {
-  await requireAuth(event, ['Admin'])
+  await requireAuth({ event, roles: ['Admin'] })
 
   const {
     data: locations,

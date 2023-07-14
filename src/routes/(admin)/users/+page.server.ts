@@ -4,7 +4,7 @@ import type { PageServerLoad } from './$types'
 import { requireAuth } from '$lib/utils/auth'
 
 export const load: PageServerLoad = async (event) => {
-  const { session } = await requireAuth(event, ['Admin'])
+  const { session } = await requireAuth({ event, roles: ['Admin'] })
 
   const {
     data: profiles,

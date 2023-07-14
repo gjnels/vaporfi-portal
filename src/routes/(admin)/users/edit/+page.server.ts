@@ -11,7 +11,7 @@ const UPDATE_USER_ID = 'update_user'
 const DELETE_USER_ID = 'delete_user'
 
 export const load: PageServerLoad = async (event) => {
-  const { session } = await requireAuth(event, ['Admin'])
+  const { session } = await requireAuth({ event, roles: ['Admin'] })
 
   const id = event.url.searchParams.get('profile_id')
   if (!id) {

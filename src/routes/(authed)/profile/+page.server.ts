@@ -1,28 +1,17 @@
-import { error, fail, redirect } from '@sveltejs/kit'
+import { error, fail } from '@sveltejs/kit'
 import { setError, superValidate } from 'sveltekit-superforms/server'
 
 import { profileNameSchema } from '$lib/schemas/profiles.js'
 import type { Actions, PageServerLoad } from './$types'
-import { alterRedirect, requireAuth } from '$lib/utils/auth'
+import { requireAuth } from '$lib/utils/auth'
 
 export const load: PageServerLoad = async (event) => {
-  const { session } = await requireAuth(event)
-
-  const { data: profile } = await event.locals.supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', session.user.id)
-    .single()
-
-  if (!profile) {
-    await event.locals.supabase.auth.signOut()
-    throw redirect(307, `/login?redirectTo=${alterRedirect(event.url.pathname + event.url.search)}`)
-  }
+  const { user } = await requireAuth({ event, returnUser: true })
 
   return {
-    profile,
+    profile: user,
     nameForm: superValidate<typeof profileNameSchema, Message>(
-      { name: profile.name },
+      { name: user.name },
       profileNameSchema,
       { id: 'name_form' }
     )

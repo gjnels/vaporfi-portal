@@ -9,7 +9,7 @@ const UPDATE_FORM_ID = 'update_missing_sku'
 const DELETE_FORM_ID = 'delete_missing_sku'
 
 export const load: PageServerLoad = async (event) => {
-  await requireAuth(event, ['Admin'])
+  await requireAuth({ event, roles: ['Admin'] })
 
   const {
     data: skus,
