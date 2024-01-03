@@ -1,4 +1,4 @@
-export type Json = string | number | boolean | null | { [key: string]: Json } | Json[]
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export interface Database {
   public: {
@@ -43,23 +43,64 @@ export interface Database {
           shots2?: number | null
           shots3?: number | null
         }
+        Relationships: [
+          {
+            foreignKeyName: 'approved_by'
+            columns: ['approved_by_profile_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'created_by'
+            columns: ['created_by_profile_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'flavor1'
+            columns: ['flavor1_id']
+            isOneToOne: false
+            referencedRelation: 'flavors'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'flavor2'
+            columns: ['flavor2_id']
+            isOneToOne: false
+            referencedRelation: 'flavors'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'flavor3'
+            columns: ['flavor3_id']
+            isOneToOne: false
+            referencedRelation: 'flavors'
+            referencedColumns: ['id']
+          }
+        ]
       }
       flavors: {
         Row: {
           category: Database['public']['Enums']['flavorcategory']
           flavor: string
+          flavor_ban_name: string | null
           id: number
         }
         Insert: {
           category: Database['public']['Enums']['flavorcategory']
           flavor: string
+          flavor_ban_name?: string | null
           id?: number
         }
         Update: {
           category?: Database['public']['Enums']['flavorcategory']
           flavor?: string
+          flavor_ban_name?: string | null
           id?: number
         }
+        Relationships: []
       }
       incorrect_skus: {
         Row: {
@@ -95,6 +136,22 @@ export interface Database {
           submitted_by_profile_id?: string | null
           submitted_from_location_id?: number | null
         }
+        Relationships: [
+          {
+            foreignKeyName: 'incorrect_skus_submitted_by_profile_id_fkey'
+            columns: ['submitted_by_profile_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'incorrect_skus_submitted_from_location_id_fkey'
+            columns: ['submitted_from_location_id']
+            isOneToOne: false
+            referencedRelation: 'locations'
+            referencedColumns: ['id']
+          }
+        ]
       }
       locations: {
         Row: {
@@ -115,6 +172,7 @@ export interface Database {
           name?: string
           phone?: string
         }
+        Relationships: []
       }
       locations_tasks: {
         Row: {
@@ -141,6 +199,29 @@ export interface Database {
           location_id?: number
           task_id?: number
         }
+        Relationships: [
+          {
+            foreignKeyName: 'locations_tasks_completed_by_profile_id_fkey'
+            columns: ['completed_by_profile_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'locations_tasks_location_id_fkey'
+            columns: ['location_id']
+            isOneToOne: false
+            referencedRelation: 'locations'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'locations_tasks_task_id_fkey'
+            columns: ['task_id']
+            isOneToOne: false
+            referencedRelation: 'tasks'
+            referencedColumns: ['id']
+          }
+        ]
       }
       missing_skus: {
         Row: {
@@ -173,6 +254,22 @@ export interface Database {
           submitted_by_profile_id?: string | null
           submitted_from_location_id?: number | null
         }
+        Relationships: [
+          {
+            foreignKeyName: 'missing_skus_submitted_by_profile_id_fkey'
+            columns: ['submitted_by_profile_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'missing_skus_submitted_from_location_id_fkey'
+            columns: ['submitted_from_location_id']
+            isOneToOne: false
+            referencedRelation: 'locations'
+            referencedColumns: ['id']
+          }
+        ]
       }
       nicotine_packets: {
         Row: {
@@ -193,6 +290,7 @@ export interface Database {
           mg?: number
           salt?: boolean
         }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -204,7 +302,7 @@ export interface Database {
         Insert: {
           email: string
           id: string
-          name: string
+          name?: string
           role?: Database['public']['Enums']['role'] | null
         }
         Update: {
@@ -213,6 +311,15 @@ export interface Database {
           name?: string
           role?: Database['public']['Enums']['role'] | null
         }
+        Relationships: [
+          {
+            foreignKeyName: 'profiles_id_fkey'
+            columns: ['id']
+            isOneToOne: true
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
+        ]
       }
       profiles_locations: {
         Row: {
@@ -227,6 +334,22 @@ export interface Database {
           location_id?: number
           profile_id?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: 'profiles_locations_location_id_fkey'
+            columns: ['location_id']
+            isOneToOne: false
+            referencedRelation: 'locations'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'profiles_locations_profile_id_fkey'
+            columns: ['profile_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
       }
       profiles_tasks: {
         Row: {
@@ -247,6 +370,22 @@ export interface Database {
           profile_id?: string
           task_id?: number
         }
+        Relationships: [
+          {
+            foreignKeyName: 'profiles_tasks_profile_id_fkey'
+            columns: ['profile_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'profiles_tasks_task_id_fkey'
+            columns: ['task_id']
+            isOneToOne: false
+            referencedRelation: 'tasks'
+            referencedColumns: ['id']
+          }
+        ]
       }
       promos: {
         Row: {
@@ -282,6 +421,15 @@ export interface Database {
           valid_from?: string
           valid_until?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: 'promos_custom_blend_id_fkey'
+            columns: ['custom_blend_id']
+            isOneToOne: false
+            referencedRelation: 'custom_blends'
+            referencedColumns: ['id']
+          }
+        ]
       }
       tasks: {
         Row: {
@@ -302,6 +450,7 @@ export interface Database {
           notes?: string | null
           task?: string
         }
+        Relationships: []
       }
     }
     Views: {
@@ -368,3 +517,76 @@ export interface Database {
     }
   }
 }
+
+export type Tables<
+  PublicTableNameOrOptions extends
+    | keyof (Database['public']['Tables'] & Database['public']['Views'])
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof (Database[PublicTableNameOrOptions['schema']]['Tables'] &
+        Database[PublicTableNameOrOptions['schema']]['Views'])
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[PublicTableNameOrOptions['schema']]['Tables'] &
+      Database[PublicTableNameOrOptions['schema']]['Views'])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : PublicTableNameOrOptions extends keyof (Database['public']['Tables'] &
+      Database['public']['Views'])
+  ? (Database['public']['Tables'] & Database['public']['Views'])[PublicTableNameOrOptions] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : never
+
+export type TablesInsert<
+  PublicTableNameOrOptions extends keyof Database['public']['Tables'] | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions['schema']]['Tables']
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicTableNameOrOptions['schema']]['Tables'][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : PublicTableNameOrOptions extends keyof Database['public']['Tables']
+  ? Database['public']['Tables'][PublicTableNameOrOptions] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : never
+
+export type TablesUpdate<
+  PublicTableNameOrOptions extends keyof Database['public']['Tables'] | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions['schema']]['Tables']
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicTableNameOrOptions['schema']]['Tables'][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : PublicTableNameOrOptions extends keyof Database['public']['Tables']
+  ? Database['public']['Tables'][PublicTableNameOrOptions] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : never
+
+export type Enums<
+  PublicEnumNameOrOptions extends keyof Database['public']['Enums'] | { schema: keyof Database },
+  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicEnumNameOrOptions['schema']]['Enums']
+    : never = never
+> = PublicEnumNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicEnumNameOrOptions['schema']]['Enums'][EnumName]
+  : PublicEnumNameOrOptions extends keyof Database['public']['Enums']
+  ? Database['public']['Enums'][PublicEnumNameOrOptions]
+  : never
