@@ -59,27 +59,15 @@ export const setFlavorPickerFlavorOptions = (
   flavors: DatabaseRow<'flavors'>[]
 ) => {
   return {
-    flavor1Options: flavors
-      .filter(({ flavor }) => flavor !== form.flavor2 && flavor !== form.flavor3)
-      .map((f) => ({
-        value: f.flavor,
-        label: f.flavor,
-        group: f.category
-      })),
-    flavor2Options: flavors
-      .filter(({ flavor }) => flavor !== form.flavor1 && flavor !== form.flavor3)
-      .map((f) => ({
-        value: f.flavor,
-        label: f.flavor,
-        group: f.category
-      })),
-    flavor3Options: flavors
-      .filter(({ flavor }) => flavor !== form.flavor1 && flavor !== form.flavor2)
-      .map((f) => ({
-        value: f.flavor,
-        label: f.flavor,
-        group: f.category
-      }))
+    flavor1Options: flavors.filter(
+      ({ flavor }) => flavor !== form.flavor2 && flavor !== form.flavor3
+    ),
+    flavor2Options: flavors.filter(
+      ({ flavor }) => flavor !== form.flavor1 && flavor !== form.flavor3
+    ),
+    flavor3Options: flavors.filter(
+      ({ flavor }) => flavor !== form.flavor1 && flavor !== form.flavor2
+    )
   }
 }
 
