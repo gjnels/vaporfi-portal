@@ -14,6 +14,10 @@
   import Select from '$components/FormControls/Select.svelte'
   import NumberInput from '$components/FormControls/NumberInput.svelte'
   import RadioButton from '$components/FormControls/RadioButton.svelte'
+  import { browser } from '$app/environment'
+  import { onMount } from 'svelte'
+
+  let ban = false
 
   export let sForm: SuperForm<typeof flavorPickerSchema>
   export let flavors: DatabaseRow<'flavors'>[]
@@ -28,9 +32,35 @@
 
   // Flavor values and shot values depend on the number of flavors
   $: $form = setBlendFormValues($form)
+
+  const saveBanSetting = () => {
+    if (!browser) return
+    localStorage.setItem('ban', JSON.stringify(ban))
+  }
+
+  onMount(() => {
+    const storedBan = localStorage.getItem('ban')
+    if (storedBan === null) {
+      saveBanSetting()
+    } else {
+      ban = JSON.parse(storedBan)
+    }
+  })
 </script>
 
-<Form superForm={sForm}>
+<Form
+  superForm={sForm}
+  baseClass="max-w-2xl mx-auto"
+>
+  <label class="flex w-fit items-center gap-2">
+    <input
+      type="checkbox"
+      class="checkbox"
+      bind:checked={ban}
+      on:change={saveBanSetting}
+    />
+    <span class="text-xl font-semibold tracking-wide">Affected by Flavor Ban?</span>
+  </label>
   <!-- Flavor count -->
   <FormControl
     label="Flavor Count"
@@ -69,8 +99,10 @@
       <option value="">Select a flavor</option>
       {#each categories as category}
         <optgroup label={category}>
-          {#each flavor1Options.filter((option) => option.group === category) as { value, label } (value)}
-            <option {value}>{label}</option>
+          {#each flavor1Options.filter((option) => option.category === category && (!ban || option.flavor_ban_name !== null)) as flavor (flavor.id)}
+            <option value={ban ? flavor.flavor_ban_name : flavor.flavor}
+              >{ban ? `${flavor.flavor_ban_name} (${flavor.flavor})` : flavor.flavor}</option
+            >
           {/each}
         </optgroup>
       {/each}
@@ -120,8 +152,10 @@
         <option value="">Select a flavor</option>
         {#each categories as category}
           <optgroup label={category}>
-            {#each flavor2Options.filter((option) => option.group === category) as { value, label } (value)}
-              <option {value}>{label}</option>
+            {#each flavor2Options.filter((option) => option.category === category && (!ban || option.flavor_ban_name !== null)) as flavor (flavor.id)}
+              <option value={ban ? flavor.flavor_ban_name : flavor.flavor}
+                >{ban ? `${flavor.flavor_ban_name} (${flavor.flavor})` : flavor.flavor}</option
+              >
             {/each}
           </optgroup>
         {/each}
@@ -164,8 +198,10 @@
         <option value="">Select a flavor</option>
         {#each categories as category}
           <optgroup label={category}>
-            {#each flavor3Options.filter((option) => option.group === category) as { value, label } (value)}
-              <option {value}>{label}</option>
+            {#each flavor3Options.filter((option) => option.category === category && (!ban || option.flavor_ban_name !== null)) as flavor (flavor.id)}
+              <option value={ban ? flavor.flavor_ban_name : flavor.flavor}
+                >{ban ? `${flavor.flavor_ban_name} (${flavor.flavor})` : flavor.flavor}</option
+              >
             {/each}
           </optgroup>
         {/each}
